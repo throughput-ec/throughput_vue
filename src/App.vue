@@ -1,28 +1,22 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app" class="mainpage">
+    <app-header></app-header>
+    <app-insertform></app-insertform>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+  import InsertForm from './components/insertform.vue'
+  import header from './components/header.vue'
 
-export default {
-  name: 'app',
-  components: {
-    HelloWorld
+  import './assets/containers.css'
+  import './assets/text.css'
+
+  export default {
+    name: 'app',
+    components: {
+      'app-insertform': InsertForm,
+      'app-header': header
+    }
   }
-}
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
