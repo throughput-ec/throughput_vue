@@ -1,10 +1,24 @@
-<template>
+this.description<template>
   <div class="annotations">
     <div class="addannot">
       <b-form @submit="onSubmit" @reset="onReset" v-if="show">
         <h2>Target URL</h2>
         <div class="input-group mb-3">
-          <b-form-input id="target"
+          <b-form-input id="orcidInput"
+                        type="text"
+                        v-model="form.orcid"
+                        required
+                        placeholder="Enter ORCID."
+                        class="form-control"
+                        aria-label="Enter valid ORCID."
+                        aria-describedby="basic-addon2" />
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" v-on:click="fetchmeta(form.url)">Check ORCID</button>
+          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <b-form-input id="urlInput"
                         type="url"
                         v-model="form.url"
                         required
@@ -31,9 +45,9 @@
 
         <h2>Target Description</h2>
         <div class="input-group mb-3">
-          <b-form-input id="exampleInput2"
+          <b-form-input id="descriptionInput"
                         type="text"
-                        v-model="form.name"
+                        v-model="form.description"
                         required
                         placeholder="Describe the purpose of the resource."
                         aria-label="Describe the purpose of the resource."
@@ -43,9 +57,9 @@
           </div>
         </div>
 
-        <div class="descripcard" v-if="this.name !== ''">
+        <div class="descripcard" v-if="this.description !== ''">
           <strong>url</strong>: {{ this.url }}<br>
-          <strong>Description</strong>: {{ this.name }}
+          <strong>Description</strong>: {{ this.description }}
         </div>
 
         <h2>Keywords</h2>
@@ -76,20 +90,23 @@
     data () {
       return {
         form: {
+          orcid: '',
           url: '',
-          name: '',
+          description: '',
           keyword: ''
         },
         show: true,
         metadata: { 'title': '', 'description': '' },
         url: '',
-        name: ''
+        description: '',
+        orcid: '',
+        graph: null
       }
     },
     methods: {
       setValues: function() {
         this.url = this.form.url;
-        this.name = this.form.name;
+        this.description = this.form.description;
       },
       fetchmeta: function (url) {
 
@@ -109,15 +126,25 @@
               this.metadata = x
               });
       },
-      onSubmit (evt) {
+      onSubmit: function (evt) {
         evt.preventDefault();
-        alert(JSON.stringify(this.form));
+        console.log('fires')
+        var url = 'http://localhost:3000/datanote/?body=' + this.form.description +
+                  '&url=' + JSON.stringify(this.form.url) +
+                  '&person=' + this.form.orcid;
+        console.log(url);
+
+        fetch(url, {
+          method: "POST", mode: "cors"} )
+          .then(response => {
+            response;
+          });
       },
       onReset (evt) {
         evt.preventDefault();
         /* Reset our form values */
         this.form.url = '';
-        this.form.name = '';
+        this.form.description = '';
         this.form.keyword = null;
         /* Trick to reset/clear native browser form validation state */
         this.show = false;
