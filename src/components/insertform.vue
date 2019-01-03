@@ -2,7 +2,7 @@ this.description<template>
   <div class="annotations">
     <div class="addannot">
       <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-        <h2>Target URL</h2>
+        <h2>User ORCID</h2>
         <div class="input-group mb-3">
           <b-form-input id="orcidInput"
                         type="text"
@@ -16,7 +16,7 @@ this.description<template>
             <button class="btn btn-outline-secondary" type="button" v-on:click="fetchmeta(form.url)">Check ORCID</button>
           </div>
         </div>
-
+        <h2>Target URL</h2>
         <div class="input-group mb-3">
           <b-form-input id="urlInput"
                         type="url"
@@ -45,12 +45,14 @@ this.description<template>
 
         <h2>Target Description</h2>
         <div class="input-group mb-3">
-          <b-form-input id="descriptionInput"
+          <b-form-textarea id="descriptionInput"
                         type="text"
                         v-model="form.description"
                         required
                         placeholder="Describe the purpose of the resource."
-                        aria-label="Describe the purpose of the resource."
+                        rows="3"
+                        max-rows="6"
+                        aria-label="Describe the purpose of the resource (free text)."
                         aria-describedby="basic-addon2" />
           <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="button" v-on:click="setValues()">Compose</button>
