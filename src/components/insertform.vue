@@ -137,17 +137,19 @@
           redirect_uri: "http://throughputdb.com"
         }
 
-        console.log(options)
+        var url_options = Object.entries(options)
+          .map(([key, val]) => `${key}=${val}`).join('&')
 
-        fetch("https://sandbox.orcid.org/oauth/token",
-              {
-                mode: "cors",
-                method: "POST",
-                headers: { "Accept": "application/json",
-                           "Content-Type": "application/json" },
-                body: JSON.stringify(options)
-              })
-          .then(response => JSON.parse(response))
+          console.log(url_options)
+
+        fetch("https://sandbox.orcid.org/oauth/token", {
+          body: url_options,
+          mode: "no-cors",
+          credentials: "include",
+          headers: { Accept: "application/json",
+                     "Content-Type": "application/x-www-form-urlencoded" },
+                     method: "POST" })
+          .then(response => console.log(response))
           .then(data => console.log(data))
           .catch(err => console.log(err))
       }
@@ -233,6 +235,8 @@
       },
       checkorcid: function(orcid) {
         this.$cookies.set('orcid', orcid);
+        this.$cookies.set("default_unit_second","input_value","0");
+
         var orcid_auth = require('@/assets/orcid_secret.json');
 
         var options = {client_id: orcid_auth.id,
