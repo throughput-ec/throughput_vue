@@ -11,6 +11,7 @@
 
   import './assets/containers.css'
   import './assets/text.css'
+  import './assets/d3styles.css'
 
   export default {
     name: 'app',
