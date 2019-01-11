@@ -130,17 +130,21 @@
         var orcid_auth = require('@/assets/orcid_secret.json');
 
         var options = {
-          client_id:orcid_auth.id,
-          client_secret:orcid_auth.secret,
-          grant_type:"authorization_code",
-          code:this.$route.query.code,
-          redirect_uri:"http://throughputdb.com"
+          client_id: orcid_auth.id,
+          client_secret: orcid_auth.secret,
+          grant_type: "authorization_code",
+          code: this.$route.query.code,
+          redirect_uri: "http://throughputdb.com"
         }
+
+        console.log(options)
 
         fetch("https://sandbox.orcid.org/oauth/token",
               {
+                mode: "cors",
                 method: "POST",
-                headers: { "Content-Type": "accept:application/json" },
+                headers: { "Accept": "application/json",
+                           "Content-Type": "application/json" },
                 body: JSON.stringify(options)
               })
           .then(response => JSON.parse(response))

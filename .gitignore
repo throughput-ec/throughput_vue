@@ -21,3 +21,5 @@ yarn-error.log*
 *.sw*
 
 src/assets/orcid_secret.json
+orcid_secret.json
+
