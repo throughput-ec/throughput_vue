@@ -13,7 +13,11 @@
                         aria-label="Enter valid ORCID."
                         aria-describedby="basic-addon2" />
           <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" v-on:click="checkorcid(form.orcid)">Validate ORCID</button>
+            <button class="btn btn-outline-secondary"
+                    style = "background-color:#A6CE39"
+                    type="button"
+                    v-on:click="checkorcid(form.orcid)"
+                    title="Link to your ORCID account">ORCID</button>
           </div>
         </div>
         <h2>Target URL</h2>
@@ -27,12 +31,18 @@
                         aria-label="Enter URL or identifier."
                         aria-describedby="basic-addon2" />
           <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" v-on:click="fetchmeta(form.url)">Check URL</button>
+            <button class="btn btn-outline-secondary"
+                    type="button"
+                    v-on:click="fetchmeta(form.url)"
+                    title="Find additional metadata and existing links">Check URL</button>
           </div>
         </div>
 
         <div v-if="this.metadata.title !== '' & this.metadata.title !== undefined">
-          <b-alert variant="info" show>
+          <b-alert variant="info"
+                   dismissible
+                   :show="showDismissibleAlert"
+                   @dismissed="showDismissibleAlert=false">
             <p><strong>Title</strong>: {{ this.metadata.title }}</p>
             <p><strong>Description</strong>: {{ this.metadata.description }}</p>
             <b-btn v-b-modal.metainfo>Show full metadata</b-btn>
@@ -60,9 +70,6 @@
                         max-rows="6"
                         aria-label="Describe the purpose of the resource (free text)."
                         aria-describedby="basic-addon2" />
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" v-on:click="setValues()">Compose</button>
-          </div>
         </div>
 
         <div class="descripcard" v-if="this.description !== ''">
@@ -85,9 +92,9 @@
       </b-form>
     </div>
     <div class="annotgraph">
-      <svg id="svg" width="500">
-        <g :id="links"></g>
-        <g :id="nodes"></g>
+      <svg id="svg" width="100%" height="100%">
+        <g :class="links"></g>
+        <g :class="nodes"></g>
       </svg>
     </div>
   </div>
@@ -101,6 +108,7 @@
   export default {
     data () {
       return {
+        showDismissibleAlert: false,
         form: {
           orcid: this.$cookies.get('orcid'),
           url: '',
@@ -159,10 +167,12 @@
         var that = this;
         var svg = d3.select("svg")
 
+        console.log(that.graph);
+
         this.simulation = d3.forceSimulation()
           .nodes(that.graph.nodes)
-          .force("link", d3.forceLink(that.graph.links).distance(100).strength(0.1))
-          .force("charge", d3.forceManyBody())
+          .force("link", d3.forceLink().links(that.graph.links).distance(80))
+          .force("charge", d3.forceManyBody().strength(-100))
           .force("center", d3.forceCenter(that.settings.svgWigth / 2, that.settings.svgHeight / 2));
       },
       setValues: function() {
@@ -170,6 +180,7 @@
         this.description = this.form.description;
       },
       fetchmeta: function (url) {
+        this.metadata = { 'title': '', 'description': '' };
 
         var ogs = require('open-graph-scraper');
         var options = {'url': 'https://cors-anywhere.herokuapp.com/' + url };
@@ -188,7 +199,9 @@
               this.metadata = x
               });
 
-        fetch('http://localhost:3000/query?search=' + url)
+        this.showDismissibleAlert=true;
+
+        fetch('http://ec2-34-219-104-150.us-west-2.compute.amazonaws.com/query?search=' + url)
         .then((response) => { return response.json() })
         .then((data) => {
           var graph = data.data.records;
@@ -253,7 +266,7 @@
       },
       onSubmit: function (evt) {
         evt.preventDefault();
-        var url = 'http://localhost:3000/datanote/?body=' + this.form.description +
+        var url = 'http://ec2-34-219-104-150.us-west-2.compute.amazonaws.com/datanote/?body=' + this.form.description +
                   '&url=' + JSON.stringify(this.form.url) +
                   '&person=' + this.form.orcid;
 
@@ -261,6 +274,11 @@
           method: "POST", mode: "cors"} )
           .then(response => {
             response;
+          })
+          .then((x) => {
+              fetchmeta(this.form.url);
+            })
+          .then((x) => {
             this.form.url = null;
             this.form.description = null;
             this.form.keyword = null;
@@ -283,16 +301,47 @@
       nodes: function () {
           var that = this;
           if (that.graph) {
-              return d3.select("svg").append("g")
+            var svg = d3.select("svg")
+
+            var node = svg.append("g")
                   .attr("class", "nodes")
                   .selectAll("circle")
                   .data(that.graph.nodes)
                   .enter().append("circle")
-                  .attr("r", 20)
-                  .attr("fill", function (d ,i) {
-                      return that.color;
+                  .attr("r", function(d) {
+                    var dtype = Object.keys(d.properties)
+                    if (dtype.indexOf("value") > -1) {
+                      return 30;
+                    } else if (Object.keys(d.properties).indexOf("url") > -1) {
+                      return 30;
+                    } else if (Object.keys(d.properties).indexOf("id") > -1) {
+                      return 20;
+                    } else {
+                      return 10;
+                    }
                   })
-                  .call(d3.drag()
+                  .attr("fill", function (d ,i) {
+                    if (Object.keys(d.properties).indexOf("value") > -1) {
+                      return "#CF394E";
+                    } else if (Object.keys(d.properties).indexOf("url") > -1) {
+                      return "#A42D81";
+                    } else if (Object.keys(d.properties).indexOf("id") > -1) {
+                    return "#A6CE39";
+                    } else {
+                      return "#53B933"
+                    }
+                  })
+                  .attr("stroke", "#00000077")
+                  .attr("stroke-width", 3)
+
+            node.append("title")
+              .text(function(d) {
+                var newobj = d.properties;
+                delete newobj.created;
+                return JSON.stringify(newobj, null, 2)
+              })
+
+            node.call(d3.drag()
                       .on("start", function dragstarted(d) {
                           if (!d3.event.active) that.simulation.alphaTarget(0.3).restart();
                           d.fx = d.x;
@@ -307,6 +356,7 @@
                           d.fx = null;
                           d.fy = null;
                       }));
+            return node;
           }
       },
       links: function () {
