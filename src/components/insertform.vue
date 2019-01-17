@@ -12,6 +12,9 @@
                         class="form-control"
                         aria-label="Enter valid ORCID."
                         aria-describedby="basic-addon2" />
+          <b-form-invalid-feedback id="basic-addon2">
+            This is a required field and must be at least 3 characters
+          </b-form-invalid-feedback>
           <div class="input-group-append">
             <button class="btn btn-outline-secondary"
                     style = "background-color:#A6CE39"
@@ -23,7 +26,7 @@
         <h2>Target URL</h2>
         <div class="input-group mb-3">
           <b-form-input id="urlInput"
-                        type="url"
+                        type="text"
                         v-model="form.url"
                         required
                         placeholder="Enter URL or identifier."
@@ -167,6 +170,9 @@
         var that = this;
         var svg = d3.select("svg")
 
+        d3.select("#allLinks").remove()
+        d3.select("#allNodes").remove()
+
         console.log(that.graph);
 
         this.simulation = d3.forceSimulation()
@@ -180,6 +186,7 @@
         this.description = this.form.description;
       },
       fetchmeta: function (url) {
+
         this.metadata = { 'title': '', 'description': '' };
 
         var ogs = require('open-graph-scraper');
@@ -239,6 +246,7 @@
           })
 
           this.graph = {nodes: nodes, links: links};
+
           this.d3plot();
         })
         .catch(function (error) {
@@ -304,6 +312,7 @@
             var svg = d3.select("svg")
 
             var node = svg.append("g")
+                  .attr("id", "allNodes")
                   .attr("class", "nodes")
                   .selectAll("circle")
                   .data(that.graph.nodes)
@@ -362,19 +371,22 @@
       links: function () {
           var that = this;
           if (that.graph) {
-              return d3.select("svg").append("g")
+              return d3.select("svg")
+                  .append("g")
+                  .attr("id", "allLinks")
                   .attr("class", "links")
                   .selectAll("line")
                   .data(that.graph.links)
                   .enter().append("line")
-                  .attr("stroke-width", function (d) { return Math.sqrt(50); });
+                  .attr("stroke-width", function (d) { return 10; });
           }
       },
     },
     updated: function () {
         if (this.simulation) {
           var that = this;
-          that.simulation.nodes(that.graph.nodes).on('tick', function ticked() {
+          that.simulation.nodes(that.graph.nodes)
+            .on('tick', function ticked() {
               that.links
                   .attr("x1", function (d) { return d.source.x; })
                   .attr("y1", function (d) { return d.source.y; })
