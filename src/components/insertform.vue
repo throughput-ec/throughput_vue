@@ -150,33 +150,27 @@
       }
     },
     created() {
-      if (this.$route.query.code) {
-        var orcid_auth = require('@/assets/orcid_secret.json');
+      var orcid_params = this.$route.hash
+        .substring(1,this.$route.hash.length)
+        .split("&")
+        .map(x => x.split("="))
+        .reduce(function(p, c) {
+          p[c[0]] = c[1];
+          return p; }, {})
 
-        var options = {
-          client_id: orcid_auth.id,
-          client_secret: orcid_auth.secret,
-          //grant_type: "authorization_code",
-          // code: this.$route.query.code,
-          response_type: "code",
-          scope: "openid",
-          redirect_uri: "http://throughputdb.com"
-        }
+      if (orcid_params.access_token) {
+        console.log("Bearer " + orcid_params.access_token)
 
-        var url_options = Object.entries(options)
-          .map(([key, val]) => `${key}=${val}`).join('&')
-
-        console.log(url_options)
-
-        fetch("https://sandbox.orcid.org/oauth/token", {
-          body: url_options,
-          mode: "no-cors",
-          credentials: "include",
+        fetch("https://sandbox.orcid.org/oauth/userinfo", {
           headers: { Accept: "application/json",
-                     "Content-Type": "application/x-www-form-urlencoded" },
-                     method: "POST" })
-          .then(response => console.log(response))
-          .then(data => console.log(data))
+                     "Authorization": orcid_params.token_type + " " + orcid_params.access_token },
+                     method: "GET" })
+          .then((response) => { return response.json() })
+          .then(data => {
+            console.log(data)
+            this.$cookies.set('orcid', data.sub);
+            this.$cookies.set("default_unit_second","input_value","0");
+            this.form.orcid = data.sub })
           .catch(err => console.log(err))
       }
     },
@@ -278,14 +272,13 @@
         });
       },
       checkorcid: function(orcid) {
-        this.$cookies.set('orcid', orcid);
-        this.$cookies.set("default_unit_second","input_value","0");
 
         var orcid_auth = require('@/assets/orcid_secret.json');
 
         var options = {client_id: orcid_auth.id,
-          response_type:"code",
-          scope:"/authenticate",
+          scope:"openid",
+          nonce: "whatever",
+          response_type:"token",
           redirect_uri:"http://throughputdb.com"}
 
         var url = "https://sandbox.orcid.org/oauth/authorize?"
@@ -293,7 +286,8 @@
         window.open(url + "client_id=" + options.client_id +
                     "&response_type=" + options.response_type +
                     "&scope=" + options.scope +
-                    "&redirect_uri=" + options.redirect_uri, name="_blank");
+                    "&nonce=" + options.nonce +
+                    "&redirect_uri=" + options.redirect_uri);
       },
       onSubmit: function (evt) {
         evt.preventDefault();

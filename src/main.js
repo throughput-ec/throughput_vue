@@ -23,7 +23,7 @@ const router = new VueRouter({
       name: 'root'
     },
     {
-      path: "/:dsid/",
+      path: "/#",
       component: App,
       props: true
     }
