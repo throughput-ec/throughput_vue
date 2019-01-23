@@ -23,25 +23,38 @@
                     title="Link to your ORCID account">ORCID</button>
           </div>
         </div>
-        <h2>Target URL</h2>
-        <div class="input-group mb-3">
-          <b-form-input id="urlInput"
-                        type="text"
-                        v-model="form.url"
-                        required
-                        placeholder="Enter URL or identifier."
-                        class="form-control"
-                        aria-label="Enter URL or identifier."
-                        aria-describedby="basic-addon2" />
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary"
-                    type="button"
-                    v-on:click="fetchmeta(form.url)"
-                    title="Find additional metadata and existing links">Check URL</button>
+        <div>
+          <h2 class="headerwbutton">Target URL</h2>
+          <button class="btn btn-outline-secondary buttonhead"
+                type="button"
+                v-on:click="drop_url()"
+                title="Add space for an additional URL">-</button>
+          <button class="btn btn-outline-secondary buttonhead"
+                type="button"
+                v-on:click="add_url()"
+                title="Remove the last URL">+</button>
+        </div>
+        <div v-for="(urls, index) in form.url">
+          <div class="input-group mb-3">
+            <b-form-input id="'urls'+index"
+                          type="text"
+                          v-model="form.url[index]"
+                          required
+                          placeholder="Enter URL or identifier."
+                          class="form-control"
+                          aria-label="Enter URL or identifier."
+                          aria-describedby="basic-addon2" />
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary"
+                      type="button"
+                      v-on:click="fetchmeta(form.url[index])"
+                      title="Find additional metadata and existing links">Check URL</button>
+            </div>
           </div>
         </div>
 
-        <div v-if="this.metadata.title !== '' & this.metadata.title !== undefined">
+        <div v-if="this.metadata.title !== '' &
+                   this.metadata.title !== undefined">
           <b-alert variant="info"
                    dismissible
                    :show="showDismissibleAlert"
@@ -68,7 +81,7 @@
                         type="text"
                         v-model="form.description"
                         required
-                        placeholder="Describe the purpose of the resource."
+                        placeholder="Describe the purpose of the resource(s)."
                         rows="3"
                         max-rows="6"
                         aria-label="Describe the purpose of the resource (free text)."
@@ -114,7 +127,7 @@
         showDismissibleAlert: false,
         form: {
           orcid: this.$cookies.get('orcid'),
-          url: '',
+          url: [''],
           description: '',
           keyword: ''
         },
@@ -143,15 +156,17 @@
         var options = {
           client_id: orcid_auth.id,
           client_secret: orcid_auth.secret,
-          grant_type: "authorization_code",
-          code: this.$route.query.code,
+          //grant_type: "authorization_code",
+          // code: this.$route.query.code,
+          response_type: "code",
+          scope: "openid",
           redirect_uri: "http://throughputdb.com"
         }
 
         var url_options = Object.entries(options)
           .map(([key, val]) => `${key}=${val}`).join('&')
 
-          console.log(url_options)
+        console.log(url_options)
 
         fetch("https://sandbox.orcid.org/oauth/token", {
           body: url_options,
@@ -185,6 +200,14 @@
         this.url = this.form.url;
         this.description = this.form.description;
       },
+      add_url: function() {
+        this.form.url.push('');
+      },
+      drop_url: function() {
+        if (this.form.url.length > 1) {
+          this.form.url.pop();
+        }
+      },
       fetchmeta: function (url) {
 
         this.metadata = { 'title': '', 'description': '' };
@@ -208,7 +231,7 @@
 
         this.showDismissibleAlert=true;
 
-        fetch('http://ec2-34-219-104-150.us-west-2.compute.amazonaws.com/query?search=' + url)
+        fetch('http://ec2-52-32-164-166.us-west-2.compute.amazonaws.com/query?search=' + url)
         .then((response) => { return response.json() })
         .then((data) => {
           var graph = data.data.records;
@@ -278,6 +301,7 @@
                   '&url=' + JSON.stringify(this.form.url) +
                   '&person=' + this.form.orcid;
 
+        console.log(url)
         fetch(url, {
           method: "POST", mode: "cors"} )
           .then(response => {

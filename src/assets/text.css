@@ -36,6 +36,16 @@ h3 { font-weight: 700;
 	 font-size: 100%;
 	}
 
+h2.headerwbutton {
+  margin:0;
+  display: inline-block;
+}
+
+button.buttonhead {
+  float: right;
+  margin: 5px;
+}
+
 li, tr {
   font-family: "Raleway";
   color: rgba(0,0,0,0.8);
