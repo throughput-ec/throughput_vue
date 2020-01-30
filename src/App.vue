@@ -7,7 +7,7 @@
 </template>
 
 <script>
-  import InsertForm from './components/insertform.vue'
+  //import InsertForm from './components/insertform.vue'
   import header from './components/header.vue'
   import startForm from './components/simple_search.vue'
 
@@ -19,7 +19,7 @@
     name: 'app',
     components: {
       'app-start': startForm,
-      'app-insertform': InsertForm,
+      //'app-insertform': InsertForm,
       'app-header': header
     }
   }

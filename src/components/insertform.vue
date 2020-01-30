@@ -1,117 +1,17 @@
 <template>
   <div class="annotations">
-    <div class="addannot">
-      <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-        <h2>User ORCID</h2>
-        <div class="input-group mb-3">
-          <b-form-input id="orcidInput"
-                        type="text"
-                        v-model="form.orcid"
-                        required
-                        :placeholder="this.orcid"
-                        class="form-control"
-                        aria-label="Enter valid ORCID."
-                        aria-describedby="basic-addon2" />
-          <b-form-invalid-feedback id="basic-addon2">
-            This is a required field and must be at least 3 characters
-          </b-form-invalid-feedback>
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary"
-                    style = "background-color:#A6CE39"
-                    type="button"
-                    v-on:click="checkorcid(form.orcid)"
-                    title="Link to your ORCID account">ORCID</button>
-          </div>
-        </div>
-        <div>
-          <h2 class="headerwbutton">Target URL</h2>
-          <button class="btn btn-outline-secondary buttonhead"
-                type="button"
-                v-on:click="drop_url()"
-                title="Add space for an additional URL">-</button>
-          <button class="btn btn-outline-secondary buttonhead"
-                type="button"
-                v-on:click="add_url()"
-                title="Remove the last URL">+</button>
-        </div>
-        <div v-for="(urls, index) in form.url">
-          <div class="input-group mb-3">
-            <b-form-input id="'urls'+index"
-                          type="text"
-                          v-model="form.url[index]"
-                          required
-                          placeholder="Enter URL or identifier."
-                          class="form-control"
-                          aria-label="Enter URL or identifier."
-                          aria-describedby="basic-addon2" />
-            <div class="input-group-append">
-              <button class="btn btn-outline-secondary"
-                      type="button"
-                      v-on:click="fetchmeta(form.url[index])"
-                      title="Find additional metadata and existing links">Check URL</button>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="this.metadata.title !== '' &
-                   this.metadata.title !== undefined">
-          <b-alert variant="info"
-                   dismissible
-                   :show="showDismissibleAlert"
-                   @dismissed="showDismissibleAlert=false">
-            <p><strong>Title</strong>: {{ this.metadata.title }}</p>
-            <p><strong>Description</strong>: {{ this.metadata.description }}</p>
-            <b-btn v-b-modal.metainfo>Show full metadata</b-btn>
-
-            <b-modal id="metainfo" title="Website OpenGraph Data" ok-only >
-              <pre style="white-space: pre-wrap; ">{{ this.metadata.data }}</pre>
-            </b-modal>
-
-          </b-alert>
-        </div>
-        <div v-if="this.metadata.title === undefined">
-          <b-alert variant="warning" show>
-            URL resource has no defined metadata - may redirect to another resource.
-          </b-alert>
-        </div>
-
-        <h2>Target Description</h2>
-        <div class="input-group mb-3">
-          <b-form-textarea id="descriptionInput"
-                        type="text"
-                        v-model="form.description"
-                        required
-                        placeholder="Describe the purpose of the resource(s)."
-                        rows="3"
-                        max-rows="6"
-                        aria-label="Describe the purpose of the resource (free text)."
-                        aria-describedby="basic-addon2" />
-        </div>
-
-        <div class="descripcard" v-if="this.description !== ''">
-          <strong>url</strong>: {{ this.url }}<br>
-          <strong>Description</strong>: {{ this.description }}
-        </div>
-
-        <h2>Keywords</h2>
-        <b-form-group id="exampleInputGroup3"
-                      label-for="exampleInput3">
-          <b-form-input id="exampleInput3"
-                        type="text"
-                        required
-                        placeholder="Add keywords"
-                        v-model="form.keyword">
-          </b-form-input>
-        </b-form-group>
-        <b-button type="submit" variant="primary">Submit</b-button>
-        <b-button type="reset" variant="danger">Reset</b-button>
-      </b-form>
-    </div>
+      <annotside></annotside>
+    
     <div class="annotgraph">
-      <svg id="svg" width="100%" height="100%">
-        <g :class="links"></g>
-        <g :class="nodes"></g>
-      </svg>
+      <div  v-if="this.graph===null">
+        <open-vue></open-vue>
+      </div>
+      <div v-else>
+        <svg id="svg" width="100%" height="600">
+          <g :class="links"></g>
+          <g :class="nodes"></g>
+        </svg>
+      </div>
     </div>
   </div>
 </template>
@@ -120,8 +20,14 @@
 
 <script>
   import * as d3 from 'd3';
-
+  import orcidText from '../components/orcid_text.vue'
+  import opener from '../components/opener.vue'
+  import annotside from '../components/addition_sidebar.vue'
   export default {
+    components: {
+      'app-orcid': orcidText,
+      'open-vue': opener
+    },
     data () {
       return {
         showDismissibleAlert: false,
@@ -138,6 +44,7 @@
         url: '',
         description: '',
         orcid: this.$cookies.get('orcid'),
+        orcid_token: '',
         simulation: null,
         graph: null,
         color: "#aa0000",
@@ -167,7 +74,6 @@
                      method: "GET" })
           .then((response) => { return response.json() })
           .then(data => {
-            console.log(data)
             this.$cookies.set('orcid', data.sub);
             this.$cookies.set("default_unit_second","input_value","0");
             this.form.orcid = data.sub })
@@ -181,8 +87,6 @@
 
         d3.select("#allLinks").remove()
         d3.select("#allNodes").remove()
-
-        console.log(that.graph);
 
         this.simulation = d3.forceSimulation()
           .nodes(that.graph.nodes)
@@ -256,13 +160,19 @@
 
             })
 
-          var addlinks = newNodes.flat().map(x => {
-
-            links.push({source: nodes.map(y => y.identity).indexOf(x[0].identity.low),
-                        target: nodes.map(y => y.identity).indexOf(x[1].identity.low)})
+          var addlinks = newNodes
+            .flat()
+            .map(x => {
+              var source = nodes.map(y => y.identity).indexOf(x[0].identity.low)
+              var target =  nodes.map(y => y.identity).indexOf(x[1].identity.low)
+              return { source: source, target: target }
           })
 
+          links = addlinks
+
           this.graph = {nodes: nodes, links: links};
+
+          console.log(this.graph.links)
 
           this.d3plot();
         })
@@ -295,7 +205,6 @@
                   '&url=' + JSON.stringify(this.form.url) +
                   '&person=' + this.form.orcid;
 
-        console.log(url)
         fetch(url, {
           method: "POST", mode: "cors"} )
           .then(response => {
