@@ -50,7 +50,7 @@
       </b-form>
     </b-card>
     <b-card title="Search Summary">
-      Total Data Repositories: {{this.reposum.ccrds}}<br>
+      Total Data Repositories: {{this.reposum.ccdrs}}<br>
       Total Code Repositories: {{this.reposum.code}}
     </b-card>
 
@@ -73,8 +73,8 @@
                 </div>
                 <small>url: <a :href="items.url">{{items.url}}</a></small>
 <br>
-                <b-button v-b-toggle="items.repos" variant="primary">Show Code</b-button>
-                <b-collapse id="items.repos" class="mt-2">
+                <b-button v-b-toggle="items.name" variant="primary">Show Code</b-button>
+                <b-collapse :id="items.name" class="mt-2">
                   <div v-for="ghrepo in items.repos" v-bind:key="ghrepo.name">
                     <b-card
                       :title="ghrepo.name">
@@ -128,7 +128,7 @@
           .then((data) => {
             /* Modifying the values and processing the inputs */
             self.repos = data.data.ccdrs
-            self.reposum.ccrds = data.data.ccdrs.length
+            self.reposum.ccdrs = data.data.ccdrs.length
             self.reposum.code = data.data.ccdrs
               .map( x => x.repos.length )
               .reduce( (pval, cval) => pval + cval )
@@ -140,6 +140,8 @@
         // Reset our form values
         this.form.name = ''
         this.form.keyword = ''
+        this.repos = null
+        this.reposum = { ccdrs: 0, code: 0 }
         // Trick to reset/clear native browser form validation state
         this.show = false
         this.$nextTick(() => {
