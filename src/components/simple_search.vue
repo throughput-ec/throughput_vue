@@ -49,8 +49,12 @@
         <b-button type="reset" variant="danger">Reset</b-button>
       </b-form>
     </b-card>
+    <b-card title="Search Summary">
+      Total Data Repositories: {{this.reposum.ccrds}}<br>
+      Total Code Repositories: {{this.reposum.code}}
+    </b-card>
 
-    <div v-for="items in this.repos">
+    <div v-for="items in this.repos" v-bind:key="items.name">
       <b-card
         :title="items.name"
         tag="repository"
@@ -69,9 +73,9 @@
                 </div>
                 <small>url: <a :href="items.url">{{items.url}}</a></small>
 <br>
-                <b-button v-b-toggle.collapse-1 variant="primary">Show Code</b-button>
-                <b-collapse id="collapse-1" class="mt-2">
-                  <div v-for="ghrepo in items.repos">
+                <b-button v-b-toggle="items.repos" variant="primary">Show Code</b-button>
+                <b-collapse id="items.repos" class="mt-2">
+                  <div v-for="ghrepo in items.repos" v-bind:key="ghrepo.name">
                     <b-card
                       :title="ghrepo.name">
                       <div>{{ghrepo.description}}</div>
@@ -103,6 +107,10 @@
         },
         limit: [5,10,15,30],
         repos: null,
+        reposum: {
+          ccdrs: 0,
+          code: 0
+        },
         show: true
       }
     },
@@ -120,6 +128,10 @@
           .then((data) => {
             /* Modifying the values and processing the inputs */
             self.repos = data.data.ccdrs
+            self.reposum.ccrds = data.data.ccdrs.length
+            self.reposum.code = data.data.ccdrs
+              .map( x => x.repos.length )
+              .reduce( (pval, cval) => pval + cval )
           })
 
       },
