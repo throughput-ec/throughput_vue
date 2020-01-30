@@ -2,7 +2,9 @@
 @import url('https://fonts.googleapis.com/css?family=EB+Garamond|Raleway|Roboto+Slab');
 
 * { font-family: "Raleway";
-    color: rgba(0,0,0,0.8); }
+    color: rgba(0,0,0,0.8);
+    font-size: 150%
+  }
 
 a { font-weight: 700;
     color: rgba(59, 72, 202, 0.8); }
