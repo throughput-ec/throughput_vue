@@ -5,10 +5,11 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "start": "HOST='0.0.0.0' PORT=80 npm run serve"
   },
   "dependencies": {
-    "bootstrap-vue": "^2.3.0",
+    "bootstrap-vue": "^2.6.1",
     "d3": "^5.15.0",
     "html-metadata": "git://github.com/wikimedia/html-metadata.git",
     "http": "0.0.0",
@@ -17,14 +18,15 @@
     "passport-orcid": "0.0.3",
     "url-metadata": "^2.4.0",
     "vue": "^2.6.11",
-    "vue-cookies": "^1.6.1",
-    "vue-router": "^3.1.5"
+    "vue-cookies": "^1.7.0",
+    "vue-loading-spinner": "^1.0.11",
+    "vue-router": "^3.1.6"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.12.1",
     "@vue/cli-plugin-eslint": "^3.12.1",
-    "@vue/cli-service": "^4.1.2",
-    "babel-eslint": "^10.0.3",
+    "@vue/cli-service": "^4.2.3",
+    "babel-eslint": "^10.1.0",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.3",
     "vue-template-compiler": "^2.6.11"

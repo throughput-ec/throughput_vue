@@ -23,7 +23,7 @@
       <h4>Add Keywords</h4>
         <p>Sometimes it helps to add some extra keywords.  You can look
           through the set of keywords in the database, or add your own.</p>
-      <img src="../assets/graph_place.svg" style="text-align:center;">
+      <img src="../assets/graph_place.svg" style="text-align:center;width:100%">
      </b-alert>
 
    </div>
@@ -33,7 +33,7 @@
   import '../assets/containers.css'
 
   export default {
-    name: 'opener',
+    name: 'opens',
     data () {
       return {
         msg: 'Text opening'
