@@ -9,7 +9,7 @@
     "start": "HOST='0.0.0.0' PORT=80 npm run serve"
   },
   "dependencies": {
-    "bootstrap-vue": "^2.6.1",
+    "bootstrap-vue": "^2.7.0",
     "d3": "^5.15.0",
     "html-metadata": "git://github.com/wikimedia/html-metadata.git",
     "http": "0.0.0",
@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.12.1",
-    "@vue/cli-plugin-eslint": "^3.12.1",
+    "@vue/cli-plugin-eslint": "^4.2.3",
     "@vue/cli-service": "^4.2.3",
     "babel-eslint": "^10.1.0",
     "eslint": "^5.16.0",
