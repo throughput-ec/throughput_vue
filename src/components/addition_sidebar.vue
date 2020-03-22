@@ -23,7 +23,7 @@
                 v-on:click="add_url()"
                 title="Remove the last URL">+</button>
         </div>
-        <div v-for="(urls, index) in form.url">
+        <div v-for="(urls, index) in form.url" v-bind:key="index">
           <div class="input-group mb-3">
             <b-form-input id="'urls'+index"
                           type="text"
