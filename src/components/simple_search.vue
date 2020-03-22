@@ -42,8 +42,6 @@
 
     <repoCounter :counters="reposum" :type="selected" />
 
-    <opens v-if="repos === null"></opens>
-
     <objectList :type="selected" :repos="this.repos"></objectList>
 
   </div>
@@ -51,7 +49,6 @@
 
 <script>
 import '../assets/containers.css'
-import opens from '../components/opener.vue'
 import repoCounter from '../components/elements/repoCounter.vue'
 import objectList from '../components/elements/objectList.vue'
 
@@ -87,9 +84,9 @@ export default {
       evt.preventDefault()
       let self = this
       if (self.selected == "A") {
-        var urlbase = 'http://localhost:3000/ccdr?'
+        var urlbase = 'http://localhost:3000/api/ccdr?'
       } else {
-        urlbase = 'http://localhost:3000/repo?'
+        urlbase = 'http://localhost:3000/api/repo?'
       }
 
       fetch(urlbase +
@@ -112,9 +109,6 @@ export default {
         .then(() => {
           self.loading = false;
         })
-
-
-
     },
     onReset(evt) {
       evt.preventDefault()
@@ -134,7 +128,6 @@ export default {
     }
   },
   components: {
-    'opens': opens,
     'repoCounter': repoCounter,
     'objectList': objectList
   }
