@@ -1,8 +1,8 @@
 <template>
   <div id="app" class="mainpage">
     <app-header v-show="started"></app-header>
-    <app-element v-show="started"></app-element>
-
+    <app-keywords v-show="started" />
+    <app-search v-show="started"></app-search>
     <app-graph @startup="getStarted" v-show="!started"></app-graph>
     <cookies />
     <!--<app-insertform></app-insertform>-->
@@ -20,10 +20,11 @@
 
 <script>
   //import InsertForm from './components/insertform.vue'
+  import keywords from './components/keyword_search.vue'
   import header from './components/header.vue'
   import throughGraph from './components/firstgraph.vue'
-  import elements from './components/head_buttons.vue'
   import cookieLaw from './components/cookie_note.vue'
+  import searcher from './components/simple_search.vue'
 
   import './assets/containers.css'
   // import './assets/text.css'
@@ -37,11 +38,12 @@
       }
     },
     components: {
-      'app-element' : elements,
       'app-graph': throughGraph,
       //'app-insertform': InsertForm,
       'app-header': header,
-      'cookies': cookieLaw
+      'app-search': searcher,
+      'cookies': cookieLaw,
+      'app-keywords': keywords
     },
     methods: {
       getStarted(e) {
