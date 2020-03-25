@@ -2,7 +2,7 @@
   <div id="app" class="mainpage">
     <app-header v-show="started"></app-header>
     <app-keywords v-show="started" />
-    <app-search v-show="started"></app-search>
+    <app-search v-show="started & extsearch"></app-search>
     <app-graph @startup="getStarted" v-show="!started"></app-graph>
     <cookies />
     <!--<app-insertform></app-insertform>-->
@@ -34,7 +34,8 @@
     name: 'app',
     data() {
       return {
-        started: false
+        started: false,
+        extsearch: false
       }
     },
     components: {
