@@ -9,7 +9,7 @@
     "start": "HOST='0.0.0.0' PORT=80 npm run serve"
   },
   "dependencies": {
-    "bootstrap-vue": "^2.7.0",
+    "bootstrap-vue": "^2.14.0",
     "d3": "^5.16.0",
     "html-metadata": "git://github.com/wikimedia/html-metadata.git",
     "http": "0.0.0",
