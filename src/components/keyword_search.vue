@@ -3,86 +3,125 @@
     <b-card title="Keyword Search">
 
       <!--       Input box section    -->
-      <b-input-group prepend="Keyword" class="mt-3">
-        <b-form-input v-model="kwText"></b-form-input>
-        <b-input-group-append>
-          <b-button v-b-modal.modal-1>Info</b-button>
-          <b-modal id="modal-1">
-            <strong>Keyword search</strong>: Begin typing keywords.
-            As you limit the potential set of keywords a set of options will appear in blue below.
-            Click on a term to add it to your search set.  Click on it again to remove it from the search set.
-          </b-modal>
-        </b-input-group-append>
-      </b-input-group>
-
-      <!-- Selected terms -->
-      <div v-if="keyresults.length > 0">
-        <b-container>
-          <small>selected terms</small>
-          <b-row>
-            <b-col cols="8">
-              <span v-for="(item, index) in keyresults" v-bind:key="index">
-                <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
-                  <b-badge v-on:click="addkw(item)" variant="danger">{{ item }}</b-badge>
-                </span>
-              </span>
-            </b-col>
-            <b-col>
-              <b-button @click="onSubmit" variant="primary">Submit Keywords</b-button>
-            </b-col>
-          </b-row>
-        </b-container>
-      </div>
+      <b-container>
+        <b-input-group prepend="Keyword" class="mt-3">
+          <b-form-input v-model="kwText" id="tooltip-target-1"></b-form-input>
+          <b-input-group-append>
+            <b-button v-b-modal.modal-1>Info</b-button>
+            <b-modal id="modal-1">
+              <strong>Keyword search</strong>: Begin typing keywords.
+              As you limit the potential set of keywords a set of options will appear in blue below.
+              Click on a term to add it to your search set.  Click on it again to remove it from the search set.
+            </b-modal>
+          </b-input-group-append>
+        </b-input-group>
+      </b-container>
 
       <!-- Available terms -->
-      <div>
-        <span v-for="index in Math.min(30, somekw.length)" v-bind:key="index">
-          <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
-            <b-badge v-on:click="addkw(somekw[index -1].keyword)" variant="primary">{{ somekw[index-1].keyword }}</b-badge>
+      <b-container>
+        <div v-if="somekw.length > 1">
+          <span v-for="index in Math.min(30, somekw.length)" v-bind:key="index">
+            <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
+              <b-badge v-on:click="addkw(somekw[index -1].keyword)" variant="primary">{{ somekw[index-1].keyword }} <b-badge variant="light">{{ somekw[index-1].links }}</b-badge></b-badge>
+            </span>
           </span>
-        </span>
-      </div>
-      <div v-if="somekw.length === 0 & !kwText === ''">
-        No keywords available.
-      </div>
-      <div v-if="somekw.length > 1">
-        The top {{ Math.min(30,somekw.length) }} of {{somekw.length}} available keywords are shown.
-      </div>
+        </div>
+        <div v-if="somekw.length === 0 & !kwText === ''">
+          No keywords available.
+        </div>
+        <div v-if="somekw.length > 1">
+          The top {{ Math.min(30,somekw.length) }} of {{somekw.length}} available keywords are shown.
+          Click on a blue word to add it to your set.<br />The number beside the keyword indicates how many code repositories are associated with that keyword.
+        </div>
+      </b-container>
+
+      <!-- Selected terms -->
+      <b-container v-if="keyresults.length > 0">
+        <b-row>
+          <b-col cols="9">
+            <span v-for="(item, index) in keyresults" v-bind:key="index">
+              <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
+                <b-badge v-on:click="addkw(item)" variant="danger">{{ item }}</b-badge>
+              </span>
+            </span>
+          </b-col>
+          <b-col cols="3">
+            <b-button @click="onSubmit" variant="primary" class="float-right">Submit Keywords</b-button>
+          </b-col>
+        </b-row>
+      </b-container>
+
     </b-card>
 
     <!-- D3 graph -->
 
     <div style="padding:10px;" v-if="apikw.length > 0">
-      <div>
-        You have selected {{apikw.length}} databases.  You can drop some databases before you proceed to search data repositories by clicking the blue "Drop" button.
-        <b-button-group>
-          <b-button @click="toNetwork" variant="primary">Visualize Keywords</b-button>
-          <b-button @click="listRepos" variant="secondary">Search Repos</b-button>
-        </b-button-group>
+      <div style="border-width:1px;float:center;">
+        <strong>You have selected {{apikw.length}} databases.
+        You can drop some databases before you proceed to search data repositories by clicking the red "Drop" button.</strong>
       </div>
-      <d3-network v-if="viewer" :net-nodes="nodes" :net-links="links" :options="options" style="overflow:scroll;height:600;"/>
     </div>
-    <div v-if="lister">
-      <div v-for="(item, index) in apikw" v-bind:key="index">
-        <b-card :title="item.name">
-          <b-card-text>
-            <strong>Description</strong>: {{item.description}}<br>
-            <strong>Type</strong>: {{item.type}}<br>
-            <strong>Keyword</strong>: {{item.keyword}}<br>
-            <b-button @click="dropDB(item)" variant="primary">Drop</b-button>
-            <b-button @click="checkrepo(item)" variant="primary">Check Repositories</b-button>
-          </b-card-text>
-        </b-card>
-      </div>
+    <div>
+      <b-tabs content-class="mt-3">
+        <b-tab title="Data Catalogs" active>
+          <b-card-group deck style="margin-top:10px;margin-bottom:10px;">
+            <div class="col-md-4" v-for="(item, index) in apikw" v-bind:key="index">
+              <b-card class="h-100" >
+                <h4>{{item.name}}</h4>
+                <b-button-group>
+                  <b-button @click="dropDB(item)" variant="danger">Drop</b-button>
+                  <b-button  variant="primary">{{ kwlinks[index] }} Repositories</b-button>
+                </b-button-group>
+                <b-card-text>
+                  <v-clamp max-lines=3 autoresize style="padding-top:10px;">
+                    {{item.description}}
+                  </v-clamp>
+                  <hr />
+                  <strong>URL</strong>: <a v-bind:href="item.url">{{ item.name }}</a><br>
+                  <hr />
+                  <strong>Keyword</strong>: {{item.keyword}}<br>
+                </b-card-text>
+              </b-card>
+            </div>
+          </b-card-group>
+        </b-tab>
+
+        <b-tab title="Code Repositories" @click="getCodeRepos">
+          <div v-if="apikw.length > 40">
+            You cannot select more than 40 Databases.  Please remove databases from your selection.
+          </div>
+          <div v-else>
+            <b-card-group deck style="margin-top:10px;margin-bottom:10px;">
+              <div class="col-md-4" v-for="(item, index) in allrepos.ccdrs" v-bind:key="index">
+                <b-card class="h-100" >
+                  <h4>{{item.name}}</h4>
+                  <b-button @click="dropRepos(item)" variant="danger">Drop</b-button>
+                  <b-card-text>
+                    {{item.description}}
+                    <hr />
+                    <strong>URL</strong>:<br /><a v-bind:href="item.url">{{ item.name }}</a><br>
+                    <hr />
+                    <hr />
+                    <strong>Linked DBs</strong>:<br />
+                    <span v-for="index in item.dbs" v-bind:key="index">
+                      <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
+                        <b-badge variant="primary">{{ index }}</b-badge>
+                      </span>
+                    </span>
+                  </b-card-text>
+                </b-card>
+              </div>
+            </b-card-group>
+          </div>
+        </b-tab>
+      </b-tabs>
     </div>
   </div>
 </template>
 
-<style src="vue-d3-network/dist/vue-d3-network.css"></style>
-
 <script>
   import '../assets/containers.css'
-  import D3Network from 'vue-d3-network'
+  import VClamp from 'vue-clamp'
 
   export default {
     name: 'keywordSearch',
@@ -93,28 +132,18 @@
         keyresults: [],
         apikw: [],
         allkw: [],
+        allrepos: [],
         somekw: [{keyword:'', items:''}],
         kwText: '',
         nodes: [],
         links:[],
-        viewer: true,
-        lister: false
+        kwlinks: [],
+        viewer: false,
+        lister: true
         }
       },
       components: {
-        D3Network
-      },
-      computed:{
-        options(){
-          return{
-            force: 500,
-            size:{ w:1200, h:1200},
-            nodeSize: 20,
-            nodeLabels: true,
-            canvas: this.canvas,
-            linkWidth:4
-          }
-        }
+        VClamp
       },
       mounted () {
           this.allkw = this.fetchkw()
@@ -126,27 +155,45 @@
           })
         }
       },
-      methods: {
-        dropDB(val){
-          var dbs = this.apikw.map(x => x.name)
-          var position = dbs.indexOf(val.name)
-          this.apikw.splice(position, 1)
-        },
-        checkRepo(val){
-          let self = this;
+      computed: {
 
-          fetch('http://localhost:3000/api/linked?id=' + val )
+      },
+      methods: {
+        checkRepo(idx){
+          // Check for the number of code repositories linked to DBs
+          let self = this;
+          fetch('http://localhost:3000/api/summary/ccdr?id=' + self.apikw[idx].id )
           .then(function(response) {
             return response.json();
           })
           .then((data) => {
-            self.allkw = data.data;
+            self.kwlinks[idx] = data.data[0].count;
           })
         },
-        listRepos(){
-          let self = this
-          self.viewer = false
-          self.lister = true
+        dropDB(val){
+          // Remove Database from the DB set for analysis
+          var dbs = this.apikw.map(x => x.name)
+          var position = dbs.indexOf(val.name)
+          this.apikw.splice(position, 1)
+        },
+        dropRepos(val){
+          var repos = this.allrepos.ccdrs.map(x => x.name)
+          var position = repos.indexOf(val.name)
+          this.allrepos.ccdrs.splice(position, 1)
+        },
+        getCodeRepos(){
+          // Get the code repositories associated with databases.
+          let self = this;
+          if(this.apikw.length < 40) {
+            let val = this.apikw.map(x => x.id).join(',')
+            fetch('http://localhost:3000/api/linked?id=' + val)
+            .then(function(response) {
+              return response.json();
+            })
+            .then((data) => {
+              self.allrepos = data.data;
+            })
+          }
         },
         addkw(val) {
           var idx = this.keyresults.indexOf(val)
@@ -160,64 +207,16 @@
         },
         fetchkw() {
           let self = this;
-
           fetch('http://localhost:3000/api/keyword/all')
           .then(function(response) {
             return response.json();
           })
           .then((data) => {
             self.allkw = data.data;
+            return data.data
           })
         },
-        toNetwork() {
-          let self = this
-          var results = self.apikw
-          var keywords = results.map(function(x) {
-            return ( { "id": x.keyword,
-                       "name": x.keyword,
-                       "_color": '#D83A7A' } )
-                     })
-
-          var newkw = []
-
-          for (var i=0;i < keywords.length;i++) {
-            var names = newkw.map(x => x.name)
-            if (names.indexOf(keywords[i].name) == -1) {
-              newkw.push(keywords[i])
-            }
-          }
-
-          var resources = results.map(function(x) {
-            if(x.type === 'schema:DataCatalog') {
-              var color = "#E94500"
-            } else {
-              color = "gray"
-            }
-            return ({ "id": x.id,
-                       "name": x.name,
-                       "_color": color } )
-                     })
-
-         for (i=0;i < resources.length;i++) {
-           names = newkw.map(x => x.name)
-           if (names.indexOf(resources[i].name) == -1) {
-             newkw.push(resources[i])
-           }
-         }
-
-         var nodes = newkw
-
-         // Making the links now:
-         var links = results.map((x) => {
-           return({sid: x.id, tid: x.keyword})
-         })
-
-         self.nodes = nodes
-         self.links = links
-
-        },
         onSubmit(evt) {
-
           evt.preventDefault()
           let self = this
           var urlbase = 'http://localhost:3000/api/keyword/repos?'
@@ -230,6 +229,7 @@
             .then((data) => {
               /* Modifying the values and processing the inputs */
                 self.apikw = data.data.keywords
+                return data.data.keywords
             })
         }
       }
