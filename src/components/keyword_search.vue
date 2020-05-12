@@ -135,8 +135,6 @@
         allrepos: [],
         somekw: [{keyword:'', items:''}],
         kwText: '',
-        nodes: [],
-        links:[],
         kwlinks: [],
         viewer: false,
         lister: true
