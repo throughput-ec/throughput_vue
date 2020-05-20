@@ -2,7 +2,6 @@
   <div id="app" class="mainpage">
     <app-header v-show="started"></app-header>
     <app-keywords v-show="started" />
-    <app-search v-show="started & extsearch"></app-search>
     <app-graph @startup="getStarted" v-show="!started"></app-graph>
     <cookies />
     <!--<app-insertform></app-insertform>-->
@@ -24,7 +23,6 @@
   import header from './components/header.vue'
   import throughGraph from './components/firstgraph.vue'
   import cookieLaw from './components/cookie_note.vue'
-  import searcher from './components/simple_search.vue'
 
   import './assets/containers.css'
   // import './assets/text.css'
@@ -42,7 +40,6 @@
       'app-graph': throughGraph,
       //'app-insertform': InsertForm,
       'app-header': header,
-      'app-search': searcher,
       'cookies': cookieLaw,
       'app-keywords': keywords
     },
