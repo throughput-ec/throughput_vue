@@ -5,7 +5,7 @@
       <!--       Input box section    -->
       <b-container>
         <b-input-group prepend="Keyword" class="mt-3">
-          <b-form-input v-model="kwText" id="tooltip-target-1"></b-form-input>
+          <b-form-input v-model="kwText" id="tooltip-target-1">Enter keywords here.</b-form-input>
           <b-input-group-append>
             <b-button v-b-modal.modal-1>Info</b-button>
             <b-modal id="modal-1">
@@ -19,41 +19,54 @@
 
       <!-- Available terms -->
       <b-container>
-        <div v-if="somekw.length > 1">
-          <span v-for="index in Math.min(30, somekw.length)" v-bind:key="index">
-            <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
-              <b-badge v-on:click="addkw(somekw[index -1].keyword)" variant="primary">{{ somekw[index-1].keyword }} <b-badge variant="light">{{ somekw[index-1].links }}</b-badge></b-badge>
+        <b-card title="Available terms:">
+          <div v-if="somekw.length > 1">
+            <small>
+              The top {{ Math.min(30,somekw.length) }} of {{somekw.length}} available keywords are shown.
+              Click on a blue word to add it to your set.<br />The number beside the keyword indicates how many code repositories are associated with that keyword.
+            </small>
+          </div>
+          <div v-if="somekw.length > 1">
+            <span v-for="index in Math.min(30, somekw.length)" v-bind:key="index">
+              <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
+                <b-badge v-on:click="addkw(somekw[index -1].keyword)" variant="primary">{{ somekw[index-1].keyword }} <b-badge variant="light">{{ somekw[index-1].links }}</b-badge></b-badge>
+              </span>
             </span>
-          </span>
-        </div>
+          </div>
+          <div v-else>
+            <small>Please begin entering keywords.</small>
+          </div>
+        </b-card>
         <div v-if="somekw.length === 0 & !kwText === ''">
-          No keywords available.
-        </div>
-        <div v-if="somekw.length > 1">
-          The top {{ Math.min(30,somekw.length) }} of {{somekw.length}} available keywords are shown.
-          Click on a blue word to add it to your set.<br />The number beside the keyword indicates how many code repositories are associated with that keyword.
+          <small>No keywords available.</small>
         </div>
       </b-container>
 
       <!-- Selected terms -->
-      <b-container v-if="keyresults.length > 0">
-        <b-row>
-          <b-col cols="9">
-            <span v-for="(item, index) in keyresults" v-bind:key="index">
-              <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
-                <b-badge v-on:click="addkw(item)" variant="danger">{{ item }}</b-badge>
+      <b-container>
+        <b-card title="Selected terms:">
+        <div v-if="keyresults.length > 0">
+          <b-row>
+            <b-col cols="9">
+              <span v-for="(item, index) in keyresults" v-bind:key="index">
+                <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
+                  <b-badge v-on:click="addkw(item)" variant="danger">{{ item }}</b-badge>
+                </span>
               </span>
-            </span>
-          </b-col>
-          <b-col cols="3">
-            <b-button @click="onSubmit" variant="primary" class="float-right">Submit Keywords</b-button>
-          </b-col>
-        </b-row>
+            </b-col>
+            <b-col cols="3">
+              <b-button @click="onSubmit" variant="primary" class="float-right">Submit Keywords</b-button>
+            </b-col>
+          </b-row>
+        </div>
+        <div v-else>
+          <small>Click on a keyword above to add it to the list of selected keywords. Click a keyword again to remove it.</small>
+        </div>
+        </b-card>
       </b-container>
-
     </b-card>
 
-    <!-- D3 graph -->
+<!-- This is the part where the dbs show up: -->
 
     <div style="padding:10px;" v-if="apikw.length > 0">
       <div style="border-width:1px;float:center;">
@@ -64,26 +77,8 @@
     <div>
       <b-tabs content-class="mt-3">
         <b-tab title="Data Catalogs" active>
-          <b-card-group deck style="margin-top:10px;margin-bottom:10px;">
-            <div class="col-md-4" v-for="(item, index) in apikw" v-bind:key="index">
-              <b-card class="h-100" >
-                <h4>{{item.name}}</h4>
-                <b-button-group>
-                  <b-button @click="dropDB(item)" variant="danger">Drop</b-button>
-                  <b-button  variant="primary">{{ kwlinks[index] }} Repositories</b-button>
-                </b-button-group>
-                <b-card-text>
-                  <v-clamp max-lines=3 autoresize style="padding-top:10px;">
-                    {{item.description}}
-                  </v-clamp>
-                  <hr />
-                  <strong>URL</strong>: <a v-bind:href="item.url">{{ item.name }}</a><br>
-                  <hr />
-                  <strong>Keyword</strong>: {{item.keyword}}<br>
-                </b-card-text>
-              </b-card>
-            </div>
-          </b-card-group>
+          <!-- Pass out the variables to list the databases -->
+          <lister :apikw=apikw></lister>
         </b-tab>
 
         <b-tab title="Code Repositories" @click="getCodeRepos">
@@ -121,7 +116,7 @@
 
 <script>
   import '../assets/containers.css'
-  import VClamp from 'vue-clamp'
+  import lister from './lister.vue'
 
   export default {
     name: 'keywordSearch',
@@ -141,7 +136,7 @@
         }
       },
       components: {
-        VClamp
+        'lister': lister
       },
       mounted () {
           this.allkw = this.fetchkw()
