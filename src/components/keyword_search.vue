@@ -139,17 +139,30 @@
         'lister': lister
       },
       mounted () {
-          this.allkw = this.fetchkw()
+          if (localStorage.apikw) {
+            this.apikw = JSON.parse(localStorage.apikw);
+          }
         },
       watch: {
-        kwText: function(val) {
+        kwText: {
+          immediate: true,
+          handler(val) {
           this.somekw = this.allkw.filter(function(kw) {
             return kw.keyword.includes(val)
-          })
+            })
+          }
         }
       },
-      computed: {
-
+      created() {
+        fetch('http://localhost:3000/api/keyword/all')
+        .then(function(response) {
+          return response.json();
+        })
+        .then((data) => {
+          this.allkw = data.data;
+          this.somekw = data.data;
+          return data.data;
+        })
       },
       methods: {
         checkRepo(idx){
@@ -198,17 +211,6 @@
             return this.keyresults
           }
         },
-        fetchkw() {
-          let self = this;
-          fetch('http://localhost:3000/api/keyword/all')
-          .then(function(response) {
-            return response.json();
-          })
-          .then((data) => {
-            self.allkw = data.data;
-            return data.data
-          })
-        },
         onSubmit(evt) {
           evt.preventDefault()
           let self = this
@@ -221,8 +223,9 @@
             })
             .then((data) => {
               /* Modifying the values and processing the inputs */
-                self.apikw = data.data.keywords
-                return data.data.keywords
+                localStorage.apikw = JSON.stringify(data.data.keywords);
+                self.apikw = data.data.keywords;
+                return data.data.keywords;
             })
         }
       }

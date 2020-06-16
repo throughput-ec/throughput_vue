@@ -47,6 +47,11 @@
       getStarted(e) {
         this.started = e;
       }
+    },
+    created () {
+      if (localStorage.apikw) {
+        this.started = true;
+      }
     }
   }
 </script>
