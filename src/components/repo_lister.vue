@@ -11,26 +11,23 @@
     </pre></p>
   </b-modal>
 
-
   <b-card-group deck style="margin-top:10px;margin-bottom:10px;">
     <div class="col-md-4" v-for="(item, index) in apikw" v-bind:key="index">
-      <b-card class="h-100">
+      <b-card class="h-100" >
         <h4>{{item.name}}</h4>
-        <b-button-group>
-          <b-button @click="dropDB(item)" variant="danger">Drop</b-button>
-          <b-button variant="primary">Repositories</b-button>
-        </b-button-group>
+        <b-button @click="dropRepos(item)" variant="danger">Drop</b-button>
         <b-card-text>
-          <small>
-            <v-clamp :expanded="clamped" :max-lines="3" autoresize style="padding-top:10px;">
-              {{item.description}}
-            </v-clamp>
-          </small>
-          <b-badge @click="toggle()">Expand</b-badge>
           <hr />
-          <strong>URL</strong>: <a v-bind:href="item.url" rel="noopener noreferrer" target="_blank">{{ item.name }}</a><br>
+          <strong>URL</strong>:<br /><a v-bind:href="item.url">{{ item.name }}</a><br>
           <hr />
-          <strong>Keyword</strong>: {{item.keyword}}<br>
+          {{item.description}}
+          <hr />
+          <strong>Linked DBs</strong>:<br />
+          <span v-for="index in item.dbs" v-bind:key="index">
+            <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
+              <b-badge variant="primary">{{ index }}</b-badge>
+            </span>
+          </span>
         </b-card-text>
       </b-card>
     </div>
@@ -41,7 +38,6 @@
 
 <script>
 import '../assets/containers.css'
-import VClamp from 'vue-clamp'
 
 export default {
   name: 'listervue',
@@ -67,7 +63,6 @@ export default {
     }
   },
   components: {
-    VClamp
   },
   computed: {
 

@@ -86,27 +86,7 @@
             You cannot select more than 40 Databases.  Please remove databases from your selection.
           </div>
           <div v-else>
-            <b-card-group deck style="margin-top:10px;margin-bottom:10px;">
-              <div class="col-md-4" v-for="(item, index) in allrepos.ccdrs" v-bind:key="index">
-                <b-card class="h-100" >
-                  <h4>{{item.name}}</h4>
-                  <b-button @click="dropRepos(item)" variant="danger">Drop</b-button>
-                  <b-card-text>
-                    {{item.description}}
-                    <hr />
-                    <strong>URL</strong>:<br /><a v-bind:href="item.url">{{ item.name }}</a><br>
-                    <hr />
-                    <hr />
-                    <strong>Linked DBs</strong>:<br />
-                    <span v-for="index in item.dbs" v-bind:key="index">
-                      <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
-                        <b-badge variant="primary">{{ index }}</b-badge>
-                      </span>
-                    </span>
-                  </b-card-text>
-                </b-card>
-              </div>
-            </b-card-group>
+            <repo_lister :apikw=allrepos.ccdrs></repo_lister>
           </div>
         </b-tab>
       </b-tabs>
@@ -117,6 +97,7 @@
 <script>
   import '../assets/containers.css'
   import lister from './lister.vue'
+  import repo_lister from './repo_lister.vue'
 
   export default {
     name: 'keywordSearch',
@@ -127,7 +108,7 @@
         keyresults: [],
         apikw: [],
         allkw: [],
-        allrepos: [],
+        allrepos: {'ccdr':[]},
         somekw: [{keyword:'', items:''}],
         kwText: '',
         kwlinks: [],
@@ -136,7 +117,8 @@
         }
       },
       components: {
-        'lister': lister
+        'lister': lister,
+        'repo_lister': repo_lister
       },
       mounted () {
           if (localStorage.apikw) {
@@ -154,7 +136,7 @@
         }
       },
       created() {
-        fetch('http://localhost:3000/api/keyword/all')
+        fetch('http://' + process.env.VUE_APP_URLPATH + '/api/keyword/all')
         .then(function(response) {
           return response.json();
         })
@@ -168,7 +150,7 @@
         checkRepo(idx){
           // Check for the number of code repositories linked to DBs
           let self = this;
-          fetch('http://localhost:3000/api/summary/ccdr?id=' + self.apikw[idx].id )
+          fetch('http://' + process.env.VUE_APP_URLPATH + '/api/summary/ccdr?id=' + self.apikw[idx].id )
           .then(function(response) {
             return response.json();
           })
@@ -192,7 +174,7 @@
           let self = this;
           if(this.apikw.length < 40) {
             let val = this.apikw.map(x => x.id).join(',')
-            fetch('http://localhost:3000/api/linked?id=' + val)
+            fetch('http://' + process.env.VUE_APP_URLPATH + '/api/linked?id=' + val)
             .then(function(response) {
               return response.json();
             })
@@ -214,7 +196,7 @@
         onSubmit(evt) {
           evt.preventDefault()
           let self = this
-          var urlbase = 'http://localhost:3000/api/keyword/repos?'
+          var urlbase = 'http://' + process.env.VUE_APP_URLPATH + '/api/keyword/repos?'
 
           fetch(urlbase +
               'keywords=' + self.keyresults.join(',') )
