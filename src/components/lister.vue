@@ -10,38 +10,32 @@
       {{this.citations}}
     </pre></p>
   </b-modal>
+<hr />
 
-
-  <b-card-group deck style="margin-top:10px;margin-bottom:10px;">
-    <div class="col-md-4" v-for="(item, index) in apikw" v-bind:key="index">
-      <b-card class="h-100">
-        <h4>{{item.name}}</h4>
-        <b-button-group>
-          <b-button @click="dropDB(item)" variant="danger">Drop</b-button>
-          <b-button variant="primary">Repositories</b-button>
-        </b-button-group>
-        <b-card-text>
-          <small>
-            <v-clamp :expanded="clamped" :max-lines="3" autoresize style="padding-top:10px;">
-              {{item.description}}
-            </v-clamp>
-          </small>
-          <b-badge @click="toggle()">Expand</b-badge>
-          <hr />
-          <strong>URL</strong>: <a v-bind:href="item.url" rel="noopener noreferrer" target="_blank">{{ item.name }}</a><br>
-          <hr />
-          <strong>Keyword</strong>: {{item.keyword}}<br>
-        </b-card-text>
-      </b-card>
+    <div  v-for="(item, index) in apikw" v-bind:key="index">
+      <b-container fluid>
+        <b-row align-v="center">
+          <b-col class="col-md-1">
+            <b-button-group>
+            <b-button @click="dropDB(item)" variant="danger">Drop</b-button>
+            </b-button-group>
+          </b-col>
+          <b-col class="col-md-10">
+            <h4><a v-bind:href="item.url" rel="noopener noreferrer" target="_blank">{{item.name}}</a></h4>
+              <small>{{item.description}}</small><br />
+              <strong>Keywords</strong>:
+              <b-badge variant="primary">{{item.keyword}}</b-badge>
+          </b-col>
+        </b-row>
+        <hr />
+      </b-container>
     </div>
-  </b-card-group>
 </div>
 </template>
 
 
 <script>
 import '../assets/containers.css'
-import VClamp from 'vue-clamp'
 
 export default {
   name: 'listervue',
@@ -67,7 +61,6 @@ export default {
     }
   },
   components: {
-    VClamp
   },
   computed: {
 
