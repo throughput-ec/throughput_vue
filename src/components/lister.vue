@@ -6,30 +6,33 @@
   <b-button v-b-modal.citation-1 @click="getCite(apikw)" align="right">Get Citations</b-button>
 
   <b-modal id="citation-1" title="Citations">
-    <p class="my-4"><pre>
-      {{this.citations}}
-    </pre></p>
+    <p class="my-4">
+    <pre>
+    {{this.citations}}
+    </pre>
+    </p>
   </b-modal>
-<hr />
 
-    <div  v-for="(item, index) in apikw" v-bind:key="index">
-      <b-container fluid>
-        <b-row align-v="center">
-          <b-col class="col-md-1">
-            <b-button-group>
+  <hr />
+
+  <div v-for="(item, index) in apikw" v-bind:key="index">
+    <b-container fluid>
+      <b-row align-v="center">
+        <b-col class="col-md-1">
+          <b-button-group>
             <b-button @click="dropDB(item)" variant="danger">Drop</b-button>
-            </b-button-group>
-          </b-col>
-          <b-col class="col-md-10">
-            <h4><a v-bind:href="item.url" rel="noopener noreferrer" target="_blank">{{item.name}}</a></h4>
-              <small>{{item.description}}</small><br />
-              <strong>Keywords</strong>:
-              <b-badge variant="primary">{{item.keyword}}</b-badge>
-          </b-col>
-        </b-row>
-        <hr />
-      </b-container>
-    </div>
+          </b-button-group>
+        </b-col>
+        <b-col class="col-md-10">
+          <h4><a v-bind:href="item.url" rel="noopener noreferrer" target="_blank">{{item.name}}</a></h4>
+          <small>{{item.description}}</small><br />
+          <strong>Keywords</strong>:
+          <b-badge variant="primary">{{item.keyword}}</b-badge>
+        </b-col>
+      </b-row>
+      <hr />
+    </b-container>
+  </div>
 </div>
 </template>
 
@@ -60,8 +63,7 @@ export default {
       citations: null,
     }
   },
-  components: {
-  },
+  components: {},
   computed: {
 
   },
@@ -82,13 +84,13 @@ export default {
 
       self.ids = val.map(x => x.id).join(',')
 
-      fetch('http://' + process.env.VUE_APP_URLPATH + '/api/citations?ids=' + self.ids )
-      .then(function(response) {
-        return response.json();
-      })
-      .then((data) => {
-        self.citations = data.data.citation.join('');
-      })
+      fetch('http://' + process.env.VUE_APP_URLPATH + '/api/citations?ids=' + self.ids)
+        .then(function(response) {
+          return response.json();
+        })
+        .then((data) => {
+          self.citations = data.data.citation.join('');
+        })
     }
   }
 }
