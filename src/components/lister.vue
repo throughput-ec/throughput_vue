@@ -27,7 +27,9 @@
           <h4><a v-bind:href="item.url" rel="noopener noreferrer" target="_blank">{{item.name}}</a></h4>
           <small>{{item.description}}</small><br />
           <strong>Keywords</strong>:
-          <b-badge variant="primary">{{item.keyword}}</b-badge>
+          <div v-for="(item, index) in item.keywords" v-bind:key="index">
+            <b-badge variant="primary">{{ item.keyword }}</b-badge>
+          </div>
         </b-col>
       </b-row>
       <hr />
@@ -65,11 +67,25 @@ export default {
   },
   components: {},
   computed: {
-
+  },
+  created() {
+    let self = this;
+    self.nodes = self.apikw.map(function(x) {
+      this.getkws(x.id)
+      .then(data => data);
+    })
   },
   mounted() {},
   watch: {},
   methods: {
+    getkws(id){
+      let getForRepo = function(id) {
+        fetch('http://' + process.env.VUE_APP_URLPATH + '/api/keyword/repo/' + id)
+        .then(response => response.json())
+      }
+
+      return getForRepo(id)
+    },
     toggle() {
       this.clamped = !this.clamped
     },
