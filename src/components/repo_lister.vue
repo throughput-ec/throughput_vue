@@ -6,34 +6,38 @@
   <b-button v-b-modal.citation-1 @click="getCite(apikw)" align="right">Get Citations</b-button>
 
   <b-modal id="citation-1" title="Citations">
-    <p class="my-4"><pre>
-      {{this.citations}}
-    </pre></p>
+    <p class="my-4">
+    <pre>
+    {{this.citations}}
+    </pre>
+    </p>
   </b-modal>
 
-  <b-card-group deck style="margin-top:10px;margin-bottom:10px;">
-    <div class="col-md-4" v-for="(item, index) in apikw" v-bind:key="index">
-      <b-card class="h-100" >
-        <h4>{{item.name}}</h4>
-        <b-button @click="dropRepos(item)" variant="danger">Drop</b-button>
-        <b-card-text>
-          <hr />
-          <strong>URL</strong>:<br /><a v-bind:href="item.url">{{ item.name }}</a><br>
-          <hr />
-          {{item.description}}
-          <hr />
-          <strong>Linked DBs</strong>:<br />
-          <span v-for="index in item.dbs" v-bind:key="index">
-            <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
-              <b-badge variant="primary">{{ index }}</b-badge>
+
+    <div v-for="(item, index) in apikw" v-bind:key="index">
+      <b-container fluid>
+        <b-row align-v="center">
+          <b-col class="col-md-1">
+            <b-button-group>
+              <b-button @click="dropDB(item)" variant="danger">Drop</b-button>
+            </b-button-group>
+          </b-col>
+          <b-col class="col-md-10">
+            <h4><a v-bind:href="item.url" rel="noopener noreferrer" target="_blank">{{item.name}}</a></h4>
+            <small>{{item.description}}</small><br />
+            <strong>Linked DBs</strong>:<br />
+            <span v-for="index in item.dbs" v-bind:key="index">
+              <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
+                <b-badge variant="primary">{{ index }}</b-badge>
+              </span>
             </span>
-          </span>
-        </b-card-text>
-      </b-card>
+          </b-col>
+        </b-row>
+        <hr />
+      </b-container>
     </div>
-  </b-card-group>
-</div>
-</template>
+  </div>
+  </template>
 
 
 <script>
@@ -62,8 +66,7 @@ export default {
       citations: null,
     }
   },
-  components: {
-  },
+  components: {},
   computed: {
 
   },
@@ -84,13 +87,13 @@ export default {
 
       self.ids = val.map(x => x.id).join(',')
 
-      fetch('http://' + process.env.VUE_APP_URLPATH + '/api/citations?ids=' + self.ids )
-      .then(function(response) {
-        return response.json();
-      })
-      .then((data) => {
-        self.citations = data.data.citation.join('');
-      })
+      fetch('http://' + process.env.VUE_APP_URLPATH + '/api/citations?ids=' + self.ids)
+        .then(function(response) {
+          return response.json();
+        })
+        .then((data) => {
+          self.citations = data.data.citation.join('');
+        })
     }
   }
 }
