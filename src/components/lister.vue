@@ -26,10 +26,19 @@
         <b-col class="col-md-10">
           <h4><a v-bind:href="item.url" rel="noopener noreferrer" target="_blank">{{item.name}}</a></h4>
           <small>{{item.description}}</small><br />
-          <strong>Keywords</strong>:
-          <div v-for="(item, index) in item.keywords" v-bind:key="index">
-            <b-badge variant="primary">{{ item.keyword }}</b-badge>
-          </div>
+          <b-container>
+            <b-row align-v="center">
+              <b-col  class="text-center" cols = "3">
+                <strong>Linked Code Repositories: {{ item.linked }}</strong>
+              </b-col>
+              <b-col>
+                <strong>Keywords</strong>:<br />
+                <span v-for="(item, index) in item.keyword" v-bind:key="index">
+                  <b-badge variant="primary">{{ item }}</b-badge>
+                </span>
+              </b-col>
+            </b-row>
+          </b-container>
         </b-col>
       </b-row>
       <hr />
@@ -65,23 +74,19 @@ export default {
       citations: null,
     }
   },
-  components: {},
-  computed: {
-  },
   created() {
     let self = this;
     self.nodes = self.apikw.map(function(x) {
       this.getkws(x.id)
-      .then(data => data);
+        .then(data => data);
     })
   },
   mounted() {},
-  watch: {},
   methods: {
-    getkws(id){
+    getkws(id) {
       let getForRepo = function(id) {
         fetch('http://' + process.env.VUE_APP_URLPATH + '/api/keyword/repo/' + id)
-        .then(response => response.json())
+          .then(response => response.json())
       }
 
       return getForRepo(id)

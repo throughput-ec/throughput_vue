@@ -15,33 +15,56 @@ All products of the Throughput Annotation Project are licensed under and [MIT Li
 
 ## Project Components
 
-This respository uses a Vue.js application to serve a static website with integrations for [the Throughput API]().
+This respository uses a Vue.js application to serve a static website with integrations for [the Throughput API](http://throughputdb.com/api-docs).
 
 ### Requirements
 
-The user must have
+This project requires the user to have `node.js` and `npm` installed on their local system.  [`node.js` downloads](https://nodejs.org/en/download/) are available for multiple systems.
 
-## Project setup
-```
+## Project Setup
+
+To initialize the project on your local computer (or on a remote server) first clone this repository to your machine.  Then run the command:
+
+```bash
 npm install
 ```
 
+to install all required packages.  Note that the user also requires a file called `.env` to be added to the local directory.  This can be done using:
+
+```bash
+echo "VUE_APP_URLPATH=http://throughputdb.com/api > .env"
+```
+
 ### Compiles and hot-reloads for development
+
+During local development of the website it is useful to monitor the effect of changes locally.
+
 ```
 npm run serve
 ```
 
+Creates a local version of the website at `localhost:8080`.
+
 ### Compiles and minifies for production
+
+This can be run to serve the vuejs webpage as a static "[single page application](https://en.wikipedia.org/wiki/Single-page_application)".
+
 ```
 npm run build
 ```
 
+Once the script has been run the pages to serve the website are placed in the `./dist` folder.
+
 ### Run your tests
+
 ```
 npm run test
 ```
 
 ### Lints and fixes files
+
+[`Lint`](https://en.wikipedia.org/wiki/Lint_(software))ing is a useful tool for software development to help ensure that code style is standardized, making it easier to detect code errors.
+
 ```
 npm run lint
 ```
