@@ -29,11 +29,14 @@
         <small>No keywords available.</small>
       </div>
     </b-container>
-
+    <b-container>
+      <linkedkws v-bind:kwin="keyresults"></linkedkws>
+    </b-container>
     <!-- Selected terms -->
     <b-container>
+
       <b-row>
-        <b-col>
+        <b-col cols="10">
           <b-card title="Selected terms:">
             <div v-if="keyresults.length > 0">
               <span v-for="(item, index) in keyresults" v-bind:key="index">
@@ -44,26 +47,6 @@
             </div>
             <div v-else>
               <small>Click on a keyword above to add it to the list of selected keywords. Click a keyword again to remove it.</small>
-            </div>
-          </b-card>
-        </b-col>
-        <b-col>
-          <b-card title="Linked terms:">
-            <div v-if="keyresults.length > 1">
-              <b-row>
-                <b-col cols="9">
-                  <div v-if="keyresults.length > 0">
-                    <span v-for="(item, index) in keylinked" v-bind:key="index">
-                      <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
-                        <b-badge v-on:click="addkw(item)" variant="danger">{{ item }}</b-badge>
-                      </span>
-                    </span>
-                  </div>
-                </b-col>
-              </b-row>
-            </div>
-            <div v-else>
-              <small>Click to find databases that match the selected combinations.</small>
             </div>
           </b-card>
         </b-col>
@@ -107,12 +90,12 @@ import '../assets/containers.css'
 import lister from './lister.vue'
 import repo_lister from './repo_lister.vue'
 import kwInput from './keywords/keywordinput.vue'
+import linkedkws from './keywords/linkedkws.vue'
 
 export default {
   name: 'keywordSearch',
   data() {
     return {
-      status: true,
       keyresults: [],
       keylinked: [],
       apikw: [],
@@ -124,21 +107,14 @@ export default {
         keyword: '',
         items: ''
       }],
-      kwText: '',
-      kwlinks: [],
-      viewer: false,
-      lister: true
+      kwText: ''
     }
   },
   components: {
     'lister': lister,
     'repo_lister': repo_lister,
-    'kwInput': kwInput
-  },
-  mounted() {
-    if (localStorage.apikw) {
-      this.apikw = JSON.parse(localStorage.apikw);
-    }
+    'kwInput': kwInput,
+    'linkedkws': linkedkws
   },
   created() {
     fetch('http://' + process.env.VUE_APP_URLPATH + '/api/keyword/all')
@@ -162,17 +138,6 @@ export default {
   methods: {
     newText: function(val) {
       this.kwText = val;
-    },
-    checkRepo(idx) {
-      // Check for the number of code repositories linked to DBs
-      let self = this;
-      fetch('http://' + process.env.VUE_APP_URLPATH + '/api/summary/ccdr?id=' + self.apikw[idx].id)
-        .then(function(response) {
-          return response.json();
-        })
-        .then((data) => {
-          self.kwlinks[idx] = data.data[0].count;
-        })
     },
     dropDB(val) {
       // Remove Database from the DB set for analysis
