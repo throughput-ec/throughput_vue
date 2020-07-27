@@ -5,8 +5,19 @@
     </div>
     <div class="titlediv">
       <h1 style="vertical-align:middle;letter-spacing:5px;">THROUGHPUT</h1>
-      <b-button class='mx-2' @click="getStarted()">Get Started</b-button>
-      <div>Find out more</div>
+      <b-button class='mx-2' @click="getStarted()" variant="success">Get Started</b-button>
+      <b-button v-b-modal.findout variant="info">Find out more!</b-button>
+
+      <b-modal id="findout" title="Throughput Database">
+        Throughput links data resources, such as research databases, to code
+        repositories, such as those on <a href="http://github.com">github.com</a> that
+        reference those data resources.
+        <img src="throughput_modal.svg" width="100%" style="padding:20px;"/>
+        By searching for databases and repositories using keywords Throughput
+        returns all associated data resources, and provides links to code
+        repositories that either reference those data resources, or use those
+        data resources in analysis.
+      </b-modal>
     </div>
   </div>
 </template>
@@ -33,8 +44,10 @@
     position:absolute;
     top:30%;
     z-index:10;
+    opacity:0.8;
     background:rgba(200, 54, 54, 0.7);
     margin-bottom: 100;
+    padding:20px;
     font-family: 'Alegreya Sans SC', sans-serif;
   }
   .node {
