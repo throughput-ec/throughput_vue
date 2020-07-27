@@ -169,7 +169,9 @@ export default {
       // Get the code repositories associated with databases.
       let self = this;
       if (this.apikw.length < 40) {
-        let val = this.apikw.map(x => x.id).join(",");
+        let val = this.apikw
+          .filter(x => x.show=='yes')
+          .map(x => x.id).join(",");
         fetch("http://" + process.env.VUE_APP_URLPATH + "/api/linked?id=" + val)
           .then(function(response) {
             return response.json();
