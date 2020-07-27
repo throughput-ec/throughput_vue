@@ -1,9 +1,10 @@
 <template>
   <b-card title="Linked terms:">
+    <small>These keywords are associated with a database that shares a linked code repository.</small>
     <div v-if="kwin.length > 0">
       <div
         v-if="kwin.length > 0"
-        style="max-height: 300px; overflow-y: scroll; width: 100%;"
+        style="max-height: 200px; overflow-y: scroll; width: 100%;"
       >
         <span
           v-for="(item, index) in keylinked"
@@ -15,9 +16,9 @@
               >{{ item.keywords }}
               <b-badge variant="light">{{ item.count }}</b-badge>
             </b-badge>
-          </span>
         </span>
-      </div>
+    </span>
+  </div>
     </div>
     <div v-else>
       <small

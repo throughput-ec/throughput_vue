@@ -38,7 +38,7 @@
                 </div>
                 <div v-else>
                   <b-button-group>
-                    <b-button @click="addDB(item)" variant="success" disabled>Add</b-button>
+                    <b-button @click="addDB(item)" variant="success">Add</b-button>
                   </b-button-group>
                 </div>
             </b-col>
@@ -102,6 +102,15 @@ export default {
       var dbs = this.apikw.map(x => x.name)
       var position = dbs.indexOf(val.name)
       this.apikw[position]['show'] = 'no'
+      this.apikw.sort(function(a, b) {
+        return -a['show'].localeCompare(b['show'])
+      })
+      this.$emit('apikw', this.apikw)
+    },
+    addDB(val) {
+      var dbs = this.apikw.map(x => x.name)
+      var position = dbs.indexOf(val.name)
+      this.apikw[position]['show'] = 'yes'
       this.apikw.sort(function(a, b) {
         return -a['show'].localeCompare(b['show'])
       })
