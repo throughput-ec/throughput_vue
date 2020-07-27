@@ -97,7 +97,7 @@
         </b-tab>
 
         <b-tab title="Code Repositories" @click="getCodeRepos">
-          <div v-if="apikw.length > 40">
+          <div v-if="apikw.filter(x=> x.show == 'yes').length > 40">
             You cannot select more than 40 Databases. Please remove databases
             from your selection.
           </div>
