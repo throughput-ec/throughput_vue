@@ -77,7 +77,7 @@
           You cannot select more than 40 Databases. Please remove databases from your selection.
         </div>
         <div v-else>
-          <repo_lister :apikw=allrepos.ccdrs></repo_lister>
+          <repo_lister :apikw=allrepos></repo_lister>
         </div>
       </b-tab>
     </b-tabs>
@@ -100,9 +100,7 @@ export default {
       keylinked: [],
       apikw: [],
       allkw: [],
-      allrepos: {
-        'ccdr': []
-      },
+      allrepos: [],
       somekw: [{
         keyword: '',
         items: ''
@@ -139,17 +137,6 @@ export default {
     newText: function(val) {
       this.kwText = val;
     },
-    dropDB(val) {
-      // Remove Database from the DB set for analysis
-      var dbs = this.apikw.map(x => x.name)
-      var position = dbs.indexOf(val.name)
-      this.apikw.splice(position, 1)
-    },
-    dropRepos(val) {
-      var repos = this.allrepos.ccdrs.map(x => x.name)
-      var position = repos.indexOf(val.name)
-      this.allrepos.ccdrs.splice(position, 1)
-    },
     getCodeRepos() {
       // Get the code repositories associated with databases.
       let self = this;
@@ -160,8 +147,13 @@ export default {
             return response.json();
           })
           .then((data) => {
-            self.allrepos = data.data;
+            return data.data.ccdrs;
           })
+          .then((data) => {
+            self.allrepos = data.map(function(x) {
+              x['show'] = 'yes'
+              return(x) })
+            })
       }
     },
     addkw(val) {
@@ -186,9 +178,10 @@ export default {
         })
         .then((data) => {
           /* Modifying the values and processing the inputs */
-          localStorage.apikw = JSON.stringify(data.data.keywords);
           self.apikw = data.data.keywords;
-          return data.data.keywords;
+          self.apikw = self.apikw.map(function(x) {
+            x['show'] = 'yes'
+            return(x) })
         })
     }
   }

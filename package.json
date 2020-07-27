@@ -1,7 +1,19 @@
 {
-  "name": "annotation_vue",
+  "name": "Throughput",
+  "author": {
+    "name": "Simon James Goring",
+    "email": "goring@wisc.edu",
+    "website":"http://goring.org"
+  },
+  "bugs":"http://github.com/throughput-ec/throughput_vue/issues",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "keywords": ["database", "annotation", "EarthCube","interdisciplinary","coding"],
+  "repository": {
+    "type":"git",
+    "url":"https://github.com/throughput-ec/throughput_vue"
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
