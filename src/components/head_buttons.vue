@@ -3,7 +3,7 @@
     <b-container class="bv-example-row">
       <b-button-toolbar aria-label="Website navigation bar">
         <b-button-group>
-          <b-button class='mx-2'>Metrics</b-button>
+          <b-button class="mx-2">Metrics</b-button>
         </b-button-group>
         <b-button-group>
           <b-button>Metrics</b-button>
@@ -16,15 +16,15 @@
 </template>
 
 <script>
-import '../assets/containers.css'
+import "../assets/containers.css";
 
 export default {
-  name: 'opener',
+  name: "opener",
   data() {
     return {
       loading: false,
-      options: ['Status', 'Searches', 'Something']
-    }
+      options: ["Status", "Searches", "Something"]
+    };
   }
-}
+};
 </script>

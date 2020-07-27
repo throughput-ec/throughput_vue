@@ -1,17 +1,16 @@
 <template>
   <div>
-    <b-card title="Keyword Search">
-    </b-card>
+    <b-card title="Keyword Search"> </b-card>
   </div>
 </template>
 <script>
 export default {
-  name: 'keywordSearch',
+  name: "keywordSearch",
   data() {
     return {
       status: true,
       keywords: []
-      }
-    },
+    };
   }
+};
 </script>

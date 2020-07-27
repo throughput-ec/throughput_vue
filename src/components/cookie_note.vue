@@ -5,8 +5,8 @@
 </template>
 
 <script>
-  import CookieLaw from 'vue-cookie-law'
-  export default {
-    components: { CookieLaw }
-  }
+import CookieLaw from "vue-cookie-law";
+export default {
+  components: { CookieLaw }
+};
 </script>

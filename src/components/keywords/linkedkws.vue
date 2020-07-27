@@ -1,26 +1,36 @@
 <template>
-<b-card title="Linked terms:">
-  <div v-if="kwin.length > 0">
-    <div v-if="kwin.length > 0" style="max-height: 300px; overflow-y: scroll; width: 100%;">
-      <span v-for="(item, index) in keylinked" v-bind:key="index" v-on:click="addkw(item.keywords)">
-        <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
-          <b-badge variant="danger">{{ item.keywords }}
-            <b-badge variant="light">{{ item.count }}</b-badge>
-          </b-badge>
+  <b-card title="Linked terms:">
+    <div v-if="kwin.length > 0">
+      <div
+        v-if="kwin.length > 0"
+        style="max-height: 300px; overflow-y: scroll; width: 100%;"
+      >
+        <span
+          v-for="(item, index) in keylinked"
+          v-bind:key="index"
+          v-on:click="addkw(item.keywords)"
+        >
+          <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
+            <b-badge variant="danger"
+              >{{ item.keywords }}
+              <b-badge variant="light">{{ item.count }}</b-badge>
+            </b-badge>
+          </span>
         </span>
-      </span>
+      </div>
     </div>
-  </div>
-  <div v-else>
-    <small>Click to find databases that match the selected combinations.</small>
-  </div>
-</b-card>
+    <div v-else>
+      <small
+        >Click to find databases that match the selected combinations.</small
+      >
+    </div>
+  </b-card>
 </template>
 
 <script>
 export default {
-  name: 'linkedkws',
-  props: ['kwin'],
+  name: "linkedkws",
+  props: ["kwin"],
   data: () => ({
     keylinked: []
   }),
@@ -28,21 +38,26 @@ export default {
     kwin: {
       handler(val) {
         let self = this;
-        let inp = val.join(',')
-        fetch('http://' + process.env.VUE_APP_URLPATH + '/api/keyword/dbs/linked?keywords=' + inp)
+        let inp = val.join(",");
+        fetch(
+          "http://" +
+            process.env.VUE_APP_URLPATH +
+            "/api/keyword/dbs/linked?keywords=" +
+            inp
+        )
           .then(function(response) {
             return response.json();
           })
-          .then((data) => {
-            self.keylinked = data.data.filter(x=> !val.includes(x.keywords));
-          })
+          .then(data => {
+            self.keylinked = data.data.filter(x => !val.includes(x.keywords));
+          });
       }
     }
   },
   methods: {
     addkw(val) {
-      return this.kwin.push(val)
+      return this.kwin.push(val);
     }
   }
-}
+};
 </script>
