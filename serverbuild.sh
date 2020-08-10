@@ -1,6 +1,5 @@
 #!/bin/bash
 
-git reset --hard HEAD
 git pull
 npm update
 npm run build
