@@ -156,7 +156,7 @@ export default {
     kwText: {
       handler(val) {
         this.somekw = this.allkw.filter(function(kw) {
-          return kw.keyword.includes(val);
+          return kw.keyword.includes(val.toLowerCase());
         });
       }
     }
