@@ -5,11 +5,12 @@
     </div>
     <div class="titlediv">
       <h1 style="vertical-align:middle;letter-spacing:5px;">THROUGHPUT</h1>
+      <img src=@/assets/logo_earthcube_cube-only_SMALL.png height=50px />
       <b-button class="mx-2" @click="getStarted()" variant="success"
         >Get Started</b-button
       >
       <b-button v-b-modal.findout variant="info">Find out more!</b-button>
-
+      <img src="@/assets/nsf.png" height=50px />
       <b-modal id="findout" title="Throughput Database">
         Throughput links data resources, such as research databases, to code
         repositories, such as those on
@@ -20,7 +21,8 @@
         returns all associated data resources, and provides links to code
         repositories that either reference those data resources, or use those
         data resources in analysis.
-      </b-modal>
+      </b-modal><br />
+      <small>Funding support from the National Science Foundation Award 1928366</small>
     </div>
   </div>
 </template>
