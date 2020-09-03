@@ -82,11 +82,9 @@
 
     <div style="padding:10px;" v-if="apikw.length > 0">
       <div style="border-width:1px;float:center;">
-        <strong
-          >You have selected {{ apikw.filter(x => x.show == 'yes') }} databases. You can drop some
+        <strong>You have selected {{ apikw.filter(x => x.show == 'yes').length }} databases. You can drop some
           databases before you proceed to search data repositories by clicking
-          the red "Drop" button.</strong
-        >
+          the red "Drop" button.</strong>
       </div>
     </div>
     <div>
