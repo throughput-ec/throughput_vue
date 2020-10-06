@@ -1,0 +1,55 @@
+.app-body {
+    width: 80%;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+.screen-center {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.loading-indicator {
+    z-index: 999999;
+}
+
+.tabs {
+    margin-top: 20px;
+}
+
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link  {
+    background: rgb(245,245,245) !important;
+    border-color: #dee2e6 #dee2e6 rgb(245,245,245) !important;
+}
+
+.active-tab {
+    background: rgb(245,245,245) !important;
+    padding-top: 15px;
+    border-left: 1px solid rgba(0, 0, 0, 0.125) !important;
+    border-right: 1px solid rgba(0, 0, 0, 0.125) !important;
+}
+
+.login-form {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    background: rgb(245,245,245);
+    border-radius: 4px;
+}
+
+.login-form label {
+    font-size: 12px;
+    font-weight: 700;
+    margin: 1px 0 2px 0;
+}
+
+.login-form input {
+    margin-bottom: 10px;
+}
+

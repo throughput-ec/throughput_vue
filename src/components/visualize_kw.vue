@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-card title="Keyword Search"> </b-card>
+    <b-card title="Visualization Goes Here..."> </b-card>
   </div>
 </template>
 <script>

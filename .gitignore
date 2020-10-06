@@ -23,3 +23,5 @@ yarn-error.log*
 src/assets/orcid_secret.json
 orcid_secret.json
 
+./src/settings.js;
+

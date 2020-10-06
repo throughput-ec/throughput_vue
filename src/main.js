@@ -4,6 +4,7 @@ import BootstrapVue from "bootstrap-vue";
 import VueCookies from "vue-cookies";
 
 import App from "./App.vue";
+import keyword_search from './components/keyword_search';
 
 Vue.use(BootstrapVue);
 Vue.use(require("vue-cookies"));
@@ -44,11 +45,8 @@ const router = new VueRouter({
         }
       ]
     },
-    {
-      path: "/#",
-      component: App,
-      props: true
-    }
+    { path: "/search", component: keyword_search, props: true },
+    { path: "/#", component: App, props: true }
   ]
 });
 
