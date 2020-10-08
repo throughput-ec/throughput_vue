@@ -61,7 +61,7 @@
                                 </div>
                             </b-card>
                         </b-col>
-                        <b-col align-self="center">
+                        <b-col cols="2" align-self="center">
                             <b-button @click="onSubmit" variant="primary" class="float-right" style='width: 112px; height: 63px;'>
                                 <span v-if='!loadingRepos'>Submit Keywords</span>
                                 <b-spinner v-if='loadingRepos'></b-spinner>
@@ -155,7 +155,7 @@
         },
         created() {
             this.loading = true;
-            
+
             const code = this.$route.query.code;
             if(code != null) {
                 console.log("ORCID CODE: " + code);
@@ -253,20 +253,6 @@
                     this.loadingRepos = false;
                 });
             },
-            orcidAuthenticate() {
-                console.log("AUTHENTICATE VIA ORCID");
-                const URL = `https://sandbox.orcid.org/oauth/authorize?client_id=${Settings.ORCID_CLIENT_ID}&response_type=code&scope=/authorize&redirect_uri=localhost:8080`;
-
-                console.log("ORCID URL: " + URL);
-                fetch(URL).then( (response) => {
-                    return response.json();
-                }).then(data => {
-                    console.log("ORCID AUTHENTICATE DATA: " + JSON.stringify(data));
-                }).catch( (error) => {
-                    console.log("THERE WAS AN ERROR AUTHENTICATING THROUGH ORCID: " + JSON.stringify(error));
-                });
-
-            }
         }
     };
 </script>
