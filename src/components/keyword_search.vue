@@ -89,14 +89,14 @@
             <div v-if="apikw.length > 0" style='margin-top: 15px; border: 1px solid #007bff; border-radius: 4px;'>
                 <div style="padding: 15px;">
                     <p style='font-size: 18px;'>You have selected {{ apikw.filter(x => x.show === 'yes').length }} databases.
-                    <span v-if="apikw.filter(x => x.show === 'yes').length >= 40"> The number of databases selected needs to be 40 or less in order to proceed to search data repositories.</span>
+                    <span v-if="apikw.filter(x => x.show === 'yes').length > 40"> The number of databases selected needs to be 40 or less in order to proceed to search data repositories.</span>
                         <span> You can drop individual databases by clicking the <span class='drop-button-span'>Drop</span> button next to each database below.</span>
                     </p>
-                    <p v-if="apikw.filter(x => x.show === 'yes').length >= 40" style='font-size: 18px;'>You can also click on <span class='auto-filter-span' @click='autoFilterDBs'>Auto Filter</span> and we will automatically
+                    <p v-if="apikw.filter(x => x.show === 'yes').length > 40" style='font-size: 18px;'>You can also click on <span class='auto-filter-span' @click='autoFilterDBs'>Auto Filter</span> and we will automatically
                         select the top 40 databases based on your keyword search.
                     </p>
                     <div style='display: flex; justify-content: flex-end; padding-left: 30px;'>
-                        <b-button v-if="apikw.filter(x => x.show === 'yes').length >= 40" @click='autoFilterDBs' variant='primary'>Auto Filter</b-button>
+                        <b-button v-if="apikw.filter(x => x.show === 'yes').length > 40" @click='autoFilterDBs' variant='primary'>Auto Filter</b-button>
                     </div>
                 </div>
             </div>
@@ -284,7 +284,7 @@
             },
             autoFilterDBs() {
                 const filtered = this.apikw.filter(x => x.show === 'yes');
-                this.apikw = (filtered.length >= 40) ? filtered.slice(0, 39) : filtered;
+                this.apikw = (filtered.length >= 40) ? filtered.slice(0, 40) : filtered;
             },
             toggleKeywordSearch() {
                 this.expandKeywordSearch = !this.expandKeywordSearch;
