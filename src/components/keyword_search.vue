@@ -6,48 +6,56 @@
         </div>
         <div>
             <b-card title="Keyword Search" style='background: rgb(245,245,245);'>
-                <kwInput @change="newText"></kwInput>
+                <div class='toggle-container'>
+                    <div v-if='!expandKeywordSearch' class='h1'>
+                        <b-icon-plus-square variant='primary' @click='toggleKeywordSearch'></b-icon-plus-square>
+                    </div>
+                    <div v-if='expandKeywordSearch' class='h1'>
+                        <b-icon-dash-square variant='primary' @click='toggleKeywordSearch'></b-icon-dash-square>
+                    </div>
+                </div>
 
                 <!-- Available terms -->
-                <b-container>
-                    <b-card title="Available terms:">
-                        <div v-if="somekw.length > 1">
-                            <small>
-                                The top {{ Math.min(30, somekw.length) }} of
-                                {{ somekw.length }} available keywords are shown. Click on a blue
-                                word to add it to your set.<br />The number beside the keyword
-                                indicates how many code repositories are associated with that
-                                keyword.
-                            </small>
-                        </div>
-                        <div v-if="somekw.length > 1">
-                            <span v-for="index in Math.min(30, somekw.length)" v-bind:key="index">
-                                <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
-                                    <b-badge v-on:click="addKw(somekw[index - 1].keyword)" variant="primary">
-                                        {{ somekw[index - 1].keyword }}
-                                        <b-badge variant="light">{{ somekw[index - 1].links }}</b-badge>
-                                    </b-badge>
+                <div v-if='expandKeywordSearch'>
+                    <kwInput @change="newText"></kwInput>
+                    <b-container>
+                        <b-card title="Available terms:">
+                            <div v-if="somekw.length > 1">
+                                <small>
+                                    The top {{ Math.min(30, somekw.length) }} of
+                                    {{ somekw.length }} available keywords are shown. Click on a blue
+                                    word to add it to your set.<br />The number beside the keyword
+                                    indicates how many code repositories are associated with that
+                                    keyword.
+                                </small>
+                            </div>
+                            <div v-if="somekw.length > 1">
+                                <span v-for="index in Math.min(30, somekw.length)" v-bind:key="index">
+                                    <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
+                                        <b-badge v-on:click="addKw(somekw[index - 1].keyword)" variant="primary">
+                                            {{ somekw[index - 1].keyword }}
+                                            <b-badge variant="light">{{ somekw[index - 1].links }}</b-badge>
+                                        </b-badge>
+                                    </span>
                                 </span>
-                            </span>
-                        </div>
-                        <div v-else>
-                            <small>Please begin entering keywords.</small>
-                        </div>
-                    </b-card>
+                            </div>
+                            <div v-else>
+                                <small>Please begin entering keywords.</small>
+                            </div>
+                        </b-card>
 
-                    <div v-if="(somekw.length === 0) & (kwText !== '')">
-                        <small>No keywords available.</small>
-                    </div>
-                </b-container>
+                        <div v-if="(somekw.length === 0) & (kwText !== '')">
+                            <small>No keywords available.</small>
+                        </div>
+                    </b-container>
 
-                <b-container>
-                    <linkedkws v-bind:kwin="keyresults"></linkedkws>
-                </b-container>
-                <!-- Selected terms -->
-                <b-container>
-                    <b-row>
-                        <b-col cols="10">
-                            <b-card title="Selected terms:">
+                    <b-container>
+                        <linkedkws v-bind:kwin="keyresults"></linkedkws>
+                    </b-container>
+                    <!-- Selected terms -->
+                    <b-container>
+                        <div class='terms-container'>
+                            <b-card title="Selected terms:" class='terms-card'>
                                 <div v-if="keyresults.length > 0">
                                     <span v-for="(item, index) in keyresults" v-bind:key="index">
                                         <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
@@ -60,23 +68,36 @@
                                      keywords. Click a keyword again to remove it.</small>
                                 </div>
                             </b-card>
-                        </b-col>
-                        <b-col cols="2" align-self="center">
-                            <b-button @click="onSubmit" variant="primary" class="float-right" style='width: 112px; height: 63px;'>
+
+                            <b-button @click="onSubmit" variant="primary" class='terms-submit'>
                                 <span v-if='!loadingRepos'>Submit Keywords</span>
                                 <b-spinner v-if='loadingRepos'></b-spinner>
                             </b-button>
-                        </b-col>
-                    </b-row>
-                </b-container>
+                        </div>
+                    </b-container>
+                </div>
             </b-card>
 
+<!--            ORCID TEST-->
+            <div>
+                <b-card title='ORCID Login Test'>
+                    <a :href='orcid' >ORCID Login</a>
+                </b-card>
+            </div>
+
             <!-- This is the part where the dbs show up: -->
-            <div style="padding:10px;" v-if="apikw.length > 0">
-                <div style="border-width:1px;">
-                    <strong>You have selected {{ apikw.filter(x => x.show === 'yes').length }} databases. You can drop some
-                            databases before you proceed to search data repositories by clicking
-                            the red "Drop" button.</strong>
+            <div v-if="apikw.length > 0" style='margin-top: 15px; border: 1px solid #007bff; border-radius: 4px;'>
+                <div style="padding: 15px;">
+                    <p style='font-size: 18px;'>You have selected {{ apikw.filter(x => x.show === 'yes').length }} databases.
+                    <span v-if="apikw.filter(x => x.show === 'yes').length >= 40"> The number of databases selected needs to be 40 or less in order to proceed to search data repositories.</span>
+                        <span> You can drop individual databases by clicking the <span class='drop-button-span'>Drop</span> button next to each database below.</span>
+                    </p>
+                    <p v-if="apikw.filter(x => x.show === 'yes').length >= 40" style='font-size: 18px;'>You can also click on <span class='auto-filter-span' @click='autoFilterDBs'>Auto Filter</span> and we will automatically
+                        select the top 40 databases based on your keyword search.
+                    </p>
+                    <div style='display: flex; justify-content: flex-end; padding-left: 30px;'>
+                        <b-button v-if="apikw.filter(x => x.show === 'yes').length >= 40" @click='autoFilterDBs' variant='primary'>Auto Filter</b-button>
+                    </div>
                 </div>
             </div>
 
@@ -97,17 +118,11 @@
                             <repo_lister :apikw="allrepos"></repo_lister>
                         </div>
                     </b-tab>
+
+                    <b-tab title='Network Graph' v-if='apikw.length > 0 && allrepos.length > 0'>
+                        <visualize_kw v-bind:databases='apikw' v-bind:repos:='allrepos'></visualize_kw>
+                    </b-tab>
                 </b-tabs>
-            </div>
-
-            <div>
-                <visualize_kw></visualize_kw>
-            </div>
-
-            <div>
-                <b-card title='ORCID Login'>
-                    <a :href='orcid' >ORCID Login</a>
-                </b-card>
             </div>
         </div>
     </div>
@@ -142,7 +157,10 @@
                 kwText: "",
                 loading: false,
                 loadingRepos: false,
-                orcid: `https://sandbox.orcid.org/oauth/authorize?client_id=${Settings.ORCID_CLIENT_ID}&response_type=code&scope=/authenticate&redirect_uri=http://localhost:8080/search`
+                orcid: `https://sandbox.orcid.org/oauth/authorize?client_id=${Settings.ORCID_CLIENT_ID}&response_type=code&scope=/authenticate&redirect_uri=http://localhost:8080/search`,
+                orcidId: '',
+                networkGraphData: [],
+                expandKeywordSearch: true,
             };
         },
         components: {
@@ -156,14 +174,25 @@
         created() {
             this.loading = true;
 
+            // ORCID CODE & COOKIES
             const code = this.$route.query.code;
             if(code != null) {
-                console.log("ORCID CODE: " + code);
-                //TODO: SAVE AS COOKIE
+                // SAVE CODE AS COOKIE
+                let date = new Date();
+                date.setTime(date.getTime() + (90 * 86400000)); // EXPIRE COOKIE AFTER 90 DAYS;
+                const expires = date.toUTCString();
+                document.cookie = "orcid-id=" + code.toString() + "; expires=" + expires;
             } else {
-                console.log("NO CODE PARAMETER");
-            }
+                // CHECK COOKIES FOR ORCID
+                const store = decodeURIComponent(document.cookie);
+                const cookies = store.split(";");
 
+                for(const cookie of cookies) {
+                    if(cookie.substring(0,8) === 'orcid-id') {
+                        this.orcidId = cookie.substring(9);
+                    }
+                }
+            }
 
             fetch("http://" + process.env.VUE_APP_URLPATH + "/api/keyword/all")
                 .then(function(response) {
@@ -253,6 +282,13 @@
                     this.loadingRepos = false;
                 });
             },
+            autoFilterDBs() {
+                const filtered = this.apikw.filter(x => x.show === 'yes');
+                this.apikw = (filtered.length >= 40) ? filtered.slice(0, 39) : filtered;
+            },
+            toggleKeywordSearch() {
+                this.expandKeywordSearch = !this.expandKeywordSearch;
+            }
         }
     };
 </script>

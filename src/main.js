@@ -1,12 +1,13 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import BootstrapVue from "bootstrap-vue";
+import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 import VueCookies from "vue-cookies";
 
 import App from "./App.vue";
 import keyword_search from './components/keyword_search';
 
 Vue.use(BootstrapVue);
+Vue.use(BootstrapVueIcons);
 Vue.use(require("vue-cookies"));
 Vue.use(VueCookies);
 
