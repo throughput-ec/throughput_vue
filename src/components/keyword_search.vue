@@ -32,7 +32,7 @@
                             <div v-if="somekw.length > 1">
                                 <span v-for="index in Math.min(30, somekw.length)" v-bind:key="index">
                                     <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
-                                        <b-badge v-on:click="addKw(somekw[index - 1].keyword)" variant="primary">
+                                        <b-badge v-on:click="toggleKw(somekw[index - 1].keyword)" variant="primary">
                                             {{ somekw[index - 1].keyword }}
                                             <b-badge variant="light">{{ somekw[index - 1].links }}</b-badge>
                                         </b-badge>
@@ -59,7 +59,7 @@
                                 <div v-if="keyresults.length > 0">
                                     <span v-for="(item, index) in keyresults" v-bind:key="index">
                                         <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
-                                            <b-badge v-on:click="addKw(item)" variant="danger">{{ item }}</b-badge>
+                                            <b-badge v-on:click="toggleKw(item)" variant="danger">{{ item }}</b-badge>
                                         </span>
                                     </span>
                                 </div>
@@ -103,6 +103,7 @@
 
             <!-- TABS -->
             <div class='tabs' v-if="apikw.length > 0">
+                <b-button variant='warning' @click='reset'>Reset Search</b-button>
                 <b-tabs active-tab-class='active-tab'>
                     <b-tab title="Data Catalogs" active>
                         <!-- Pass out the variables to list the databases -->
@@ -119,8 +120,9 @@
                         </div>
                     </b-tab>
 
-                    <b-tab title='Network Graph' v-if='apikw.length > 0 && allrepos.length > 0'>
-                        <visualize_kw v-bind:databases='apikw' v-bind:repos:='allrepos'></visualize_kw>
+<!--                    <b-tab title='Network Graph' v-if='apikw.length > 0 && allrepos.length > 0'> TODO: ADD allrepos back in when repo API call works -->
+                    <b-tab title='Network Graph' v-if='apikw.length > 0 && apikw.length <= 40' @click='generateNetworkGraph'>
+                        <visualize_kw v-if='showGraph' v-bind:databases='apikw' v-bind:repos:='allrepos'></visualize_kw>
                     </b-tab>
                 </b-tabs>
             </div>
@@ -144,16 +146,10 @@
         data() {
             return {
                 keyresults: [],
-                keylinked: [],
                 apikw: [],
                 allkw: [],
                 allrepos: [],
-                somekw: [
-                    {
-                        keyword: "",
-                        items: ""
-                    }
-                ],
+                somekw: [ { keyword: "", items: "" } ],
                 kwText: "",
                 loading: false,
                 loadingRepos: false,
@@ -161,6 +157,7 @@
                 orcidId: '',
                 networkGraphData: [],
                 expandKeywordSearch: true,
+                showGraph: false,
             };
         },
         components: {
@@ -249,7 +246,7 @@
                     });
                 }
             },
-            addKw(val) {
+            toggleKw(val) {
                 const idx = this.keyresults.indexOf(val);
                 if (idx === -1) {
                     return this.keyresults.push(val);
@@ -288,6 +285,15 @@
             },
             toggleKeywordSearch() {
                 this.expandKeywordSearch = !this.expandKeywordSearch;
+            },
+            generateNetworkGraph() {
+                this.showGraph = true;
+            },
+            reset() {
+                this.apikw = [];
+                this.allrepos = [];
+                this.keyresults = [];
+                this.showGraph = false;
             }
         }
     };

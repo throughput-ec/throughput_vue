@@ -1,8 +1,8 @@
 <template>
     <div>
-        <b-card title="Visualization Goes Here...">
-            <div>
-<!--                <d3-network :net-nodes="nodes" :net-links="links" :options="options" />-->
+        <b-card>
+            <div v-if='nodes.length > 0' style='height: 900px;'>
+                <d3-network :net-nodes="nodes" :net-links="links" :options="options" />
             </div>
         </b-card>
     </div>
@@ -10,9 +10,9 @@
 
 <style src="vue-d3-network/dist/vue-d3-network.css"></style>
 
-
 <script>
     import D3Network from "vue-d3-network";
+    import * as d3 from "d3";
 
     export default {
         name: "keywordSearch",
@@ -26,62 +26,62 @@
         data() {
             return {
                 nodes: [],
-                links: []
+                links: [],
             };
+        },
+        created() {
+            this.nodes = [];
+            this.links = [];
+
+            for(let index = 0; index < this.databases.length; index++) {
+                this.nodes.push({
+                    id: this.databases[index]['id'],
+                    name: this.databases[index]['name'],
+                    _color: this.getColor(this.databases[index]['linked']),
+                    _size: this.databases[index]['linked'],
+                });
+            }
+
+            //TODO: UPDATE - FOR NOW JUST ADD SOME RELATIONSHIPS UNTIL REPOS ARE AVAILABLE
+            for(let index = 0; index < this.databases.length; index++) {
+                if(index > 1) {
+                    this.links.push({
+                        sid: this.nodes[index - 1].id, // SOURCE NODE ID
+                        tid: this.nodes[index].id, // TARGET NODE ID   (OTHER PROPERTIES AVAILABLE: id, name, _color, _svgAttrs)
+                        _color: '#D83A7A'
+                    })
+                }
+            }
         },
         computed: {
             options() {
                 return {
-                    nodeSize: 20,
+                    nodeSize: 1,
                     nodeLabels: true,
                     canvas: false,
-                    linkWidth: 3
+                    linkWidth: 1
                 };
-            }
+            },
         },
+        methods: {
+            getColor(i) {
+                const color = d3.scaleSequential().domain([1,400])
+                    .interpolator(d3.interpolateRdYlBu);
+
+                return color(i);
+            }
+        }
     };
 </script>
 
-
 /*
-{
-"nodes": [
-{"id": "rd", "name": "Research Database", "_color": "#E94500", "_size": 20},
-{"id": "rda", "name": "Research Database", "_color": "#E94500", "_size": 20},
-{"id": "rdb", "name": "Research Database", "_color": "#E94500", "_size": 20},
-{"id": "gh", "name": "GitHub", "_color": "black", "_size": 30},
-{"id": "or", "name": "ORCiD", "_color": "#A6CE39", "_size": 30},
-{"id": "an", "name": "Annotation", "_color": "#D83A7A", "_size": 10},
-{"id": "cr", "name": "Code Repository", "_color": "gray", "_size": 20},
-{"id": "crt", "name": "Code Repository", "_color": "gray", "_size": 20},
-{"id": "crth", "name": "Code Repository", "_color": "gray", "_size": 20},
-{"id": "crf", "name": "Code Repository", "_color": "gray", "_size": 20},
-{"id": "pr", "name": "Person", "_color": "#A1E900", "_size": 10},
-{"id": "prt", "name": "Person", "_color": "#A1E900", "_size": 10},
-{"id": "ant", "name": "Annotation", "_color": "#D83A7A", "_size": 10},
-{"id": "r3", "name": "Re3Data", "_color": "#E94500", "_size": 30},
-{"id": "anth", "name": "Annotation", "_color": "#D83A7A", "_size": 10},
-{"id": "anf", "name": "Annotation", "_color": "#D83A7A", "_size": 10}
-
-],
-"links": [
-{"sid": "rd", "tid": "an"},
-{"sid": "rd", "tid": "anth"},
-{"sid": "rd", "tid": "anf"},
-{"sid": "cr", "tid": "an"},
-{"sid": "pr", "tid": "an"},
-{"sid": "or", "tid": "pr"},
-{"sid": "or", "tid": "prt"},
-{"sid": "gh", "tid": "cr"},
-{"sid": "gh", "tid": "crt"},
-{"sid": "gh", "tid": "crth"},
-{"sid": "gh", "tid": "crf"},
-{"sid": "crt", "tid": "ant"},
-{"sid": "rd", "tid": "ant"},
-{"sid": "prt", "tid": "ant"},
-{"sid": "r3", "tid": "rd"},
-{"sid": "r3", "tid": "rda"},
-{"sid": "r3", "tid": "rdb"}
-]
+database object = {
+    id: string;
+    name: string;
+    description: string;
+    url: string;
+    keyword: string[];
+    linked: number;
+    show: string;
 }
 */
