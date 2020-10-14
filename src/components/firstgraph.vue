@@ -22,6 +22,9 @@
                 returns all associated data resources, and provides links to code
                 repositories that either reference those data resources, or use those
                 data resources in analysis.
+                <div>
+                <b-button variant='primary' block href='http://throughputdb.com/about'>More Information</b-button>
+              </div>
             </b-modal><br />
 
             <small>Funding support from the National Science Foundation Award 1928366</small>

@@ -6,7 +6,10 @@
     <div class="headername">
       <h1>Throughput Data and Software Annotation</h1>
       Annotation Editor
-      <br /><a>http://throughput-ec.github.io</a>
+      <div>
+        <b-button size='sm' variant='outline-primary' href='http://throughputdb.com/about'>About Throughput</b-button>
+        <b-button size='sm' variant='outline-primary' href='http://github.com/throughput-ec'>GitHub Code</b-button>
+      </div>
     </div>
   </div>
 </template>
