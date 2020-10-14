@@ -1,2 +1,0 @@
-export const ORCID_CLIENT_ID = "CLIENT ID GOES HERE";
-export const ORCID_SECRET = "ORCID SECRET GOES HERE";

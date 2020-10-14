@@ -11,19 +11,19 @@
 <style src="vue-d3-network/dist/vue-d3-network.css"></style>
 
 <style>
-    .node circle {
-        /*stroke: #000;*/
-        /*stroke-width: 3px;*/
+    .node {
+        stroke: #AAAAAA !important;
+        stroke-width: 1px !important;
     }
 
     .db-node-text {
         font-weight: 700;
-        fill: #08306b !important;
+        fill: #08306B !important;
     }
 
     .keyword-node-text-large {
         font-weight: 700;
-        fill: #dc3545 !important;
+        fill: #DC3545 !important;
     }
 
 </style>

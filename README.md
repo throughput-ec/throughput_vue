@@ -35,9 +35,9 @@ to install all required packages.  Note that the user also requires a file calle
 echo "VUE_APP_URLPATH=http://throughputdb.com/api > .env"
 ```
 
-### Update App Settings
-Change `settings.sample.js` to `settings.js` and set the variables contained in the file. 
-
+```bash
+echo "VUE_APP_ORCID={{ADD ORCID APP ID HERE}} > .env.local"
+```
 
 ### Compiles and hot-reloads for development
 

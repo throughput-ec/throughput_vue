@@ -132,7 +132,6 @@
 
 <script>
     import "../assets/containers.css";
-    import * as Settings from "../settings";
     import lister from "./lister.vue";
     import repo_lister from "./repo_lister.vue";
     import kwInput from "./keywords/keywordinput.vue";
@@ -153,7 +152,7 @@
                 kwText: "",
                 loading: false,
                 loadingRepos: false,
-                orcid: `https://sandbox.orcid.org/oauth/authorize?client_id=${Settings.ORCID_CLIENT_ID}&response_type=code&scope=/authenticate&redirect_uri=http://localhost:8080/search`,
+                orcid: '',
                 orcidId: '',
                 networkGraphData: [],
                 expandKeywordSearch: true,
@@ -170,6 +169,7 @@
         },
         created() {
             this.loading = true;
+            this.orcid = `https://sandbox.orcid.org/oauth/authorize?client_id=${process.env.VUE_APP_ORCID}&response_type=code&scope=/authenticate&redirect_uri=http://localhost:8080/search`;
 
             // ORCID CODE & COOKIES
             const code = this.$route.query.code;
