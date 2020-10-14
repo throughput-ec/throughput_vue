@@ -1,7 +1,7 @@
 <template>
     <div>
-        <b-card>
-            <div v-if='nodes.length > 0' style='height: 900px;'>
+        <b-card title='Keyword & Database Network Diagram'>
+            <div v-if='nodes.length > 0' style='height: 1000px;'>
                 <d3-network :net-nodes="nodes" :net-links="links" :options="options" />
             </div>
         </b-card>
@@ -9,6 +9,24 @@
 </template>
 
 <style src="vue-d3-network/dist/vue-d3-network.css"></style>
+
+<style>
+    .node circle {
+        /*stroke: #000;*/
+        /*stroke-width: 3px;*/
+    }
+
+    .db-node-text {
+        font-weight: 700;
+        fill: #08306b !important;
+    }
+
+    .keyword-node-text-large {
+        font-weight: 700;
+        fill: #dc3545 !important;
+    }
+
+</style>
 
 <script>
     import D3Network from "vue-d3-network";
@@ -27,46 +45,82 @@
             return {
                 nodes: [],
                 links: [],
+                options: { nodeLabels: true, canvas: false, linkWidth: 1 }
             };
         },
         created() {
             this.nodes = [];
             this.links = [];
+            let keywords = {};
 
             for(let index = 0; index < this.databases.length; index++) {
+                // DB NODE SIZE
+                const size = ((1 + Math.sqrt(this.databases[index]['linked'])).toFixed()) * 2; //TODO: ADJUST OR REMOVE THIS MULTIPLE
+
+                //SET KEYWORDS
+                for(const keyword of this.databases[index]['keyword']) {
+                    if(!keywords[keyword]) {
+                        keywords[keyword] = [];
+                    }
+                }
+
+                // ADD DB IDS FOR EACH KEYWORD
+                for(const keyword of this.databases[index]['keyword']) {
+                   keywords[keyword].push(this.databases[index]['id'])
+                }
+
+
+                // DB NODES
                 this.nodes.push({
                     id: this.databases[index]['id'],
                     name: this.databases[index]['name'],
-                    _color: this.getColor(this.databases[index]['linked']),
-                    _size: this.databases[index]['linked'],
+                    _color: this.getDBColor(size),
+                    _labelClass: "db-node-text",
+                    _size: size,
                 });
             }
 
-            //TODO: UPDATE - FOR NOW JUST ADD SOME RELATIONSHIPS UNTIL REPOS ARE AVAILABLE
-            for(let index = 0; index < this.databases.length; index++) {
-                if(index > 1) {
+            // KEYWORD NODES
+            const keys = Object.keys(keywords);
+
+            for(const key of keys) {
+                if(keywords[key].length > 1) {
+                    this.nodes.push({
+                        id: key,
+                        name: key,
+                        _color: this.getKeywordColor(keywords[key].length),
+                        _labelClass: (keywords[key].length > 5) ? "keyword-node-text-large" : "keyword-node-text-small",
+                        _size: keywords[key].length * 3, //TODO: ADJUST OR REMOVE THIS MULTIPLE
+                    });
+                } else if (keywords[key].length === 1) {
+                    this.nodes.push({
+                        id: key,
+                        name: key,
+                        _color: '#000000',
+                        _size: 1,
+                    });
+                }
+
+                // LINKS
+                for(const dbID of keywords[key]) {
                     this.links.push({
-                        sid: this.nodes[index - 1].id, // SOURCE NODE ID
-                        tid: this.nodes[index].id, // TARGET NODE ID   (OTHER PROPERTIES AVAILABLE: id, name, _color, _svgAttrs)
-                        _color: '#D83A7A'
-                    })
+                        sid: key, // SOURCE NODE ID
+                        tid: dbID, // TARGET NODE ID   (OTHER PROPERTIES AVAILABLE: id, name, _svgAttrs)
+                        _color: '#AAAAAA'
+                    });
                 }
             }
         },
-        computed: {
-            options() {
-                return {
-                    nodeSize: 1,
-                    nodeLabels: true,
-                    canvas: false,
-                    linkWidth: 1
-                };
-            },
-        },
         methods: {
-            getColor(i) {
-                const color = d3.scaleSequential().domain([1,400])
-                    .interpolator(d3.interpolateRdYlBu);
+            getDBColor(i) {
+                const color = d3.scaleSequential().domain([1, 25])
+                    .interpolator(d3.interpolateBlues);
+
+                return color(i);
+            },
+            getKeywordColor(i) {
+                const color = d3.scaleSequential().domain([1, 15])
+                    .interpolator(d3.interpolateReds);
 
                 return color(i);
             }
