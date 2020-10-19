@@ -3,7 +3,7 @@
         <div class='header-menu'>
             <a :href='home' class='menu-button'>Home</a>
             <a :href='about' class='menu-button'>About Throughput</a>
-            <a href='http://github.com/throughput-ec' class='menu-button'>GitHub Code</a>
+            <a href='https://github.com/throughput-ec' class='menu-button' target='_blank'>GitHub Code</a>
             <a v-if='showLogin' :href='orcid' class='menu-button'>ORCID Login</a>
         </div>
 
