@@ -1,7 +1,7 @@
 <template>
     <div>
         <b-card title='Keyword & Database Network Diagram'>
-            <div v-if='nodes.length > 0' style='height: 1000px;'>
+            <div v-if='nodes.length > 0' :class='graphContainer'>
                 <d3-network :net-nodes="nodes" :net-links="links" :options="options" />
             </div>
         </b-card>
@@ -26,6 +26,32 @@
         fill: #DC3545 !important;
     }
 
+    .keyword-node-text-small {
+        font-weight: 300;
+       fill: rgba(18, 120, 98, 0.65) !important;
+    }
+
+    .keyword-node-text-small:hover {
+        font-weight: 700;
+        fill: rgba(18, 120, 98, 1) !important;
+    }
+
+    .c-small {
+        height: 400px;
+    }
+
+    .c-medium-small {
+        height: 600px;
+    }
+
+    .c-medium {
+        height: 800px;
+    }
+
+    .c-large {
+        height: 1000px;
+    }
+
 </style>
 
 <script>
@@ -45,7 +71,8 @@
             return {
                 nodes: [],
                 links: [],
-                options: { nodeLabels: true, canvas: false, linkWidth: 1 }
+                options: { nodeLabels: true, canvas: false, linkWidth: 1 },
+                graphContainer: 'c-large'
             };
         },
         created() {
@@ -55,7 +82,7 @@
 
             for(let index = 0; index < this.databases.length; index++) {
                 // DB NODE SIZE
-                const size = ((1 + Math.sqrt(this.databases[index]['linked'])).toFixed()) * 2; //TODO: ADJUST OR REMOVE THIS MULTIPLE
+                const size = ((1 + Math.sqrt(this.databases[index]['linked'])).toFixed()) * 3;
 
                 //SET KEYWORDS
                 for(const keyword of this.databases[index]['keyword']) {
@@ -82,6 +109,19 @@
 
             // KEYWORD NODES
             const keys = Object.keys(keywords);
+            console.log("# OF Keywords: " + keys.length);
+
+            if(keys.length === 0 || keys[0] === '') {
+                return;
+            } else if(keys.length < 50) {
+                this.graphContainer = 'c-small';
+            } else if (keys.length < 100) {
+                this.graphContainer = 'c-medium-small';
+            } else if (keys.length < 150) {
+                this.graphContainer = 'c-medium';
+            } else {
+                this.graphContainer = 'c-large';
+            }
 
             for(const key of keys) {
                 if(keywords[key].length > 1) {
@@ -90,12 +130,13 @@
                         name: key,
                         _color: this.getKeywordColor(keywords[key].length),
                         _labelClass: (keywords[key].length > 5) ? "keyword-node-text-large" : "keyword-node-text-small",
-                        _size: keywords[key].length * 3, //TODO: ADJUST OR REMOVE THIS MULTIPLE
+                        _size: keywords[key].length * 2,
                     });
                 } else if (keywords[key].length === 1) {
                     this.nodes.push({
                         id: key,
                         name: key,
+                        _labelClass: "keyword-node-text-small",
                         _color: '#000000',
                         _size: 1,
                     });

@@ -4,20 +4,38 @@
         <div v-if='loading' class='screen-center' style='height: 80vh;'>
             <b-spinner label='Loading...' style='width: 4rem; height: 4rem;' variant='primary'/>
         </div>
+
         <div>
-            <b-card title="Keyword Search" style='background: rgb(245,245,245);'>
+<!--            <b-card title="Keyword Search">-->
+            <div class='title-with-options'>
                 <div class='toggle-container'>
-                    <div v-if='!expandKeywordSearch' class='h1'>
-                        <b-icon-plus-square variant='primary' @click='toggleKeywordSearch'></b-icon-plus-square>
-                    </div>
-                    <div v-if='expandKeywordSearch' class='h1'>
-                        <b-icon-dash-square variant='primary' @click='toggleKeywordSearch'></b-icon-dash-square>
+                    <h3>Search By:</h3>
+
+                    <div class='t-toggle'>
+                        <div :class='keywordToggleClasses' @click='toggleSearchType'>
+                            <span>Keyword</span>
+                        </div>
+                        <div :class='textToggleClasses' @click='toggleSearchType'>
+                            <span>Text</span>
+                        </div>
                     </div>
                 </div>
 
+                <div>
+                    <div v-if='!expandKeywordSearch' class='h1' style='color: var(--t-color-blue)'>
+                        <b-icon-plus-square @click='toggleKeywordSearch'></b-icon-plus-square>
+                    </div>
+                    <div v-if='expandKeywordSearch' class='h1' style='color: var(--t-color-blue)'>
+                        <b-icon-dash-square @click='toggleKeywordSearch'></b-icon-dash-square>
+                    </div>
+                </div>
+            </div>
+
+
                 <!-- Available terms -->
-                <div v-if='expandKeywordSearch'>
-                    <kwInput @change="newText"></kwInput>
+                <div v-if='expandKeywordSearch' :class='searchBodyClasses'>
+                    <kwInput @change="newText" style='margin-bottom:5px;'></kwInput>
+
                     <b-container>
                         <b-card title="Available terms:">
                             <div v-if="somekw.length > 1">
@@ -29,16 +47,14 @@
                                     keyword.
                                 </small>
                             </div>
-                            <div v-if="somekw.length > 1">
-                                <span v-for="index in Math.min(30, somekw.length)" v-bind:key="index">
-                                    <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
-                                        <b-badge v-on:click="toggleKw(somekw[index - 1].keyword)" variant="primary">
-                                            {{ somekw[index - 1].keyword }}
-                                            <b-badge variant="light">{{ somekw[index - 1].links }}</b-badge>
-                                        </b-badge>
-                                    </span>
-                                </span>
+
+                            <div v-if="somekw.length > 1" class='keyword-container'>
+                                <div v-for="index in Math.min(30, somekw.length)" v-bind:key="index" class='keyword-badge'>
+                                    <span v-on:click="toggleKw(somekw[index - 1].keyword)" >{{ somekw[index - 1].keyword }}</span>
+                                    <span class='inner-badge'>{{ somekw[index - 1].links }}</span>
+                                </div>
                             </div>
+
                             <div v-else>
                                 <small>Please begin entering keywords.</small>
                             </div>
@@ -56,12 +72,11 @@
                     <b-container>
                         <div class='terms-container'>
                             <b-card title="Selected terms:" class='terms-card'>
-                                <div v-if="keyresults.length > 0">
-                                    <span v-for="(item, index) in keyresults" v-bind:key="index">
-                                        <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
-                                            <b-badge v-on:click="toggleKw(item)" variant="danger">{{ item }}</b-badge>
-                                        </span>
-                                    </span>
+                                <div v-if="keyresults.length > 0" class='keyword-container'>
+                                    <div v-for="(item, index) in keyresults" v-bind:key="index" @click='toggleKw(item)' class='keyword-badge'>
+                                        <span>{{ item }}</span>
+                                        <span class='inner-badge' style='color: red;'>X</span>
+                                    </div>
                                 </div>
                                 <div v-else>
                                     <small>Click on a keyword above to add it to the list of selected
@@ -69,24 +84,17 @@
                                 </div>
                             </b-card>
 
-                            <b-button @click="onSubmit" variant="primary" class='terms-submit'>
+                            <button @click="onSubmit" class='blue-button terms-submit'>
                                 <span v-if='!loadingRepos'>Submit Keywords</span>
                                 <b-spinner v-if='loadingRepos'></b-spinner>
-                            </b-button>
+                            </button>
                         </div>
                     </b-container>
                 </div>
-            </b-card>
-
-<!--            ORCID TEST-->
-            <div>
-                <b-card title='ORCID Login Test'>
-                    <a :href='orcid' >ORCID Login</a>
-                </b-card>
-            </div>
+<!--            </b-card>-->
 
             <!-- This is the part where the dbs show up: -->
-            <div v-if="apikw.length > 0" style='margin-top: 15px; border: 1px solid #007bff; border-radius: 4px;'>
+            <div v-if="apikw.length > 0" style='background: var(--t-color-light-grey); margin-top: 10px;'>
                 <div style="padding: 15px;">
                     <p style='font-size: 18px;'>You have selected {{ apikw.filter(x => x.show === 'yes').length }} databases.
                     <span v-if="apikw.filter(x => x.show === 'yes').length > 40"> The number of databases selected needs to be 40 or less in order to proceed to search data repositories.</span>
@@ -96,14 +104,14 @@
                         select the top 40 databases based on your keyword search.
                     </p>
                     <div style='display: flex; justify-content: flex-end; padding-left: 30px;'>
-                        <b-button v-if="apikw.filter(x => x.show === 'yes').length > 40" @click='autoFilterDBs' variant='primary'>Auto Filter</b-button>
+                        <b-button variant='warning' @click='reset'>Reset Search</b-button>
+                        <button v-if="apikw.filter(x => x.show === 'yes').length > 40" @click='autoFilterDBs' class='blue-button' style='margin-left: 10px;'>Auto Filter</button>
                     </div>
                 </div>
             </div>
 
             <!-- TABS -->
             <div class='tabs' v-if="apikw.length > 0">
-                <b-button variant='warning' @click='reset'>Reset Search</b-button>
                 <b-tabs active-tab-class='active-tab'>
                     <b-tab title="Data Catalogs" active>
                         <!-- Pass out the variables to list the databases -->
@@ -121,7 +129,7 @@
                     </b-tab>
 
 <!--                    <b-tab title='Network Graph' v-if='apikw.length > 0 && allrepos.length > 0'> TODO: ADD allrepos back in when repo API call works -->
-                    <b-tab title='Network Graph' v-if='apikw.length > 0 && apikw.length <= 40' @click='generateNetworkGraph'>
+                    <b-tab title='Network Graph' v-if="apikw.filter(x => x.show === 'yes').length > 0 && apikw.filter(x => x.show === 'yes').length <= 40" @click='generateNetworkGraph'>
                         <visualize_kw v-if='showGraph' v-bind:databases='apikw' v-bind:repos:='allrepos'></visualize_kw>
                     </b-tab>
                 </b-tabs>
@@ -130,14 +138,86 @@
     </div>
 </template>
 
+<style>
+    .title-with-options{
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 10px 40px;
+    }
+
+    .toggle-container {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+    }
+
+    .title-with-options h3 {
+        margin: 0;
+    }
+
+    .t-toggle {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: center;
+        align-items: center;
+        margin-left: 12px;
+    }
+
+
+    .toggle-left, .toggle-right {
+        display: flex;
+        flex-flow: row;
+        justify-content: center;
+        align-items: center;
+        border-bottom: 1px solid var(--t-color-blue);
+        border-top: 1px solid var(--t-color-blue);
+        padding: 5px 10px;
+        width: 100px !important;
+        font-size: 18px;
+    }
+
+    .toggle-left {
+        border-left: 1px solid var(--t-color-blue);
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+    }
+
+    .toggle-right {
+        border-right: 1px solid var(--t-color-blue);
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+
+    .active {
+        color: var(--t-color-light);
+        background: var(--t-color-blue);
+        /*background: #001F72;*/
+        animation-name: fade-in;
+        animation-duration: 500ms;
+    }
+
+    .inactive {
+        /*color: #888888;*/
+        color: var(--t-color-medium);
+        /*background: #dee2e6;*/
+        background: var(--t-color-light-grey)
+    }
+
+    .compress {
+        animation-name: compress;
+        animation-duration: 800ms;
+    }
+</style>
+
 <script>
-    import "../assets/containers.css";
     import lister from "./lister.vue";
     import repo_lister from "./repo_lister.vue";
     import kwInput from "./keywords/keywordinput.vue";
     import linkedkws from "./keywords/linkedkws.vue";
     import visualize_kw from './visualize_kw';
-    import "../assets/global-styles.css";
     import header from "../components/header.vue";
 
     export default {
@@ -152,11 +232,13 @@
                 kwText: "",
                 loading: false,
                 loadingRepos: false,
-                orcid: '',
-                orcidId: '',
                 networkGraphData: [],
                 expandKeywordSearch: true,
                 showGraph: false,
+                searchKeywords: true,
+                keywordToggleClasses: 'toggle-left active',
+                textToggleClasses: 'toggle-right inactive',
+                searchBodyClasses: ''
             };
         },
         components: {
@@ -169,28 +251,6 @@
         },
         created() {
             this.loading = true;
-            this.orcid = `https://sandbox.orcid.org/oauth/authorize?client_id=${process.env.VUE_APP_ORCID}&response_type=code&scope=/authenticate&redirect_uri=http://localhost:8080/search`;
-
-            // ORCID CODE & COOKIES
-            const code = this.$route.query.code;
-            if(code != null) {
-                // SAVE CODE AS COOKIE
-                let date = new Date();
-                date.setTime(date.getTime() + (90 * 86400000)); // EXPIRE COOKIE AFTER 90 DAYS;
-                const expires = date.toUTCString();
-                document.cookie = "orcid-id=" + code.toString() + "; expires=" + expires;
-            } else {
-                // CHECK COOKIES FOR ORCID
-                const store = decodeURIComponent(document.cookie);
-                const cookies = store.split(";");
-
-                for(const cookie of cookies) {
-                    if(cookie.substring(0,8) === 'orcid-id') {
-                        this.orcidId = cookie.substring(9);
-                    }
-                }
-            }
-
             fetch("http://" + process.env.VUE_APP_URLPATH + "/api/keyword/all")
                 .then(function(response) {
                     return response.json();
@@ -274,6 +334,9 @@
                         });
                     }).then(data => {
                         this.loadingRepos = false;
+                        if(this.expandKeywordSearch === true) {
+                            this.toggleKeywordSearch();
+                        }
                         return data;
                 }).catch( () => {
                     this.loadingRepos = false;
@@ -285,6 +348,12 @@
             },
             toggleKeywordSearch() {
                 this.expandKeywordSearch = !this.expandKeywordSearch;
+
+                if(this.expandKeywordSearch === false) {
+                    this.searchBodyClasses = 'compress';
+                } else {
+                    this.searchBodyClasses = '';
+                }
             },
             generateNetworkGraph() {
                 this.showGraph = true;
@@ -294,7 +363,22 @@
                 this.allrepos = [];
                 this.keyresults = [];
                 this.showGraph = false;
+
+                if(this.expandKeywordSearch === false) {
+                    this.toggleKeywordSearch();
+                }
+            },
+            toggleSearchType() {
+                if(this.searchKeywords === true) {
+                    this.keywordToggleClasses = 'toggle-left inactive';
+                    this.textToggleClasses = 'toggle-right active';
+                } else {
+                    this.keywordToggleClasses = 'toggle-left active';
+                    this.textToggleClasses = 'toggle-right inactive';
+                }
+                this.searchKeywords = !this.searchKeywords;
             }
+
         }
     };
 </script>

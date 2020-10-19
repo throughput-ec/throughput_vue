@@ -5,19 +5,19 @@
         </div>
 
         <div class="title-div">
-            <h1 style="vertical-align:middle;letter-spacing:5px;">THROUGHPUT</h1>
+            <h1 style="vertical-align:middle;letter-spacing:4px;">THROUGHPUT</h1>
 
-            <img src=../assets/logo_earthcube_cube-only_SMALL.png height=50px alt='earth cube' />
+            <img src="@/assets/img/logo_earthcube_cube-only_SMALL.png" height=50px alt='earth cube' />
             <b-button class="mx-2" @click="getStarted()" variant="success">Get Started</b-button>
             <b-button v-b-modal.findout variant="info">Find out more!</b-button>
-            <img src="../assets/nsf.png" height="50px" alt='national science foundation logo'/>
+            <img src="@/assets/img/nsf.png" height="50px" alt='national science foundation logo'/>
 
             <b-modal id="findout" title="Throughput Database" ok-only>
                 Throughput links data resources, such as research databases, to code
                 repositories, such as those on
                 <a href="http://github.com">github.com</a> that reference those data
                 resources.
-                <img src="../assets/throughput_modal.svg" width="100%" style="padding:20px;" alt='network diagram' />
+                <img src="@/assets/throughput_modal.svg" width="100%" style="padding:20px;" alt='network diagram' />
                 By searching for databases and repositories using keywords Throughput
                 returns all associated data resources, and provides links to code
                 repositories that either reference those data resources, or use those
@@ -34,8 +34,6 @@
 
 <style src="vue-d3-network/dist/vue-d3-network.css"></style>
 <style>
-    @import url("https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC&display=swap");
-
     .page-div {
         text-align: center;
         position: absolute;
@@ -58,7 +56,7 @@
         opacity: 0.8;
         background: rgba(200, 54, 54, 0.7);
         padding: 20px;
-        font-family: "Alegreya Sans SC", sans-serif;
+        font-family: "Montserrat", sans-serif;
     }
 </style>
 

@@ -76,7 +76,6 @@
 </template>
 
 <script>
-import "../assets/containers.css";
 import repoCounter from "../components/elements/repoCounter.vue";
 import objectList from "../components/elements/objectList.vue";
 

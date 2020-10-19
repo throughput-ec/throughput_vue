@@ -2,86 +2,101 @@
 
 <template>
     <div>
-        <b-container fluid>
-            <b-row>
-                <b-col cols="3">
-                    <b-button v-b-modal.dbcitation @click="getCite(apikw)" align="right">
-                        Get Citations
-                    </b-button>
-                </b-col>
-                <b-col cols="5">
-                    <b-form-checkbox
-                            id="checkboxdb"
-                            v-model="status"
-                            name="checkboxdb"
-                            value="yes"
-                            unchecked-value="no"
-                            v-b-tooltip.hover
-                            title="Unselected resources will be placed at the end of the list."
-                    >
-                        Show Unselected Resources
-                    </b-form-checkbox>
-                </b-col>
-            </b-row>
-        </b-container>
+        <div class='tab-header'>
+            <b-button v-b-modal.dbcitation @click="getCite(apikw)" align="right">Get Citations</b-button>
+
+            <b-form-checkbox id="checkboxdb"
+                    v-model="status"
+                    name="checkboxdb"
+                    value="yes"
+                    unchecked-value="no"
+                    v-b-tooltip.hover
+                    title="Unselected resources will be placed at the end of the list.">
+                Show Unselected Resources
+            </b-form-checkbox>
+        </div>
 
         <b-modal id="dbcitation" title="Citations">
-            <pre>
-                {{ this.citations }}
-            </pre>
+            <pre>{{ this.citations }}</pre>
         </b-modal>
 
         <hr />
 
         <div v-for="(item, index) in apikw" v-bind:key="index">
-            <div v-if="(item.show === 'yes') || ((status === 'yes') && (item.show === 'no'))">
-                <b-container fluid>
-                    <b-row align-v="center">
-                        <b-col class="col-md-2">
-                            <div v-if="item.show == 'yes'">
-                                <b-button-group>
-                                    <b-button @click="dropDB(item)" variant="danger">Drop</b-button>
-                                </b-button-group>
-                            </div>
-                            <div v-else>
-                                <b-button-group>
-                                    <b-button @click="addDB(item)" variant="success">Add</b-button>
-                                </b-button-group>
-                            </div>
-                        </b-col>
-                        <b-col class="col-md-10">
-                            <h4>
-                                <a v-bind:href="item.url"
-                                   rel="noopener noreferrer"
-                                   target="_blank"
-                                >{{ item.name }}</a>
-                            </h4>
-                            <small>{{ item.description }}</small>
-                            <br />
-                            <b-container>
-                                <b-row align-v="center">
-                                    <b-col class="text-center" cols="3">
-                                        <strong>Linked Code Repositories: {{ item.linked }}</strong>
-                                    </b-col>
-                                    <b-col>
-                                        <strong>Keywords</strong>:<br />
-                                        <span v-for="(item, index) in item.keyword" v-bind:key="index">
-                                            <b-badge variant="primary">{{ item }}</b-badge>
-                                        </span>
-                                    </b-col>
-                                </b-row>
-                            </b-container>
-                        </b-col>
-                    </b-row>
-                    <hr />
-                </b-container>
-            </div>
+            <b-container v-if="(item.show === 'yes') || ((status === 'yes') && (item.show === 'no'))">
+                <b-row align-v="center">
+                    <b-col class="col-md-2">
+                        <div v-if="item.show === 'yes'">
+                            <b-button-group>
+                                <b-button @click="dropDB(item)" variant="danger">Drop</b-button>
+                            </b-button-group>
+                        </div>
+                        <div v-else>
+                            <b-button-group>
+                                <b-button @click="addDB(item)" variant="success">Add</b-button>
+                            </b-button-group>
+                        </div>
+                    </b-col>
+                    <b-col class="col-md-10">
+                        <h4>
+                            <a :href="item.url" rel="noopener noreferrer" target="_blank" style='color: var(--t-color-light-blue)'>{{ item.name }}</a>
+                        </h4>
+                        <small>{{ item.description }}</small>
+                        <br />
+                        <b-container>
+                            <b-row align-v="center">
+                                <b-col class="text-center" cols="3">
+                                    <strong style='color: var(--t-color-blue-green);'>Linked Code Repositories: {{ item.linked }}</strong>
+                                </b-col>
+                                <b-col>
+                                    <strong>Keywords</strong>:<br />
+
+                                    <div class='keyword-container'>
+                                    <div v-for="(item, index) in item.keyword" :key="index" class='keyword-badge light-blue-badge'>
+                                        <span>{{ item }}</span>
+                                    </div>
+                                    </div>
+                                </b-col>
+                            </b-row>
+                        </b-container>
+                    </b-col>
+                </b-row>
+                <hr />
+            </b-container>
+
         </div>
     </div>
 </template>
 
+<style>
+    .tab-header {
+        display: flex;
+        flex-flow: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 15px 20px 5px 20px;
+    }
+
+    hr {
+        background: var(--t-color-medium);
+    }
+
+    .light-blue-badge {
+        font-size: 12px;
+        line-height: 16px;
+        border-radius: 4px;
+        letter-spacing: 1px;
+        margin: 2px 2px;
+        padding: 2px 4px;
+        /*background: var(--t-color-light-blue);*/
+        background: transparent;
+        color: var(--t-color-light-blue)
+    }
+</style>
+
+
 <script>
-    import "../assets/containers.css";
 
     export default {
         name: "listervue",
@@ -113,9 +128,8 @@
         methods: {
             getkws(id) {
                 let getForRepo = function(id) {
-                    fetch(
-                        "http://" + process.env.VUE_APP_URLPATH + "/api/keyword/repo/" + id
-                    ).then(response => response.json());
+                    fetch(`http://${ process.env.VUE_APP_URLPATH }/api/keyword/repo/${id}`)
+                        .then(response => response.json());
                 };
 
                 return getForRepo(id);

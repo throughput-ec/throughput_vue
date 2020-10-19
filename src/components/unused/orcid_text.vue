@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import "../assets/containers.css";
 
 export default {
   name: "orcidText",

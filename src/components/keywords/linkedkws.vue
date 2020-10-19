@@ -6,17 +6,12 @@
 
         <div v-if="kwin.length > 0 && loading === false" style='max-height: 200px; width: 100%; overflow-y: scroll;'>
             <small>These keywords are associated with a database that shares a linked code repository.</small>
-            <div>
-                <span
-                        v-for="(item, index) in keyLinked"
-                        v-bind:key="index"
-                        v-on:click="addkw(item.keywords)">
-                    <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
-                        <b-badge variant="danger">{{ item.keywords }}
-                            <b-badge variant="light">{{ item.count }}</b-badge>
-                        </b-badge>
-                    </span>
-                </span>
+
+            <div class='keyword-container'>
+                <div  v-for="(item, index) in keyLinked" v-bind:key="index" v-on:click="addkw(item.keywords)" class='keyword-badge blue-green-badge'>
+                    <span>{{ item.keywords }}</span>
+                    <span class='inner-badge'>{{ item.count }}</span>
+                </div>
             </div>
         </div>
 

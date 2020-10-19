@@ -1,8 +1,34 @@
+/*@import url('./css/containers.css');*/
+@import url(./css/header.css);
+
+:root {
+    --t-color-blue: #14244e;
+    --t-color-light-blue: #8AC0FF;
+    --t-color-blue-tint: #3B99E0;
+    --t-color-blue-green: #17A2B8;
+    --t-color-green: #127862;
+    --t-color-light: #FFFFFF;
+    --t-color-light-grey: rgb(233,236,239);
+    --t-color-medium: rgb(73,80,87);
+    --t-color-dark-tint: #343840;
+    --t-color-dark: #212529;
+    --t-color-red: #DC3545;
+}
+
+h1, h2, h3, h4, h5, h5, p, a, li, span, small {
+    font-family: "Montserrat", sans-serif;
+}
+
+p {
+    color: var(--t-color-dark);
+    font-size: 16px;
+    line-height: 20px;
+}
+
 .app-body {
-    width: 80%;
     margin: 0 auto;
-    max-width: 1200px;
-    padding-bottom: 50px;
+    padding-bottom: 150px;
+    background: var(--t-color-light);
 }
 
 .screen-center {
@@ -18,41 +44,35 @@
 }
 
 .tabs {
-    margin-top: 20px;
+    margin: 20px;
+}
+
+
+.nav-link {
+    color: var(--t-color-blue) !important;
+    background: var(--t-color-light-grey) !important;
+    border-color: var(--t-color-light-grey) var(--t-color-light-grey) transparent !important;
+    margin-right: 2px;
 }
 
 .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link  {
-    background: rgb(245,245,245) !important;
-    border-color: #dee2e6 #dee2e6 rgb(245,245,245) !important;
+    background: var(--t-color-dark-tint) !important;
+    border-color: var(--t-color-dark) var(--t-color-dark) var(--t-color-dark-tint) !important;
+    color: var(--t-color-blue)
+}
+
+.active {
+    color: var(--t-color-light) !important;
 }
 
 .active-tab {
-    background: rgb(245,245,245) !important;
-    padding-top: 15px;
-    border-left: 1px solid rgba(0, 0, 0, 0.125) !important;
-    border-right: 1px solid rgba(0, 0, 0, 0.125) !important;
+    background: var(--t-color-dark-tint) !important;
+    border-top-right-radius: 4px;
 }
 
-.login-form {
-    display: flex;
-    flex-flow: column;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 20px;
-    border: 1px solid #dee2e6;
-    background: rgb(245,245,245);
-    border-radius: 4px;
-}
 
-.login-form label {
-    font-size: 12px;
-    font-weight: 700;
-    margin: 1px 0 2px 0;
-}
 
-.login-form input {
-    margin-bottom: 10px;
-}
+
 
 .terms-container {
     display: flex;
@@ -66,14 +86,23 @@
     width: 80%;
 }
 
+.blue-button {
+    margin: 0;
+    padding: 10px 20px;
+    background: var(--t-color-blue);
+    border: none;
+    border-radius: 4px;
+    color: var(--t-color-light);
+}
+
 .terms-submit {
     width: 112px;
     height: 63px;
-    margin: 0;
+    padding: 0;
 }
 
 .drop-button-span {
-    background: #dc3545;
+    background: var(--t-color-red);
     color: white;
     padding: 4px 6px;
     border-radius: 4px;
@@ -81,22 +110,103 @@
 }
 
 .auto-filter-span {
-    background: #007bff;
+    background: var(--t-color-blue);
     color: white;
     padding: 4px 6px;
     border-radius: 4px;
     font-size: 12px;
 }
 
-.toggle-container {
+.keyword-container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+}
+
+.keyword-badge {
     display: flex;
     flex-flow: row nowrap;
-    justify-content: flex-end;
-    width: 95%;
-    position: absolute;
-    top: 0;
-    padding-top: 8px;
+    justify-content: center;
+    align-items: center;
+    background: var(--t-color-blue);
+    color: var(--t-color-light);
+    font-size: 12px;
+    line-height: 16px;
+    border-radius: 5px;
+    letter-spacing: 1px;
+    margin: 2px 3px;
+    padding: 3px 5px;
 }
+
+.red-badge {
+    background: var(--t-color-red);
+}
+
+.blue-green-badge {
+    background: var(--t-color-blue-green);
+}
+
+.keyword-badge:hover {
+    cursor: pointer;
+}
+
+.inner-badge {
+    color: var(--t-color-dark);
+    font-size: 10px;
+    line-height: 11px;
+    font-weight: 600;
+    background:var(--t-color-light);
+    padding: 1px 3px;
+    border-radius: 4px;
+    margin-left: 4px;
+}
+
+
+@keyframes fade-in {
+    from {
+        opacity: 0.5;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation-name: fade-in;
+    animation-duration: 1000ms;
+}
+
+
+@keyframes fade-out {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.fade-out {
+    animation-name: fade-out;
+    animation-duration: 500ms;
+}
+
+@keyframes compress {
+    from {
+        height: auto;
+    }
+
+    to {
+        height: 0;
+    }
+}
+
+
+
 
 @media only screen and (max-width: 950px) {
     .terms-container {

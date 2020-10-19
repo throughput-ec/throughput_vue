@@ -65,9 +65,6 @@
 </template>
 
 <script>
-    import "../assets/global-styles.css";
-    import "../assets/containers.css";
-
     export default {
         name: "listervue",
         props: {
