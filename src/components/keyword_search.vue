@@ -251,7 +251,7 @@
         },
         created() {
             this.loading = true;
-            fetch("http://" + process.env.VUE_APP_URLPATH + "/api/keyword/all")
+            fetch("http://" + process.env.VUE_APP_URLPATH + "/api/keyword/all/ccdr")
                 .then(function(response) {
                     return response.json();
                 })
@@ -286,7 +286,7 @@
                         .filter(x => x.show === "yes")
                         .map(x => x.id)
                         .join(",");
-                    fetch("http://" + process.env.VUE_APP_URLPATH + "/api/linked?id=" + val)
+                    fetch("http://" + process.env.VUE_APP_URLPATH + "/api/ccdr/linked?id=" + val)
                         .then(function(response) {
                             return response.json();
                         })
