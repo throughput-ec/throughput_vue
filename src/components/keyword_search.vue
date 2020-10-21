@@ -264,7 +264,7 @@
         },
         created() {
             this.loading = true;
-            fetch("http://" + process.env.VUE_APP_URLPATH + "/api/keyword/all/ccdr")
+            fetch(`http://${process.env.VUE_APP_URLPATH}/api/keyword/all/ccdr`)
                 .then(function(response) {
                     return response.json();
                 })
@@ -300,7 +300,7 @@
                         .map(x => x.id)
                         .join(",");
 
-                    fetch("http://" + process.env.VUE_APP_URLPATH + "/api/ccdr/linked?id=" + val)
+                    fetch(`http://${process.env.VUE_APP_URLPATH}/api/ccdr/linked?id=${databaseIds}`)
                         .then(function(response) {
                             return response.json();
                         })
