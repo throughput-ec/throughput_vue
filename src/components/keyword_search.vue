@@ -264,11 +264,7 @@
         },
         created() {
             this.loading = true;
-<<<<<<< HEAD
-            fetch(`http://${process.env.VUE_APP_URLPATH}/api/keyword/all`)
-=======
             fetch("http://" + process.env.VUE_APP_URLPATH + "/api/keyword/all/ccdr")
->>>>>>> api_cleaning
                 .then(function(response) {
                     return response.json();
                 })
