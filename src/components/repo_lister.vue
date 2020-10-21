@@ -1,9 +1,8 @@
-<!-- this is the component that is supposed to list the databases: -->
-
+<!-- this is the component that lists the repositories: -->
 <template>
     <div>
         <div class='tab-header'>
-            <b-button v-if='apikw.length > 0' v-b-modal.dbcitation @click="getCite(apikw)" align="right">Get Citations</b-button>
+            <button v-if='apikw.length > 0' v-b-modal.dbcitation @click="getCite(apikw)" class='light-blue-button'>Get Citations</button>
 
             <b-form-checkbox id="checkboxrepo"
                              v-model="status"
@@ -12,7 +11,7 @@
                              unchecked-value="no"
                              v-b-tooltip.hover
                              title="Unselected resources will be placed at the end of the list.">
-                Show Unselected Resources
+                <label style='color: var(--t-color-light-blue);'>Show Unselected Resources</label>
             </b-form-checkbox>
         </div>
 
@@ -20,10 +19,12 @@
             <pre>{{ this.citations }}</pre>
         </b-modal>
 
-        <div v-for="(item, index) in apikw" v-bind:key="index">
-            <div v-if="(item.show === 'yes') || ((status === 'yes') && (item.show === 'no'))">
-                <b-container fluid>
+        <hr />
+
+        <div v-for="(item, index) in apikw" :key="index">
+                <b-container v-if="(item.show === 'yes') || ((status === 'yes') && (item.show === 'no'))">
                     <b-row align-v="center">
+
                         <b-col class="col-md-2">
                             <div v-if="item.show === 'yes'">
                                 <b-button-group>
@@ -36,15 +37,18 @@
                                 </b-button-group>
                             </div>
                         </b-col>
+
+
                         <b-col class="col-md-10">
                             <h4>
-                                <a v-bind:href="item.url" rel="noopener noreferrer" target="_blank">{{ item.name }}</a>&nbsp;
-                                <span v-for="index in item.dbs" v-bind:key="index">
-                                    <span style="margin-right: 2px;margin-bottom: 2px;font-size:14px;">
-                                        <b-badge variant="primary">{{ index }}</b-badge>
-                                    </span>
-                                </span>
+                                <a :href="item.url" rel="noopener noreferrer" target="_blank" style='color: var(--t-color-light-blue)'>{{ item.name }}</a>&nbsp;
                             </h4>
+                            <div class='keyword-container'>
+                                <div v-for="(keyword, index) in item.dbs" :key="index" class='keyword-badge transparent-blue-green-badge'>
+                                    <span>{{ keyword }}</span>
+                                    <span v-if='index < item.dbs.length - 1' style='color: var(--t-color-light);'>,</span>
+                                </div>
+                            </div>
                             <small>{{ item.description }}</small>
                             <br />
                         </b-col>
@@ -52,9 +56,22 @@
                     <hr />
                 </b-container>
             </div>
-        </div>
     </div>
 </template>
+
+<style>
+    .transparent-blue-green-badge {
+        font-size: 12px;
+        line-height: 16px;
+        border-radius: 4px;
+        letter-spacing: 1px;
+        margin: 2px 8px 2px 0;
+        padding: 2px 4px;
+        background: transparent;
+        color: var(--t-color-blue-green);
+        cursor: default !important;
+    }
+</style>
 
 <script>
     export default {

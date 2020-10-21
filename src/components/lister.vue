@@ -3,7 +3,7 @@
 <template>
     <div>
         <div class='tab-header'>
-            <b-button v-b-modal.dbcitation @click="getCite(apikw)" align="right">Get Citations</b-button>
+            <button v-b-modal.dbcitation @click="getCite(apikw)" class='light-blue-button'>Get Citations</button>
 
             <b-form-checkbox id="checkboxdb"
                     v-model="status"
@@ -12,7 +12,7 @@
                     unchecked-value="no"
                     v-b-tooltip.hover
                     title="Unselected resources will be placed at the end of the list.">
-                Show Unselected Resources
+                <label style='color: var(--t-color-light-blue);'>Show Unselected Resources</label>
             </b-form-checkbox>
         </div>
 
@@ -77,6 +77,12 @@
 </template>
 
 <style>
+    .excerpt-toggle-button {
+        background: transparent;
+        border: none;
+        color: var(--t-color-light-blue);
+    }
+
     .light-blue-badge {
         font-size: 12px;
         line-height: 16px;
@@ -89,11 +95,6 @@
         cursor: default !important;
     }
 
-    .excerpt-toggle-button {
-        background: transparent;
-        border: none;
-        color: var(--t-color-light-blue);
-    }
 </style>
 
 

@@ -112,7 +112,7 @@
                         select the top 40 databases based on your keyword search.
                     </p>
                     <div style='display: flex; justify-content: flex-end; padding-left: 30px;'>
-                        <b-button variant='warning' @click='reset'>Reset Search</b-button>
+                        <button @click='reset' class='light-blue-button'>Reset Search</button>
                         <button v-if="apikw.filter(x => x.show === 'yes').length > 40" @click='autoFilterDBs' class='blue-button' style='margin-left: 10px;'>Auto Filter</button>
                     </div>
                 </div>
@@ -292,7 +292,7 @@
             },
             getCodeRepos() {
                 // Get the code repositories associated with databases.
-                if (this.apikw.length < 40 && this.apikw.length > 0) {
+                if (this.apikw.length <= 40 && this.apikw.length > 0) {
                     this.loading = true;
                     let self = this;
                     const databaseIds = this.apikw
@@ -305,7 +305,6 @@
                             return response.json();
                         })
                         .then(data => {
-                            console.log("GET REPOS RESPONSE: " + JSON.stringify(data));
                             return data.data.ccdrs;
                         })
                         .then(data => {
@@ -350,7 +349,6 @@
                         });
                     }).then(data => {
                         // ADD TEXT EXCERPT FIELD
-
                         self.apikw = self.apikw.map(function(x) {
                             const words = x['description'].split(' ');
 
@@ -368,7 +366,6 @@
                         }
 
                         if(self.apikw.length === 0) {
-                            console.log("ERROR: NO RESULTS");
                             this.error = 'No Databases Found.  Please update your search and try again.'
                         }
                         return data;
@@ -379,6 +376,7 @@
             autoFilterDBs() {
                 const filtered = this.apikw.filter(x => x.show === 'yes');
                 this.apikw = (filtered.length >= 40) ? filtered.slice(0, 40) : filtered;
+                this.getCodeRepos();
             },
             toggleKeywordSearch() {
                 this.expandKeywordSearch = !this.expandKeywordSearch;
