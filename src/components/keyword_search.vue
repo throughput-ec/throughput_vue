@@ -264,7 +264,11 @@
         },
         created() {
             this.loading = true;
+<<<<<<< HEAD
             fetch(`http://${process.env.VUE_APP_URLPATH}/api/keyword/all`)
+=======
+            fetch("http://" + process.env.VUE_APP_URLPATH + "/api/keyword/all/ccdr")
+>>>>>>> api_cleaning
                 .then(function(response) {
                     return response.json();
                 })
@@ -300,9 +304,7 @@
                         .map(x => x.id)
                         .join(",");
 
-                    console.log("GET REPOS FOR DB's: " + JSON.stringify(databaseIds));
-
-                    fetch(`http://${process.env.VUE_APP_URLPATH}/api/linked?id=${databaseIds}`)
+                    fetch("http://" + process.env.VUE_APP_URLPATH + "/api/ccdr/linked?id=" + val)
                         .then(function(response) {
                             return response.json();
                         })
