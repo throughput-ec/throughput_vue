@@ -41,7 +41,15 @@
                         <h4>
                             <a :href="item.url" rel="noopener noreferrer" target="_blank" style='color: var(--t-color-light-blue)'>{{ item.name }}</a>
                         </h4>
-                        <small>{{ item.description }}</small>
+
+                        <div v-if='item.showExcerpt === true'>
+                            <small>{{ item.excerpt }}</small>
+                            <button @click='toggleExcerpt(index)' class='excerpt-toggle-button'>...</button>
+                        </div>
+                        <div v-else>
+                            <small>{{ item.description }}</small>
+                        </div>
+
                         <br />
                         <b-container>
                             <b-row align-v="center">
@@ -89,9 +97,15 @@
         letter-spacing: 1px;
         margin: 2px 2px;
         padding: 2px 4px;
-        /*background: var(--t-color-light-blue);*/
         background: transparent;
-        color: var(--t-color-light-blue)
+        color: var(--t-color-light-blue);
+        cursor: default !important;
+    }
+
+    .excerpt-toggle-button {
+        background: transparent;
+        border: none;
+        color: var(--t-color-light-blue);
     }
 </style>
 
@@ -156,7 +170,7 @@
                 let self = this;
 
                 self.ids = val
-                    .filter(x => x.show == "yes")
+                    .filter(x => x.show === "yes")
                     .map(x => x.id)
                     .join(",");
 
@@ -167,6 +181,10 @@
                     .then(data => {
                         self.citations = data.data.citation.join("");
                     });
+            },
+            toggleExcerpt(index) {
+                this.apikw[index]['showExcerpt'] = !this.apikw[index]['showExcerpt'];
+                this.$forceUpdate();
             }
         }
     };

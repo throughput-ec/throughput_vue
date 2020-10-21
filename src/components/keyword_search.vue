@@ -75,7 +75,7 @@
                                 <div v-if="keyresults.length > 0" class='keyword-container'>
                                     <div v-for="(item, index) in keyresults" v-bind:key="index" @click='toggleKw(item)' class='keyword-badge'>
                                         <span>{{ item }}</span>
-                                        <span class='inner-badge' style='color: red;'>X</span>
+                                        <span class='inner-badge' style='color: red; padding-left: 4px;'>X</span>
                                     </div>
                                 </div>
                                 <div v-else>
@@ -84,12 +84,20 @@
                                 </div>
                             </b-card>
 
-                            <button @click="onSubmit" class='blue-button terms-submit'>
+                            <button v-if='keyresults.length > 0' @click="onSubmit" class='blue-button terms-submit'>
                                 <span v-if='!loadingRepos'>Submit Keywords</span>
                                 <b-spinner v-if='loadingRepos'></b-spinner>
                             </button>
+
+                            <button v-else class='blue-button terms-submit terms-submit-disabled'>
+                                <span>Submit Keywords</span>
+                            </button>
                         </div>
                     </b-container>
+
+                    <div v-if="error !== ''">
+                        <h4 class='error-message'>{{ error }}</h4>
+                    </div>
                 </div>
 <!--            </b-card>-->
 
@@ -194,21 +202,25 @@
     .active {
         color: var(--t-color-light);
         background: var(--t-color-blue);
-        /*background: #001F72;*/
         animation-name: fade-in;
         animation-duration: 500ms;
     }
 
     .inactive {
-        /*color: #888888;*/
         color: var(--t-color-medium);
-        /*background: #dee2e6;*/
         background: var(--t-color-light-grey)
     }
 
     .compress {
         animation-name: compress;
         animation-duration: 800ms;
+    }
+
+    .error-message {
+        width: 100%;
+        text-align: center;
+        color: var(--t-color-red);
+        padding: 10px 40px;
     }
 </style>
 
@@ -238,7 +250,8 @@
                 searchKeywords: true,
                 keywordToggleClasses: 'toggle-left active',
                 textToggleClasses: 'toggle-right inactive',
-                searchBodyClasses: ''
+                searchBodyClasses: '',
+                error: ''
             };
         },
         components: {
@@ -251,7 +264,7 @@
         },
         created() {
             this.loading = true;
-            fetch("http://" + process.env.VUE_APP_URLPATH + "/api/keyword/all")
+            fetch(`http://${process.env.VUE_APP_URLPATH}/api/keyword/all`)
                 .then(function(response) {
                     return response.json();
                 })
@@ -282,15 +295,19 @@
                 if (this.apikw.length < 40 && this.apikw.length > 0) {
                     this.loading = true;
                     let self = this;
-                    let val = this.apikw
+                    const databaseIds = this.apikw
                         .filter(x => x.show === "yes")
                         .map(x => x.id)
                         .join(",");
-                    fetch("http://" + process.env.VUE_APP_URLPATH + "/api/linked?id=" + val)
+
+                    console.log("GET REPOS FOR DB's: " + JSON.stringify(databaseIds));
+
+                    fetch(`http://${process.env.VUE_APP_URLPATH}/api/linked?id=${databaseIds}`)
                         .then(function(response) {
                             return response.json();
                         })
                         .then(data => {
+                            console.log("GET REPOS RESPONSE: " + JSON.stringify(data));
                             return data.data.ccdrs;
                         })
                         .then(data => {
@@ -319,9 +336,10 @@
                 evt.preventDefault();
                 this.loadingRepos = true;
                 let self = this;
-                const urlbase = "http://" + process.env.VUE_APP_URLPATH + "/api/keyword/repos?";
+                this.error = '';
+                const url = `http://${process.env.VUE_APP_URLPATH}/api/keyword/repos?keywords=${self.keyresults.join(",")}`;
 
-                fetch(urlbase + "keywords=" + self.keyresults.join(","))
+                fetch(url)
                     .then(response => {
                         return response.json();
                     })
@@ -333,9 +351,27 @@
                             return x;
                         });
                     }).then(data => {
+                        // ADD TEXT EXCERPT FIELD
+
+                        self.apikw = self.apikw.map(function(x) {
+                            const words = x['description'].split(' ');
+
+                            if(words.length > 30) { // LIMIT TO 30 WORDS
+                                x['excerpt'] = words.slice(0, 31).join(' ');
+                                x['showExcerpt'] = true;
+                            }
+
+                            return x;
+                        });
+
                         this.loadingRepos = false;
-                        if(this.expandKeywordSearch === true) {
+                        if(this.expandKeywordSearch === true && self.apikw.length > 0) {
                             this.toggleKeywordSearch();
+                        }
+
+                        if(self.apikw.length === 0) {
+                            console.log("ERROR: NO RESULTS");
+                            this.error = 'No Databases Found.  Please update your search and try again.'
                         }
                         return data;
                 }).catch( () => {

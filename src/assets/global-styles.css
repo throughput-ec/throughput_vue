@@ -101,6 +101,11 @@ p {
     padding: 0;
 }
 
+.terms-submit-disabled {
+    background: var(--t-color-light-grey);
+    color: var(--t-color-medium);
+}
+
 .drop-button-span {
     background: var(--t-color-red);
     color: white;
