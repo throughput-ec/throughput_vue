@@ -103,7 +103,7 @@
 
             <!-- This is the part where the dbs show up: -->
             <div v-if="apikw.length > 0" style='background: var(--t-color-light-grey); margin-top: 10px;'>
-                <div style="padding: 15px;">
+                <div style="padding: 15px 40px;">
                     <p style='font-size: 18px;'>You have selected {{ apikw.filter(x => x.show === 'yes').length }} databases.
                     <span v-if="apikw.filter(x => x.show === 'yes').length > 40"> The number of databases selected needs to be 40 or less in order to proceed to search data repositories.</span>
                         <span> You can drop individual databases by clicking the <span class='drop-button-span'>Drop</span> button next to each database below.</span>
@@ -127,7 +127,7 @@
                     </b-tab>
 
                     <b-tab title="Code Repositories" @click="getCodeRepos">
-                        <div v-if="apikw.filter(x => x.show === 'yes').length > 40">
+                        <div v-if="apikw.filter(x => x.show === 'yes').length > 40" style='padding: 20px 40px; width: 100%; text-align: center;'>
                             You cannot select more than 40 Databases. Please remove databases
                             from your selection.
                         </div>

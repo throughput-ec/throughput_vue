@@ -2,30 +2,22 @@
 
 <template>
     <div>
-        <b-container fluid>
-            <b-row>
-                <b-col cols="3">
-                    <b-button v-b-modal.repocitation @click="getCite(apikw)" align="right">
-                        Get Citations
-                    </b-button>
-                </b-col>
-                <b-col cols="5">
-                    <b-form-checkbox id="checkboxrepo"
-                            v-model="status"
-                            name="checkboxrepo"
-                            value="yes"
-                            unchecked-value="no"
-                            v-b-tooltip.hover
-                            title="Unselected resources will be placed at the end of the list.">
-                        Show Unselected Resources
-                    </b-form-checkbox>
-                </b-col>
-            </b-row>
-        </b-container>
+        <div class='tab-header'>
+            <b-button v-if='apikw.length > 0' v-b-modal.dbcitation @click="getCite(apikw)" align="right">Get Citations</b-button>
+
+            <b-form-checkbox id="checkboxrepo"
+                             v-model="status"
+                             name="checkboxrepo"
+                             value="yes"
+                             unchecked-value="no"
+                             v-b-tooltip.hover
+                             title="Unselected resources will be placed at the end of the list.">
+                Show Unselected Resources
+            </b-form-checkbox>
+        </div>
+
         <b-modal id="repocitation" title="Citations">
-      <pre>
-    {{ this.citations }}
-    </pre>
+            <pre>{{ this.citations }}</pre>
         </b-modal>
 
         <div v-for="(item, index) in apikw" v-bind:key="index">

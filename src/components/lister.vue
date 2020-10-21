@@ -77,19 +77,6 @@
 </template>
 
 <style>
-    .tab-header {
-        display: flex;
-        flex-flow: row;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        padding: 15px 20px 5px 20px;
-    }
-
-    hr {
-        background: var(--t-color-medium);
-    }
-
     .light-blue-badge {
         font-size: 12px;
         line-height: 16px;
