@@ -3,7 +3,7 @@
 <template>
     <div>
         <div class='tab-header'>
-            <button v-b-modal.dbcitation @click="getCite(apikw)" class='light-blue-button'>Get Citations</button>
+            <button v-b-modal.dbcitation @click="getCite(apikw)" class='light-blue-outline-button'>Get Citations</button>
 
             <b-form-checkbox id="checkboxdb"
                     v-model="status"
@@ -22,7 +22,7 @@
 
         <hr />
 
-        <div v-for="(item, index) in apikw" v-bind:key="index">
+        <div v-for="(item, index) in toDisplay" :key="index">
             <b-container v-if="(item.show === 'yes') || ((status === 'yes') && (item.show === 'no'))">
                 <b-row align-v="center">
                     <b-col class="col-md-2">
@@ -53,10 +53,10 @@
                         <br />
                         <b-container>
                             <b-row align-v="center">
-                                <b-col class="text-center" cols="3">
+                                <b-col v-if='item.linked > 0' class="text-center" cols="3">
                                     <strong style='color: var(--t-color-blue-green);'>Linked Code Repositories: {{ item.linked }}</strong>
                                 </b-col>
-                                <b-col>
+                                <b-col v-if='item["keywords"]'>
                                     <strong>Keywords</strong>:<br />
 
                                     <div class='keyword-container'>
@@ -71,8 +71,9 @@
                 </b-row>
                 <hr />
             </b-container>
-
         </div>
+
+        <t-pagination v-if='showPagination === true' :data='apikw' @updateToDisplay="updateToDisplay"></t-pagination>
     </div>
 </template>
 
@@ -99,13 +100,15 @@
 
 
 <script>
+    import pagination from "./elements/pagination";
 
     export default {
         name: "listervue",
         props: {
-            apikw: {
-                type: Array
-            }
+            apikw: { type: Array }
+        },
+        components: {
+            "t-pagination": pagination
         },
         data() {
             return {
@@ -123,19 +126,23 @@
                 viewer: false,
                 lister: true,
                 clamped: false,
-                citations: null
+                citations: null,
+                toDisplay: [],
+                showPagination: false,
             };
         },
-        mounted() {},
+        watch: {
+            apikw: {
+                handler(value) {
+                    if(value.length > 10) {
+                        this.showPagination = true;
+                    } else {
+                        this.toDisplay = value;
+                    }
+                }
+            }
+        },
         methods: {
-            getkws(id) {
-                let getForRepo = function(id) {
-                    fetch(`http://${ process.env.VUE_APP_URLPATH }/api/keyword/repo/${id}`)
-                        .then(response => response.json());
-                };
-
-                return getForRepo(id);
-            },
             dropDB(val) {
                 const dbs = this.apikw.map(x => x.name);
                 const position = dbs.indexOf(val.name);
@@ -173,6 +180,9 @@
             toggleExcerpt(index) {
                 this.apikw[index]['showExcerpt'] = !this.apikw[index]['showExcerpt'];
                 this.$forceUpdate();
+            },
+            updateToDisplay(data) {
+                this.toDisplay = data;
             }
         }
     };

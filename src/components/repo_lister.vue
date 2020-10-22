@@ -1,8 +1,8 @@
 <!-- this is the component that lists the repositories: -->
 <template>
     <div>
-        <div class='tab-header'>
-            <button v-if='apikw.length > 0' v-b-modal.dbcitation @click="getCite(apikw)" class='light-blue-button'>Get Citations</button>
+        <div v-if='apikw.length > 0' class='tab-header'>
+            <button v-if='apikw.length > 0' v-b-modal.dbcitation @click="getCite(apikw)" class='light-blue-outline-button'>Get Citations</button>
 
             <b-form-checkbox id="checkboxrepo"
                              v-model="status"
@@ -21,93 +21,78 @@
 
         <hr />
 
-        <div v-for="(item, index) in apikw" :key="index">
-                <b-container v-if="(item.show === 'yes') || ((status === 'yes') && (item.show === 'no'))">
-                    <b-row align-v="center">
+        <div v-for="(item, index) in toDisplay" :key="index">
+            <b-container v-if="(item.show === 'yes') || ((status === 'yes') && (item.show === 'no'))">
+                <b-row align-v="center">
 
-                        <b-col class="col-md-2">
-                            <div v-if="item.show === 'yes'">
-                                <b-button-group>
-                                    <b-button @click="dropDB(item)" variant="danger">Drop</b-button>
-                                </b-button-group>
-                            </div>
-                            <div v-else>
-                                <b-button-group>
-                                    <b-button @click="addDB(item)" variant="success">Add</b-button>
-                                </b-button-group>
-                            </div>
-                        </b-col>
+                    <b-col class="col-md-2">
+                        <div v-if="item.show === 'yes'">
+                            <b-button-group>
+                                <b-button @click="dropDB(item)" variant="danger">Drop</b-button>
+                            </b-button-group>
+                        </div>
+                        <div v-else>
+                            <b-button-group>
+                                <b-button @click="addDB(item)" variant="success">Add</b-button>
+                            </b-button-group>
+                        </div>
+                    </b-col>
 
 
-                        <b-col class="col-md-10">
-                            <h4>
-                                <a :href="item.url" rel="noopener noreferrer" target="_blank" style='color: var(--t-color-light-blue)'>{{ item.name }}</a>&nbsp;
-                            </h4>
-                            <div class='keyword-container'>
-                                <div v-for="(keyword, index) in item.dbs" :key="index" class='keyword-badge transparent-blue-green-badge'>
-                                    <span>{{ keyword }}</span>
-                                    <span v-if='index < item.dbs.length - 1' style='color: var(--t-color-light);'>,</span>
-                                </div>
+                    <b-col class="col-md-10">
+                        <h4>
+                            <a :href="item.url" rel="noopener noreferrer" target="_blank" style='color: var(--t-color-light-blue)'>{{ item.name }}</a>&nbsp;
+                        </h4>
+                        <div class='keyword-container'>
+                            <div v-for="(keyword, index) in item.dbs" :key="index" class='keyword-badge transparent-blue-green-badge'>
+                                <span>{{ keyword }}</span>
+                                <span v-if='index < item.dbs.length - 1' style='color: var(--t-color-light);'>,</span>
                             </div>
-                            <small>{{ item.description }}</small>
-                            <br />
-                        </b-col>
-                    </b-row>
-                    <hr />
-                </b-container>
-            </div>
+                        </div>
+                        <small>{{ item.description }}</small>
+                        <br />
+                    </b-col>
+                </b-row>
+                <hr />
+            </b-container>
+        </div>
+
+        <t-pagination v-if='showPagination === true' :data='apikw' @updateToDisplay="updateToDisplay"></t-pagination>
     </div>
 </template>
 
-<style>
-    .transparent-blue-green-badge {
-        font-size: 12px;
-        line-height: 16px;
-        border-radius: 4px;
-        letter-spacing: 1px;
-        margin: 2px 8px 2px 0;
-        padding: 2px 4px;
-        background: transparent;
-        color: var(--t-color-blue-green);
-        cursor: default !important;
-    }
-</style>
 
 <script>
+    import pagination from "./elements/pagination";
+
     export default {
         name: "listervue",
         props: {
-            apikw: {
-                type: Array
-            }
+            apikw: { type: Array }
+        },
+        components: {
+           "t-pagination": pagination
         },
         data() {
             return {
-                keyresults: [],
-                somekw: [
-                    {
-                        keyword: "",
-                        items: ""
-                    }
-                ],
-                kwText: "",
-                nodes: [],
-                links: [],
                 status: "no",
-                viewer: false,
-                lister: true,
-                clamped: false,
-                citations: null
+                citations: null,
+                toDisplay: [],
+                showPagination: false,
             };
         },
-        components: {},
-        computed: {},
-        mounted() {},
-        watch: {},
+        watch: {
+            apikw: {
+                handler(value) {
+                    if(value.length > 10) {
+                        this.showPagination = true;
+                    } else {
+                        this.toDisplay = value;
+                    }
+                }
+            }
+        },
         methods: {
-            toggle() {
-                this.clamped = !this.clamped;
-            },
             dropDB(val) {
                 const dbs = this.apikw.map(x => x.name);
                 const position = dbs.indexOf(val.name);
@@ -130,7 +115,7 @@
                 let self = this;
 
                 self.ids = val
-                    .filter(x => x.show == "yes")
+                    .filter(x => x.show === "yes")
                     .map(x => x.id)
                     .join(",");
 
@@ -141,6 +126,9 @@
                     .then(data => {
                         self.citations = data.data.citation.join("");
                     });
+            },
+            updateToDisplay(data) {
+                this.toDisplay = data;
             }
         }
     };

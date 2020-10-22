@@ -65,7 +65,6 @@
         },
         props: {
             databases: Array,
-            repos: Array,
         },
         data() {
             return {
@@ -109,7 +108,6 @@
 
             // KEYWORD NODES
             const keys = Object.keys(keywords);
-            console.log("# OF Keywords: " + keys.length);
 
             if(keys.length === 0 || keys[0] === '') {
                 return;

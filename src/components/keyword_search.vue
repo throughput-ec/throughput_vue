@@ -6,7 +6,6 @@
         </div>
 
         <div>
-<!--            <b-card title="Keyword Search">-->
             <div class='title-with-options'>
                 <div class='toggle-container'>
                     <h3>Search By:</h3>
@@ -22,86 +21,104 @@
                 </div>
 
                 <div>
-                    <div v-if='!expandKeywordSearch' class='h1' style='color: var(--t-color-blue)'>
+                    <div v-if='!expandKeywordSearch' class='h3' style='color: var(--t-color-blue); margin: 0;'>
                         <b-icon-plus-square @click='toggleKeywordSearch'></b-icon-plus-square>
                     </div>
-                    <div v-if='expandKeywordSearch' class='h1' style='color: var(--t-color-blue)'>
+                    <div v-if='expandKeywordSearch' class='h3' style='color: var(--t-color-blue); margin: 0;'>
                         <b-icon-dash-square @click='toggleKeywordSearch'></b-icon-dash-square>
                     </div>
                 </div>
             </div>
 
+<!--            TEXT SEARCH-->
+            <div v-if='expandKeywordSearch && searchKeywords === false'>
+                <text-input @change='updateQuery'></text-input>
+                <b-container class='flex' style='justify-content: flex-end; margin-top: 15px;'>
+                    <button v-if='textQuery.length > 1' class='blue-button' @click='textSearch'>
+                        <span v-if='!loadingRepos'>Search</span>
+                        <b-spinner v-if='loadingRepos'></b-spinner>
+                    </button>
 
-                <!-- Available terms -->
-                <div v-if='expandKeywordSearch' :class='searchBodyClasses'>
-                    <kwInput @change="newText" style='margin-bottom:5px;'></kwInput>
+                    <button v-else class='blue-button terms-submit-disabled'>
+                        <span>Search</span>
+                    </button>
+                </b-container>
 
-                    <b-container>
-                        <b-card title="Available terms:">
-                            <div v-if="somekw.length > 1">
-                                <small>
-                                    The top {{ Math.min(30, somekw.length) }} of
-                                    {{ somekw.length }} available keywords are shown. Click on a blue
-                                    word to add it to your set.<br />The number beside the keyword
-                                    indicates how many code repositories are associated with that
-                                    keyword.
-                                </small>
+                <div v-if="error !== ''">
+                    <h4 class='error-message'>{{ error }}</h4>
+                </div>
+            </div>
+
+            <!-- Available terms -->
+            <div v-if='expandKeywordSearch && searchKeywords === true'>
+                <kwInput @change="newText" style='margin-bottom:5px;'></kwInput>
+
+                <b-container>
+                    <b-card title="Available terms:">
+                        <div v-if="somekw.length > 1">
+                            <small>
+                                The top {{ Math.min(30, somekw.length) }} of
+                                {{ somekw.length }} available keywords are shown. Click on a blue
+                                word to add it to your set.<br />The number beside the keyword
+                                indicates how many code repositories are associated with that
+                                keyword.
+                            </small>
+                        </div>
+
+                        <div v-if="somekw.length > 1" class='keyword-container'>
+                            <div v-for="index in Math.min(30, somekw.length)" :key="index" class='keyword-badge'>
+                                <span v-on:click="toggleKw(somekw[index - 1].keyword)" >{{ somekw[index - 1].keyword }}</span>
+                                <span class='inner-badge'>{{ somekw[index - 1].links }}</span>
                             </div>
+                        </div>
 
-                            <div v-if="somekw.length > 1" class='keyword-container'>
-                                <div v-for="index in Math.min(30, somekw.length)" v-bind:key="index" class='keyword-badge'>
-                                    <span v-on:click="toggleKw(somekw[index - 1].keyword)" >{{ somekw[index - 1].keyword }}</span>
-                                    <span class='inner-badge'>{{ somekw[index - 1].links }}</span>
+                        <div v-else>
+                            <small>Please begin entering keywords.</small>
+                        </div>
+                    </b-card>
+
+                    <div v-if="(somekw.length === 0) && (kwText !== '')">
+                        <small>No keywords available.</small>
+                    </div>
+                </b-container>
+
+                <b-container>
+                    <linkedkws v-bind:kwin="keyresults"></linkedkws>
+                </b-container>
+                <!-- Selected terms -->
+                <b-container>
+                    <div class='terms-container'>
+                        <b-card title="Selected terms:" class='terms-card'>
+                            <div v-if="keyresults.length > 0" class='keyword-container'>
+                                <div v-for="(item, index) in keyresults" :key="index" @click='toggleKw(item)' class='keyword-badge'>
+                                    <span>{{ item }}</span>
+                                    <span class='inner-badge' style='color: red; padding-left: 4px;'>X</span>
                                 </div>
                             </div>
-
                             <div v-else>
-                                <small>Please begin entering keywords.</small>
+                                <small>Click on a keyword above to add it to the list of selected
+                                 keywords. Click a keyword again to remove it.</small>
                             </div>
                         </b-card>
 
-                        <div v-if="(somekw.length === 0) & (kwText !== '')">
-                            <small>No keywords available.</small>
-                        </div>
-                    </b-container>
+                        <button v-if='keyresults.length > 0' @click="onSubmit" class='blue-button terms-submit'>
+                            <span v-if='!loadingRepos'>Submit Keywords</span>
+                            <b-spinner v-if='loadingRepos'></b-spinner>
+                        </button>
 
-                    <b-container>
-                        <linkedkws v-bind:kwin="keyresults"></linkedkws>
-                    </b-container>
-                    <!-- Selected terms -->
-                    <b-container>
-                        <div class='terms-container'>
-                            <b-card title="Selected terms:" class='terms-card'>
-                                <div v-if="keyresults.length > 0" class='keyword-container'>
-                                    <div v-for="(item, index) in keyresults" v-bind:key="index" @click='toggleKw(item)' class='keyword-badge'>
-                                        <span>{{ item }}</span>
-                                        <span class='inner-badge' style='color: red; padding-left: 4px;'>X</span>
-                                    </div>
-                                </div>
-                                <div v-else>
-                                    <small>Click on a keyword above to add it to the list of selected
-                                     keywords. Click a keyword again to remove it.</small>
-                                </div>
-                            </b-card>
-
-                            <button v-if='keyresults.length > 0' @click="onSubmit" class='blue-button terms-submit'>
-                                <span v-if='!loadingRepos'>Submit Keywords</span>
-                                <b-spinner v-if='loadingRepos'></b-spinner>
-                            </button>
-
-                            <button v-else class='blue-button terms-submit terms-submit-disabled'>
-                                <span>Submit Keywords</span>
-                            </button>
-                        </div>
-                    </b-container>
-
-                    <div v-if="error !== ''">
-                        <h4 class='error-message'>{{ error }}</h4>
+                        <button v-else class='blue-button terms-submit terms-submit-disabled'>
+                            <span>Submit Keywords</span>
+                        </button>
                     </div>
-                </div>
-<!--            </b-card>-->
+                </b-container>
 
-            <!-- This is the part where the dbs show up: -->
+                <div v-if="error !== ''">
+                    <h4 class='error-message'>{{ error }}</h4>
+                </div>
+            </div>
+
+
+            <!-- INFORMATION SECTION FOR TABS: -->
             <div v-if="apikw.length > 0" style='background: var(--t-color-light-grey); margin-top: 10px;'>
                 <div style="padding: 15px 40px;">
                     <p style='font-size: 18px;'>You have selected {{ apikw.filter(x => x.show === 'yes').length }} databases.
@@ -136,9 +153,8 @@
                         </div>
                     </b-tab>
 
-<!--                    <b-tab title='Network Graph' v-if='apikw.length > 0 && allrepos.length > 0'> TODO: ADD allrepos back in when repo API call works -->
-                    <b-tab title='Network Graph' v-if="apikw.filter(x => x.show === 'yes').length > 0 && apikw.filter(x => x.show === 'yes').length <= 40" @click='generateNetworkGraph'>
-                        <visualize_kw v-if='showGraph' v-bind:databases='apikw' v-bind:repos:='allrepos'></visualize_kw>
+                    <b-tab title='Network Graph' v-if="apikw.filter(x => x.show === 'yes').length > 0 && apikw.filter(x => x.show === 'yes').length <= 40 && searchKeywords === true" @click='generateNetworkGraph'>
+                        <visualize_kw v-if='showGraph' :databases='apikw'></visualize_kw>
                     </b-tab>
                 </b-tabs>
             </div>
@@ -231,6 +247,7 @@
     import linkedkws from "./keywords/linkedkws.vue";
     import visualize_kw from './visualize_kw';
     import header from "../components/header.vue";
+    import textInput from "./elements/text-input";
 
     export default {
         name: "keywordSearch",
@@ -242,6 +259,7 @@
                 allrepos: [],
                 somekw: [ { keyword: "", items: "" } ],
                 kwText: "",
+                textQuery: "",
                 loading: false,
                 loadingRepos: false,
                 networkGraphData: [],
@@ -250,7 +268,6 @@
                 searchKeywords: true,
                 keywordToggleClasses: 'toggle-left active',
                 textToggleClasses: 'toggle-right inactive',
-                searchBodyClasses: '',
                 error: ''
             };
         },
@@ -258,12 +275,14 @@
             lister: lister,
             repo_lister: repo_lister,
             kwInput: kwInput,
+            textInput: textInput,
             linkedkws: linkedkws,
             visualize_kw: visualize_kw,
             "app-header": header
         },
         created() {
             this.loading = true;
+            this.reset();
             fetch(`http://${process.env.VUE_APP_URLPATH}/api/keyword/all/ccdr`)
                 .then(function(response) {
                     return response.json();
@@ -284,11 +303,62 @@
                         return kw.keyword.includes(val.toLowerCase());
                     });
                 }
-            }
+            },
         },
         methods: {
             newText: function(val) {
                 this.kwText = val;
+            },
+            updateQuery: function(input) {
+                this.textQuery = input;
+            },
+            textSearch() {
+                this.loadingRepos = true;
+                this.reset();
+                let self = this;
+                this.error = '';
+                const url = `http://${process.env.VUE_APP_URLPATH}/api/ccdr?search=${this.textQuery}`;
+
+                fetch(url)
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(data => {
+                        // ADD LINK COUNT
+                        self.apikw = data.data.ccdrs;
+                        self.apikw = self.apikw.map(function(x) {
+                            x["show"] = "yes";
+                            if(!x["linked"] && x["repos"]) {
+                                x["linked"] = x["repos"]
+                            }
+                            return x;
+                        });
+                    }).then(data => {
+                    // ADD TEXT EXCERPT FIELD
+                    self.apikw = self.apikw.map(function(x) {
+                        const words = x['description'].split(' ');
+
+                        if(words.length > 30) { // LIMIT TO 30 WORDS
+                            x['excerpt'] = words.slice(0, 30).join(' ');
+                            x['showExcerpt'] = true;
+                        }
+
+                        return x;
+                    });
+
+                    this.loadingRepos = false;
+                    if(this.expandKeywordSearch === true && self.apikw.length > 0) {
+                        this.toggleKeywordSearch();
+                    }
+
+                    if(self.apikw.length === 0) {
+                        this.error = 'No Databases Found.  Please update your search and try again.'
+                    }
+                    return data;
+                }).catch( () => {
+                    this.loadingRepos = false;
+                });
+
             },
             getCodeRepos() {
                 // Get the code repositories associated with databases.
@@ -312,8 +382,10 @@
                                 x["show"] = "yes";
                                 return x;
                             });
-                        }).then(data => {
-                        this.loading = false;
+                        })
+                        .then(data => {
+                            this.loading = false;
+                            this.$forceUpdate();
                             return data;
                     }).catch( () => {
                         this.loading = false;
@@ -353,7 +425,7 @@
                             const words = x['description'].split(' ');
 
                             if(words.length > 30) { // LIMIT TO 30 WORDS
-                                x['excerpt'] = words.slice(0, 31).join(' ');
+                                x['excerpt'] = words.slice(0, 30).join(' ');
                                 x['showExcerpt'] = true;
                             }
 
@@ -380,12 +452,6 @@
             },
             toggleKeywordSearch() {
                 this.expandKeywordSearch = !this.expandKeywordSearch;
-
-                if(this.expandKeywordSearch === false) {
-                    this.searchBodyClasses = 'compress';
-                } else {
-                    this.searchBodyClasses = '';
-                }
             },
             generateNetworkGraph() {
                 this.showGraph = true;
@@ -409,6 +475,7 @@
                     this.textToggleClasses = 'toggle-right inactive';
                 }
                 this.searchKeywords = !this.searchKeywords;
+                this.reset();
             }
 
         }

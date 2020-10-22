@@ -1,6 +1,7 @@
 /*@import url('./css/containers.css');*/
 @import url(./css/header.css);
 @import url(./css/tabs.css);
+@import url(./css/flex.css);
 
 :root {
     --t-color-blue: #14244e;
@@ -60,7 +61,7 @@ hr {
     width: 80%;
 }
 
-.blue-button, .light-blue-button {
+.blue-button, .light-blue-button, .light-blue-outline-button, .disabled-outline-button {
     margin: 0;
     padding: 10px 20px;
     background: var(--t-color-blue);
@@ -71,6 +72,18 @@ hr {
 
 .light-blue-button {
     background: var(--t-color-light-blue);
+}
+
+.light-blue-outline-button {
+    background: transparent;
+    color: var(--t-color-light-blue);
+    border: 1px solid var(--t-color-light-blue);
+}
+
+.disabled-outline-button {
+    background: transparent;
+    color: var(--t-color-medium);
+    border: 1px solid var(--t-color-medium);
 }
 
 .terms-submit {
@@ -135,6 +148,18 @@ hr {
     cursor: pointer;
 }
 
+.transparent-blue-green-badge {
+    font-size: 12px;
+    line-height: 16px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    margin: 2px 8px 2px 0;
+    padding: 2px 4px;
+    background: transparent;
+    color: var(--t-color-blue-green);
+    cursor: default !important;
+}
+
 .inner-badge {
     color: var(--t-color-dark);
     font-size: 10px;
@@ -161,33 +186,6 @@ hr {
     animation-name: fade-in;
     animation-duration: 1000ms;
 }
-
-
-@keyframes fade-out {
-    from {
-        opacity: 1;
-    }
-
-    to {
-        opacity: 0;
-    }
-}
-
-.fade-out {
-    animation-name: fade-out;
-    animation-duration: 500ms;
-}
-
-@keyframes compress {
-    from {
-        height: auto;
-    }
-
-    to {
-        height: 0;
-    }
-}
-
 
 
 
