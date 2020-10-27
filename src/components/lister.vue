@@ -23,7 +23,7 @@
         <hr />
 
         <div v-for="(item, index) in toDisplay" :key="index">
-            <b-container v-if="(item.show === 'yes') || ((status === 'yes') && (item.show === 'no'))">
+            <b-container v-if="(item.show === 'yes' || status === 'yes')">
                 <b-row align-v="center">
                     <b-col class="col-md-2">
                         <div v-if="item.show === 'yes'">
@@ -56,7 +56,7 @@
                                 <b-col v-if='item.linked > 0' class="text-center" cols="3">
                                     <strong style='color: var(--t-color-blue-green);'>Linked Code Repositories: {{ item.linked }}</strong>
                                 </b-col>
-                                <b-col v-if='item["keywords"]'>
+                                <b-col v-if='item["keyword"]'>
                                     <strong>Keywords</strong>:<br />
 
                                     <div class='keyword-container'>
@@ -73,7 +73,7 @@
             </b-container>
         </div>
 
-        <t-pagination v-if='showPagination === true' :data='apikw' @updateToDisplay="updateToDisplay"></t-pagination>
+        <t-pagination v-if='showPagination === true' :data='apikw' :showAll='(status === "yes")' @updateToDisplay="updateToDisplay"></t-pagination>
     </div>
 </template>
 

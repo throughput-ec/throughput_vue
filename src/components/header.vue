@@ -35,7 +35,6 @@
             this.orcid = `https://orcid.org/oauth/authorize?client_id=${process.env.VUE_APP_ORCID}&response_type=code&scope=/authenticate&redirect_uri=http://localhost:8080/search`;
 
             this.home = process.env.VUE_APP_BASEURL;
-            console.log("BASE URL: " + process.env.VUE_APP_BASEURL);
 
             // ORCID CODE & COOKIES
             const code = this.$route.query.code;
@@ -43,7 +42,6 @@
 
             if (code != null) {
                 // EXCHANGE CODE FOR AUTH TOKEN
-                console.log("GET ORCID TOKEN USING CODE: " + code);
                 const body = {
                     client_id: process.env.VUE_APP_ORCID,
                     client_secret: process.env.VUE_APP_ORCIDSECRET,

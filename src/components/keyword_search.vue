@@ -149,12 +149,12 @@
                             from your selection.
                         </div>
                         <div v-else>
-                            <repo_lister :apikw="allrepos"></repo_lister>
+                            <repo_lister :repos="allrepos"></repo_lister>
                         </div>
                     </b-tab>
 
                     <b-tab title='Network Graph' v-if="apikw.filter(x => x.show === 'yes').length > 0 && apikw.filter(x => x.show === 'yes').length <= 40 && searchKeywords === true" @click='generateNetworkGraph'>
-                        <visualize_kw v-if='showGraph' :databases='apikw'></visualize_kw>
+                        <visualize_kw v-if='showGraph' :databases='apikw.filter(x => x.show === "yes")' :key='hash'></visualize_kw>
                     </b-tab>
                 </b-tabs>
             </div>
@@ -268,7 +268,8 @@
                 searchKeywords: true,
                 keywordToggleClasses: 'toggle-left active',
                 textToggleClasses: 'toggle-right inactive',
-                error: ''
+                error: '',
+                hash: ''
             };
         },
         components: {
@@ -362,7 +363,9 @@
             },
             getCodeRepos() {
                 // Get the code repositories associated with databases.
-                if (this.apikw.length <= 40 && this.apikw.length > 0) {
+                const toShow = this.apikw.filter(x => x.show === 'yes').length;
+
+                if (this.apikw.length > 0 && toShow <= 40 ) {
                     this.loading = true;
                     let self = this;
                     const databaseIds = this.apikw
@@ -446,14 +449,31 @@
                 });
             },
             autoFilterDBs() {
-                const filtered = this.apikw.filter(x => x.show === 'yes');
-                this.apikw = (filtered.length >= 40) ? filtered.slice(0, 40) : filtered;
-                this.getCodeRepos();
+                let staging = this.apikw;
+                this.apikw = [];
+
+                const filteredCount = staging.filter(x => x.show === 'yes');
+
+                if (filteredCount.length >= 40) {
+                    let showCount = 0;
+                    for (let index = 0; index < staging.length; index++) {
+                        if(staging[index].show === 'yes' && showCount < 40) {
+                            showCount++;
+                        } else {
+                            staging[index]["show"] = "no";
+                        }
+
+                        this.apikw = [...this.apikw, staging[index]];
+                    }
+                }
+
+                this.$forceUpdate();
             },
             toggleKeywordSearch() {
                 this.expandKeywordSearch = !this.expandKeywordSearch;
             },
             generateNetworkGraph() {
+                this.hash = Math.random().toString(36).slice(2);
                 this.showGraph = true;
             },
             reset() {

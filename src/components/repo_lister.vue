@@ -1,8 +1,8 @@
 <!-- this is the component that lists the repositories: -->
 <template>
     <div>
-        <div v-if='apikw.length > 0' class='tab-header'>
-            <button v-if='apikw.length > 0' v-b-modal.dbcitation @click="getCite(apikw)" class='light-blue-outline-button'>Get Citations</button>
+        <div v-if='repos.length > 0' class='tab-header'>
+            <button v-if='repos.length > 0' v-b-modal.dbcitation @click="getCite(repos)" class='light-blue-outline-button'>Get Citations</button>
 
             <b-form-checkbox id="checkboxrepo"
                              v-model="status"
@@ -22,7 +22,7 @@
         <hr />
 
         <div v-for="(item, index) in toDisplay" :key="index">
-            <b-container v-if="(item.show === 'yes') || ((status === 'yes') && (item.show === 'no'))">
+            <b-container v-if="(item.show === 'yes' || status === 'yes')">
                 <b-row align-v="center">
 
                     <b-col class="col-md-2">
@@ -57,7 +57,7 @@
             </b-container>
         </div>
 
-        <t-pagination v-if='showPagination === true' :data='apikw' @updateToDisplay="updateToDisplay"></t-pagination>
+        <t-pagination v-if='showPagination === true' :data='repos' :showAll='(status === "yes")' @updateToDisplay="updateToDisplay"></t-pagination>
     </div>
 </template>
 
@@ -68,7 +68,7 @@
     export default {
         name: "listervue",
         props: {
-            apikw: { type: Array }
+            repos: { type: Array }
         },
         components: {
            "t-pagination": pagination
@@ -82,7 +82,7 @@
             };
         },
         watch: {
-            apikw: {
+            repos: {
                 handler(value) {
                     if(value.length > 10) {
                         this.showPagination = true;
@@ -94,22 +94,22 @@
         },
         methods: {
             dropDB(val) {
-                const dbs = this.apikw.map(x => x.name);
+                const dbs = this.repos.map(x => x.name);
                 const position = dbs.indexOf(val.name);
-                this.apikw[position]["show"] = "no";
-                this.apikw.sort(function(a, b) {
+                this.repos[position]["show"] = "no";
+                this.repos.sort(function(a, b) {
                     return -a["show"].localeCompare(b["show"]);
                 });
-                this.$emit("apikw", this.apikw);
+                this.$emit("repos", this.repos);
             },
             addDB(val) {
-                const dbs = this.apikw.map(x => x.name);
+                const dbs = this.repos.map(x => x.name);
                 const position = dbs.indexOf(val.name);
-                this.apikw[position]["show"] = "yes";
-                this.apikw.sort(function(a, b) {
+                this.repos[position]["show"] = "yes";
+                this.repos.sort(function(a, b) {
                     return -a["show"].localeCompare(b["show"]);
                 });
-                this.$emit("apikw", this.apikw);
+                this.$emit("repos", this.repos);
             },
             getCite(val) {
                 let self = this;
