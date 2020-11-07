@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import "../../assets/containers.css";
 import counters from "../../components/elements/countedElems.vue";
 export default {
   name: "objectList",

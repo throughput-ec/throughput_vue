@@ -35,6 +35,10 @@ to install all required packages.  Note that the user also requires a file calle
 echo "VUE_APP_URLPATH=http://throughputdb.com/api > .env"
 ```
 
+```bash
+echo "VUE_APP_ORCID={{ADD ORCID APP ID HERE}} > .env.local"
+```
+
 ### Compiles and hot-reloads for development
 
 During local development of the website it is useful to monitor the effect of changes locally.

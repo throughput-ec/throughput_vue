@@ -1,0 +1,50 @@
+.tabs {
+    margin: 20px;
+}
+
+.nav-link {
+    color: var(--t-color-blue) !important;
+    background: var(--t-color-light-grey) !important;
+    border-color: var(--t-color-light-grey) var(--t-color-light-grey) transparent !important;
+    margin-right: 2px;
+}
+
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link  {
+    background: var(--t-color-dark-tint) !important;
+    border-color: var(--t-color-dark) var(--t-color-dark) var(--t-color-dark-tint) !important;
+    color: var(--t-color-blue)
+}
+
+.active {
+    color: var(--t-color-light) !important;
+}
+
+.nav-link.active {
+    color: var(--t-color-light-blue) !important;
+}
+
+.active-tab {
+    background: var(--t-color-dark-tint) !important;
+    border-top-right-radius: 4px;
+}
+
+.tab-header {
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 15px 20px 5px 20px;
+}
+
+.light-blue-badge {
+    font-size: 12px;
+    line-height: 16px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    margin: 2px 2px;
+    padding: 2px 4px;
+    background: transparent;
+    color: var(--t-color-light-blue);
+    cursor: default !important;
+}
