@@ -284,7 +284,7 @@
         created() {
             this.loading = true;
             this.reset();
-            fetch(`http://${process.env.VUE_APP_URLPATH}/api/keyword/all/ccdr`)
+            fetch(`https://${process.env.VUE_APP_URLPATH}/api/keyword/all/ccdr`)
                 .then(function(response) {
                     return response.json();
                 })
@@ -318,7 +318,7 @@
                 this.reset();
                 let self = this;
                 this.error = '';
-                const url = `http://${process.env.VUE_APP_URLPATH}/api/ccdr?search=${this.textQuery}`;
+                const url = `https://${process.env.VUE_APP_URLPATH}/api/ccdr?search=${this.textQuery}`;
 
                 fetch(url)
                     .then(response => {
@@ -373,7 +373,7 @@
                         .map(x => x.id)
                         .join(",");
 
-                    fetch(`http://${process.env.VUE_APP_URLPATH}/api/ccdr/linked?id=${databaseIds}`)
+                    fetch(`https://${process.env.VUE_APP_URLPATH}/api/ccdr/linked?id=${databaseIds}`)
                         .then(function(response) {
                             return response.json();
                         })
@@ -409,7 +409,7 @@
                 this.loadingRepos = true;
                 let self = this;
                 this.error = '';
-                const url = `http://${process.env.VUE_APP_URLPATH}/api/keyword/repos?keywords=${self.keyresults.join(",")}`;
+                const url = `https://${process.env.VUE_APP_URLPATH}/api/keyword/repos?keywords=${self.keyresults.join(",")}`;
 
                 fetch(url)
                     .then(response => {

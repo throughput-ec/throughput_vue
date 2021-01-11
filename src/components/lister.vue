@@ -169,7 +169,7 @@
                     .map(x => x.id)
                     .join(",");
 
-                fetch(`http://${process.env.VUE_APP_URLPATH}/api/citations?ids=${self.ids}`)
+                fetch(`https://${process.env.VUE_APP_URLPATH}/api/citations?ids=${self.ids}`)
                     .then(function(response) {
                         return response.json();
                     })
