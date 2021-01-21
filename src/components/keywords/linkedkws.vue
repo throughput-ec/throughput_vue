@@ -35,7 +35,7 @@
                     this.loading = true;
                     let self = this;
                     let input = val.join(",");
-                    fetch(`http://${process.env.VUE_APP_URLPATH}/api/keyword/dbs/linked?keywords=${input}`)
+                    fetch(`${process.env.VUE_APP_URLPATH}/api/keyword/dbs/linked?keywords=${input}`)
                         .then(function(response) {
                             return response.json();
                         })

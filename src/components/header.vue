@@ -28,7 +28,7 @@
                 orcid: '',
                 orcidId: '',
                 home: '',
-                about: 'http://throughputdb.com/about'
+                about: 'https://throughputdb.com/about'
             };
         },
         created() {

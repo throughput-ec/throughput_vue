@@ -81,10 +81,11 @@
                         <small>No keywords available.</small>
                     </div>
                 </b-container>
-
+<!--
                 <b-container>
                     <linkedkws v-bind:kwin="keyresults"></linkedkws>
                 </b-container>
+-->
                 <!-- Selected terms -->
                 <b-container>
                     <div class='terms-container'>
@@ -284,7 +285,7 @@
         created() {
             this.loading = true;
             this.reset();
-            fetch(`https://${process.env.VUE_APP_URLPATH}/api/keyword/all/ccdr`)
+            fetch(`${process.env.VUE_APP_URLPATH}/api/keyword/all/ccdr`)
                 .then(function(response) {
                     return response.json();
                 })
@@ -318,7 +319,7 @@
                 this.reset();
                 let self = this;
                 this.error = '';
-                const url = `https://${process.env.VUE_APP_URLPATH}/api/ccdr?search=${this.textQuery}`;
+                const url = `${process.env.VUE_APP_URLPATH}/api/ccdr?search=${this.textQuery}`;
 
                 fetch(url)
                     .then(response => {
@@ -373,7 +374,7 @@
                         .map(x => x.id)
                         .join(",");
 
-                    fetch(`https://${process.env.VUE_APP_URLPATH}/api/ccdr/linked?id=${databaseIds}`)
+                    fetch(`${process.env.VUE_APP_URLPATH}/api/ccdr/linked?id=${databaseIds}`)
                         .then(function(response) {
                             return response.json();
                         })
@@ -409,7 +410,7 @@
                 this.loadingRepos = true;
                 let self = this;
                 this.error = '';
-                const url = `https://${process.env.VUE_APP_URLPATH}/api/keyword/repos?keywords=${self.keyresults.join(",")}`;
+                const url = `${process.env.VUE_APP_URLPATH}/api/keyword/repos?keywords=${self.keyresults.join(",")}`;
 
                 fetch(url)
                     .then(response => {
