@@ -53,14 +53,14 @@
                         <br />
                         <b-container>
                             <b-row align-v="center">
-                                <b-col v-if='item.linked > 0' class="text-center" cols="3">
-                                    <strong style='color: var(--t-color-blue-green);'>Linked Code Repositories: {{ item.linked }}</strong>
+                                <b-col v-if='item.count > 0' class="text-center" cols="3">
+                                    <strong style='color: var(--t-color-blue-green);'>Linked Code Repositories: {{ item.count }}</strong>
                                 </b-col>
-                                <b-col v-if='item["keyword"]'>
+                                <b-col v-if='item["keywords"]'>
                                     <strong>Keywords</strong>:<br />
 
                                     <div class='keyword-container'>
-                                    <div v-for="(item, index) in item.keyword" :key="index" class='keyword-badge light-blue-badge'>
+                                    <div v-for="(item, index) in item.keywords" :key="index" class='keyword-badge light-blue-badge'>
                                         <span>{{ item }}</span>
                                     </div>
                                     </div>

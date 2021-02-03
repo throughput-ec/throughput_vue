@@ -1,4 +1,4 @@
-<template>
+  <template>
 <div class='app-body'>
   <app-header></app-header>
   <div v-if='loading' class='screen-center' style='height: 80vh;'>
@@ -288,7 +288,7 @@ export default {
   created() {
     this.loading = true;
     this.reset();
-    fetch(`${process.env.VUE_APP_URLPATH}/api/keywords/ccdrs?limit=99999`)
+    fetch(`${process.env.VUE_APP_URLPATH}/api/ccdrs/keywords?limit=99999`)
       .then(function(response) {
         return response.json();
       })
@@ -413,7 +413,7 @@ export default {
       this.loadingRepos = true;
       let self = this;
       this.error = '';
-      const url = `${process.env.VUE_APP_URLPATH}/api/keywords?keywords=${self.keyresults.join(",")}&label=CodeRepository&limit=1000`;
+      const url = `${process.env.VUE_APP_URLPATH}/api/keywords/ccdrs?keywords=${self.keyresults.join(",")}&limit=1000`;
 
       fetch(url)
         .then(response => {
@@ -424,7 +424,7 @@ export default {
           /* This comes from the api/keyword/repos endpoint,
             returning a "repositories" array of repositories. */
 
-          self.apikw = data.data.data.repositories;
+          self.apikw = data.data.data;
           self.apikw = self.apikw.map(function(x) {
             x["show"] = "yes";
             return x;
