@@ -44,9 +44,9 @@
                             <a :href="item.url" rel="noopener noreferrer" target="_blank" style='color: var(--t-color-light-blue)'>{{ item.name }}</a>&nbsp;
                         </h4>
                         <div class='keyword-container'>
-                            <div v-for="(keyword, index) in item.dbs" :key="index" class='keyword-badge transparent-blue-green-badge'>
-                                <span>{{ keyword }}</span>
-                                <span v-if='index < item.dbs.length - 1' style='color: var(--t-color-light);'>,</span>
+                            <div v-for="(ccdrs, index) in item.ccdrs" :key="index" class='keyword-badge transparent-blue-green-badge'>
+                                <span>{{ ccdrs }}</span>
+                                <span v-if='index < item.ccdrs.length - 1' style='color: var(--t-color-light);'>,</span>
                             </div>
                         </div>
                         <small>{{ item.description }}</small>

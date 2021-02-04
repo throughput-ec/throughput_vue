@@ -377,12 +377,12 @@ export default {
           .map(x => x.id)
           .join(",");
 
-        fetch(`${process.env.VUE_APP_URLPATH}/api/ccdr/linked?id=${databaseIds}`)
+        fetch(`${process.env.VUE_APP_URLPATH}/api/ccdrs/repos?ccdrs=${databaseIds}`)
           .then(function(response) {
             return response.json();
           })
           .then(data => {
-            return data.data.repositories;
+            return data.data.data;
           })
           .then(data => {
             self.allrepos = data.map(function(x) {

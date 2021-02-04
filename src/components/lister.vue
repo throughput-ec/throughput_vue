@@ -22,6 +22,7 @@
 
         <hr />
 
+        <!-- This is to display each database/repository -->
         <div v-for="(item, index) in toDisplay" :key="index">
             <b-container v-if="(item.show === 'yes' || status === 'yes')">
                 <b-row align-v="center">
@@ -37,11 +38,11 @@
                             </b-button-group>
                         </div>
                     </b-col>
+                    <!-- The link to the external database or repo -->
                     <b-col class="col-md-10">
                         <h4>
                             <a :href="item.url" rel="noopener noreferrer" target="_blank" style='color: var(--t-color-light-blue)'>{{ item.name }}</a>
                         </h4>
-
                         <div v-if='item.showExcerpt === true'>
                             <small>{{ item.excerpt }}</small>
                             <button @click='toggleExcerpt(index)' class='excerpt-toggle-button'>...</button>
