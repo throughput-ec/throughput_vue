@@ -58,7 +58,7 @@
                                     <strong style='color: var(--t-color-blue-green);'>Linked Code Repositories: {{ item.count }}</strong>
                                 </b-col>
                                 <b-col v-if='item["keywords"]'>
-                                    <strong>Keywords</strong>:<br />
+                                    <strong>Matching Keywords</strong>:<br />
 
                                     <div class='keyword-container'>
                                     <div v-for="(item, index) in item.keywords" :key="index" class='keyword-badge light-blue-badge'>
