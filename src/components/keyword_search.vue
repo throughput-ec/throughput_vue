@@ -1,4 +1,4 @@
-  <template>
+<template>
 <div class='app-body'>
   <app-header></app-header>
   <div v-if='loading' class='screen-center' style='height: 80vh;'>
@@ -6,13 +6,21 @@
   </div>
 
   <div>
+    <searchType @searchSet="updateSearch" @returnSet="updateReturn">
+    </searchType>
+
     <div class='title-with-options'>
+
+      <br>
       <div class='toggle-container'>
         <h3>Search By:</h3>
 
         <div class='t-toggle'>
           <div :class='keywordToggleClasses' @click='toggleSearchType'>
             <span>Keyword</span>
+          </div>
+          <div :class='subjectToggleClasses' @click='toggleSearchType'>
+            <span>Subject</span>
           </div>
           <div :class='textToggleClasses' @click='toggleSearchType'>
             <span>Text</span>
@@ -249,6 +257,7 @@ import linkedkws from "./keywords/linkedkws.vue";
 import visualize_kw from './visualize_kw';
 import header from "../components/header.vue";
 import textInput from "./elements/text-input";
+import searchType from "./search_elements/searchType.vue"
 
 export default {
   name: "keywordSearch",
@@ -277,6 +286,7 @@ export default {
     };
   },
   components: {
+    searchType: searchType,
     lister: lister,
     repo_lister: repo_lister,
     kwInput: kwInput,
@@ -322,7 +332,7 @@ export default {
       this.reset();
       let self = this;
       this.error = '';
-      const url = `${process.env.VUE_APP_URLPATH}/api/ccdr?search=${this.textQuery}`;
+      const url = `${process.env.VUE_APP_URLPATH}/api/ccdr?name=${this.textQuery}`;
 
       fetch(url)
         .then(response => {
@@ -330,11 +340,11 @@ export default {
         })
         .then(data => {
           // ADD LINK COUNT
-          self.apikw = data.data.repositories;
+          self.apikw = data.data;
           self.apikw = self.apikw.map(function(x) {
             x["show"] = "yes";
-            if (!x["linked"] && x["repos"]) {
-              x["linked"] = x["repos"]
+            if (!x["linked"] && x["count"]) {
+              x["linked"] = x["count"]
             }
             return x;
           });
