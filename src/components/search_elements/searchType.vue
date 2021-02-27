@@ -12,7 +12,7 @@ Template for the search elements
           <b-button v-for="(btn, idx) in searchType" :key="idx"
                     :pressed.sync="btn.state"
                     variant="outline-primary"
-                    @clicked="onClickSearch()">
+                    v-on:click="$emit('changeSearch', searchType)">
             {{ btn.caption }}
           </b-button>
         </b-button-group>
@@ -25,7 +25,7 @@ Template for the search elements
           <b-button v-for="(btn, idx) in returnType" :key="idx"
                     :pressed.sync="btn.state"
                     variant="outline-primary"
-                    @clicked="onClickReturn(idx)">
+                    v-on:click="$emit('changeReturn', returnType)">
           {{ btn.caption }}
         </b-button>
         </b-button-group>
@@ -37,7 +37,7 @@ Template for the search elements
 </template>
 <script>
 export default {
-  name: "keywordSearch",
+  name: "searchTypes",
   data() {
     return {
       searchType: [
@@ -48,15 +48,9 @@ export default {
       returnType: [
         {caption: 'Databases', state: true },
         {caption: 'Code Repos', state: false }
-      ]
-    }
-  },
-  methods: {
-    onClickSearch (event) {
-      this.$emit('searchSet', searchType)
-    },
-    onClickReturn (idx) {
-      this.$emit('returnSet', returnType)
+      ],
+      searchOut: [],
+      returnOut: []
     }
   }
 }
