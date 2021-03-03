@@ -6,125 +6,46 @@
   </div>
 
   <div>
-    <searchType @searchSet="updateSearch" @returnSet="updateReturn">
+    <!-- This tells us which kinds of information we need to use for the
+         search parameters, and what is being returned. -->
+    <searchType
+      @changeSearch="updateSearch"
+      @changeReturn="updateReturn">
     </searchType>
 
-    <div class='title-with-options'>
+    <b-container>
+      <b-row>
+        <kwInput :term="searchKind" @change="newText"
+             style='margin-bottom:5px;'></kwInput>
+      </b-row>
+      <b-row>
+        <b-button @click="onSubmit" class="w-100">Submit Search</b-button>
+      </b-row>
+    </b-container>
 
-      <br>
-      <div class='toggle-container'>
-        <h3>Search By:</h3>
-
-        <div class='t-toggle'>
-          <div :class='keywordToggleClasses' @click='toggleSearchType'>
-            <span>Keyword</span>
-          </div>
-          <div :class='subjectToggleClasses' @click='toggleSearchType'>
-            <span>Subject</span>
-          </div>
-          <div :class='textToggleClasses' @click='toggleSearchType'>
-            <span>Text</span>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div v-if='!expandKeywordSearch' class='h3' style='color: var(--t-color-blue); margin: 0;'>
-          <b-icon-plus-square @click='toggleKeywordSearch'></b-icon-plus-square>
-        </div>
-        <div v-if='expandKeywordSearch' class='h3' style='color: var(--t-color-blue); margin: 0;'>
-          <b-icon-dash-square @click='toggleKeywordSearch'></b-icon-dash-square>
-        </div>
-      </div>
-    </div>
-
-    <!--            TEXT SEARCH-->
-    <div v-if='expandKeywordSearch && searchKeywords === false'>
-      <text-input @change='updateQuery'></text-input>
-      <b-container class='flex' style='justify-content: flex-end; margin-top: 15px;'>
-        <button v-if='textQuery.length > 1' class='blue-button' @click='textSearch'>
-          <span v-if='!loadingRepos'>Search</span>
-          <b-spinner v-if='loadingRepos'></b-spinner>
-        </button>
-
-        <button v-else class='blue-button terms-submit-disabled'>
-          <span>Search</span>
-        </button>
-      </b-container>
-
-      <div v-if="error !== ''">
-        <h4 class='error-message'>{{ error }}</h4>
-      </div>
-    </div>
-
-    <!-- Available terms -->
-    <div v-if='expandKeywordSearch && searchKeywords === true'>
-      <kwInput @change="newText" style='margin-bottom:5px;'></kwInput>
-      <b-container>
-        <b-card title="Available terms:">
-          <div v-if="somekw.length > 1">
-            <small>
-              The top {{ Math.min(30, somekw.length) }} of
-              {{ somekw.length }} available keywords are shown. Click on a blue
-              word to add it to your set.<br />The number beside the keyword
-              indicates how many code repositories are associated with that
-              keyword.
-            </small>
-          </div>
-
-          <div v-if="somekw.length > 1" class='keyword-container'>
-            <div v-for="index in Math.min(30, somekw.length)" :key="index" class='keyword-badge'>
-              <span v-on:click="toggleKw(somekw[index - 1].keywords)">{{ somekw[index - 1].keywords }}</span>
-              <span class='inner-badge'>{{ somekw[index - 1].count }}</span>
-            </div>
-          </div>
-
-          <div v-else>
-            <small>Please begin entering keywords.</small>
-          </div>
-        </b-card>
-
-        <div v-if="(somekw.length === 0) && (kwText !== '')">
-          <small>No keywords available.</small>
+    <!-- Show the Keyword search elements. -->
+    <div v-if="searchKind.includes('Keywords')">
+      <b-container class="border">
+        <b-row>
+          <b-col>
+          <wordBadges title="Keywords"
+                    :badgein="somekw"
+                    :show="true"
+                    @termOut="toggleKw"></wordBadges>
+          </b-col>
+        </b-row>
+        <div v-if="somekw.filter(x => !x.show).length > 0">
+          <b-row align-v="end">
+            <b-col>
+              <wordBadges title="Selected Keywords"
+                          :badgein="somekw"
+                          :show="false"
+                          @termOut="toggleKw"></wordBadges>
+            </b-col>
+          </b-row>
         </div>
       </b-container>
-      <!--
-                <b-container>
-                    <linkedkws v-bind:kwin="keyresults"></linkedkws>
-                </b-container>
--->
-      <!-- Selected terms -->
-      <b-container>
-        <div class='terms-container'>
-          <b-card title="Selected terms:" class='terms-card'>
-            <div v-if="keyresults.length > 0" class='keyword-container'>
-              <div v-for="(item, index) in keyresults" :key="index" @click='toggleKw(item)' class='keyword-badge'>
-                <span>{{ item }}</span>
-                <span class='inner-badge' style='color: red; padding-left: 4px;'>X</span>
-              </div>
-            </div>
-            <div v-else>
-              <small>Click on a keyword above to add it to the list of selected
-                keywords. Click a keyword again to remove it.</small>
-            </div>
-          </b-card>
-
-          <button v-if='keyresults.length > 0' @click="onSubmit" class='blue-button terms-submit'>
-            <span v-if='!loadingRepos'>Submit Keywords</span>
-            <b-spinner v-if='loadingRepos'></b-spinner>
-          </button>
-
-          <button v-else class='blue-button terms-submit terms-submit-disabled'>
-            <span>Submit Keywords</span>
-          </button>
-        </div>
-      </b-container>
-
-      <div v-if="error !== ''">
-        <h4 class='error-message'>{{ error }}</h4>
-      </div>
     </div>
-
 
     <!-- INFORMATION SECTION FOR TABS: -->
     <div v-if="apikw.length > 0" style='background: var(--t-color-light-grey); margin-top: 10px;'>
@@ -161,93 +82,16 @@
           </div>
         </b-tab>
 
+        <!-- Deprecating for a bit. . .
         <b-tab title='Network Graph' v-if="apikw.filter(x => x.show === 'yes').length > 0 && apikw.filter(x => x.show === 'yes').length <= 40 && searchKeywords === true" @click='generateNetworkGraph'>
           <visualize_kw v-if='showGraph' :databases='apikw.filter(x => x.show === "yes")' :key='hash'></visualize_kw>
         </b-tab>
+        -->
       </b-tabs>
     </div>
   </div>
 </div>
 </template>
-
-<style>
-.title-with-options {
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 10px 40px;
-}
-
-.toggle-container {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-}
-
-.title-with-options h3 {
-  margin: 0;
-}
-
-.t-toggle {
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-  margin-left: 12px;
-}
-
-
-.toggle-left,
-.toggle-right {
-  display: flex;
-  flex-flow: row;
-  justify-content: center;
-  align-items: center;
-  border-bottom: 1px solid var(--t-color-blue);
-  border-top: 1px solid var(--t-color-blue);
-  padding: 5px 10px;
-  width: 100px !important;
-  font-size: 18px;
-}
-
-.toggle-left {
-  border-left: 1px solid var(--t-color-blue);
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-}
-
-.toggle-right {
-  border-right: 1px solid var(--t-color-blue);
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
-}
-
-.active {
-  color: var(--t-color-light);
-  background: var(--t-color-blue);
-  animation-name: fade-in;
-  animation-duration: 500ms;
-}
-
-.inactive {
-  color: var(--t-color-medium);
-  background: var(--t-color-light-grey)
-}
-
-.compress {
-  animation-name: compress;
-  animation-duration: 800ms;
-}
-
-.error-message {
-  width: 100%;
-  text-align: center;
-  color: var(--t-color-red);
-  padding: 10px 40px;
-}
-</style>
 
 <script>
 import lister from "./lister.vue";
@@ -258,27 +102,41 @@ import visualize_kw from './visualize_kw';
 import header from "../components/header.vue";
 import textInput from "./elements/text-input";
 import searchType from "./search_elements/searchType.vue"
+import badgeBox from "./wordBadges.vue"
 
 export default {
   name: "keywordSearch",
   data() {
     return {
-      keyresults: [],
-      apikw: [],
       allkw: [],
       allrepos: [],
-      somekw: [{
-        keyword: "",
-        count: ""
-      }],
+      apikw: [],
+      expandKeywordSearch: true,
+      keyresults: [],
       kwText: "",
-      textQuery: "",
       loading: false,
       loadingRepos: false,
       networkGraphData: [],
-      expandKeywordSearch: true,
+      returnSet: [
+        {caption: 'Databases', state: true },
+        {caption: 'Code Repos', state: false }
+      ],
+        searchSet: [
+          {caption: 'Keywords', state: true },
+          {caption: 'Text', state: false }
+        ],
       showGraph: false,
-      searchKeywords: true,
+      somekw: [{
+        keyword: "",
+        count: "",
+        show: ""
+      }],
+      somesub: [{
+        keyword: "",
+        count: "",
+        show: ""
+      }],
+      textQuery: "",
       keywordToggleClasses: 'toggle-left active',
       textToggleClasses: 'toggle-right inactive',
       error: '',
@@ -293,6 +151,7 @@ export default {
     textInput: textInput,
     linkedkws: linkedkws,
     visualize_kw: visualize_kw,
+    wordBadges: badgeBox,
     "app-header": header
   },
   created() {
@@ -304,12 +163,30 @@ export default {
       })
       .then(data => {
         this.allkw = data.data.data;
-        this.somekw = data.data.data;
+        this.somekw = data.data.data.map((x) => {
+          x['term'] = x['keywords'];
+          x['show'] = true; return x;})
         this.loading = false;
-        return data.data.data;
+        return true;
       }).catch(() => {
         this.loading = false;
       });
+
+      fetch(`${process.env.VUE_APP_URLPATH}/api/ccdrs/subjects?limit=99999`)
+        .then(function(response) {
+          return response.json();
+        })
+        .then(data => {
+          this.allsub = data.data.data;
+          this.somesub = data.data.data.map((x) => {
+             x['show'] = true;
+             x['term'] = x['subjects'];
+             return x;})
+          this.loading = false;
+          return true;
+        }).catch(() => {
+          this.loading = false;
+        });
   },
   watch: {
     kwText: {
@@ -320,7 +197,23 @@ export default {
       }
     },
   },
+  computed: {
+    searchKind:function() {
+      let searcher = this.searchSet;
+      return searcher.filter(x => x.state == true)
+      .map(x => x.caption)
+      .join(', ');
+    }
+  },
   methods: {
+    updateSearch: function(e) {
+      // e is for emittor:
+      this.searchSet = e;
+    },
+    updateReturn: function(e) {
+      // e is for emittor:
+      this.returnSet = e;
+    },
     newText: function(val) {
       this.kwText = val;
     },
@@ -410,20 +303,34 @@ export default {
       }
     },
     toggleKw(val) {
-      const idx = this.keyresults.indexOf(val);
-      if (idx === -1) {
-        return this.keyresults.push(val);
-      } else {
-        this.keyresults.splice(idx, 1);
-        return this.keyresults;
-      }
+      let out = this.somekw.map(function(x) {
+        if (x['term'] === val) {
+          x['show'] = !x['show']
+        }
+        return x;});
+      this.somekw = out;
+    },
+    toggleSub(val) {
+      let out = this.somesub.map(function(x) {
+        if (x['term'] === val) {
+          x['show'] = !x['show']
+        }
+        return x;});
+      this.somesub = out;
     },
     onSubmit(evt) {
       evt.preventDefault();
       this.loadingRepos = true;
       let self = this;
       this.error = '';
-      const url = `${process.env.VUE_APP_URLPATH}/api/keywords/ccdrs?keywords=${self.keyresults.join(",")}&limit=1000`;
+      let keyresults = self.somekw.filter(x => x.show === false).map(x => x.keywords).join(",");
+      if(this.searchSet.filter(x => x.state).map(x => x.caption).includes('Keywords') & keyresults.length > 0) {
+        var url = `${process.env.VUE_APP_URLPATH}/api/keywords/ccdrs?keywords=${keyresults}&limit=1000`;
+      } else if(this.searchSet.filter(x => x.state).map(x => x.caption).includes('Text')) {
+        url = `${process.env.VUE_APP_URLPATH}/api/ccdr?name=${this.kwText}`;
+      } else {
+        return(null);
+      }
 
       fetch(url)
         .then(response => {

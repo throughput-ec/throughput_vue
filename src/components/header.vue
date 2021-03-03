@@ -32,7 +32,7 @@
             };
         },
         created() {
-            this.orcid = `https://orcid.org/oauth/authorize?client_id=${process.env.VUE_APP_ORCID}&response_type=code&scope=/authenticate&redirect_uri=http://localhost:8080/search`;
+            this.orcid = `https://orcid.org/oauth/authorize?client_id=${process.env.VUE_APP_ORCID}&response_type=code&scope=/authenticate&redirect_uri=https://throughputdb.org/search`;
 
             this.home = process.env.VUE_APP_BASEURL;
 
@@ -47,7 +47,7 @@
                     client_secret: process.env.VUE_APP_ORCIDSECRET,
                     grant_type: 'authorization_code',
                     code: code,
-                    redirect_uri: 'https://localhost:8080'
+                    redirect_uri: 'https://throughputdb.org/search'
                 };
 
 
