@@ -42,7 +42,6 @@ export default {
     return {
       searchType: [
         {caption: 'Keywords', state: true },
-        {caption: 'Subject', state: true },
         {caption: 'Text', state: false }
       ],
       returnType: [
