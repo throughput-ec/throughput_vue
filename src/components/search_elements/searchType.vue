@@ -12,7 +12,7 @@ Template for the search elements
           <b-button v-for="(btn, idx) in searchType" :key="idx"
                     :pressed.sync="btn.state"
                     variant="outline-primary"
-                    v-on:click="$emit('changeSearch', searchType)">
+                    v-on:click="searchClick(btn)">
             {{ btn.caption }}
           </b-button>
         </b-button-group>
@@ -49,7 +49,19 @@ export default {
         {caption: 'Code Repos', state: false }
       ],
       searchOut: [],
-      returnOut: []
+      returnOut: [],
+      btn: []
+    }
+  },
+  methods: {
+    searchClick: function(btn) {
+      this.btn = btn;
+      for(var i = 0; i < this.searchType.length; i++) {
+        if(this.searchType[i]['caption'] !== btn.caption) {
+          this.searchType[i].state = !this.searchType[i].state;
+        }
+      }
+      this.$emit('changeSearch', this.searchType)
     }
   }
 }
