@@ -205,3 +205,80 @@ hr {
         height: 63px;
     }
 }
+
+.title-with-options {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px 40px;
+}
+
+.toggle-container {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
+.title-with-options h3 {
+  margin: 0;
+}
+
+.t-toggle {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  margin-left: 12px;
+}
+
+
+.toggle-left,
+.toggle-right {
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid var(--t-color-blue);
+  border-top: 1px solid var(--t-color-blue);
+  padding: 5px 10px;
+  width: 100px !important;
+  font-size: 18px;
+}
+
+.toggle-left {
+  border-left: 1px solid var(--t-color-blue);
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.toggle-right {
+  border-right: 1px solid var(--t-color-blue);
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.active {
+  color: var(--t-color-light);
+  background: var(--t-color-blue);
+  animation-name: fade-in;
+  animation-duration: 500ms;
+}
+
+.inactive {
+  color: var(--t-color-medium);
+  background: var(--t-color-light-grey)
+}
+
+.compress {
+  animation-name: compress;
+  animation-duration: 800ms;
+}
+
+.error-message {
+  width: 100%;
+  text-align: center;
+  color: var(--t-color-red);
+  padding: 10px 40px;
+}

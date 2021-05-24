@@ -15,10 +15,10 @@
             </b-form-checkbox>
         </div>
 
-        <b-modal id="repocitation" title="Citations">
+        <!--<b-modal id="repocitation" title="Citations">
             <pre>{{ this.citations }}</pre>
         </b-modal>
-
+-->
         <hr />
 
         <div v-for="(item, index) in toDisplay" :key="index">
@@ -119,7 +119,7 @@
                     .map(x => x.id)
                     .join(",");
 
-                fetch(`https://${process.env.VUE_APP_URLPATH}/api/citations?ids=${self.ids}`)
+                fetch(`${process.env.VUE_APP_URLPATH}/api/citations?ids=${self.ids}`)
                     .then(function(response) {
                         return response.json();
                     })
