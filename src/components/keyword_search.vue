@@ -34,11 +34,11 @@
                     @termOut="toggleKw"></wordBadges>
           </b-col>
         </b-row>
-        <div v-if="somekw.filter(x => !x.show).length > 0">
+        <div v-if="allkw.filter(x => !x.show).length > 0">
           <b-row align-v="end">
             <b-col>
               <wordBadges title="Selected Keywords"
-                          :badgein="somekw"
+                          :badgein="allkw"
                           :show="false"
                           @termOut="toggleKw"></wordBadges>
             </b-col>
@@ -303,12 +303,12 @@ export default {
       }
     },
     toggleKw(val) {
-      let out = this.somekw.map(function(x) {
+      let out = this.allkw.map(function(x) {
         if (x['term'] === val) {
           x['show'] = !x['show']
         }
         return x;});
-      this.somekw = out;
+      this.allkw = out;
     },
     toggleSub(val) {
       let out = this.somesub.map(function(x) {
