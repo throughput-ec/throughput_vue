@@ -32,7 +32,7 @@
             };
         },
         created() {
-            this.orcid = `https://orcid.org/oauth/authorize?client_id=${process.env.VUE_APP_ORCID}&response_type=code&scope=/authenticate&redirect_uri=https://throughputdb.org/search`;
+            this.orcid = `https://orcid.org/oauth/authorize?client_id=${process.env.VUE_APP_ORCID}&response_type=code&scope=/authenticate&redirect_uri=${process.env.VUE_APP_BASEURL}`;
 
             this.home = process.env.VUE_APP_BASEURL;
 
@@ -47,32 +47,31 @@
                     client_secret: process.env.VUE_APP_ORCIDSECRET,
                     grant_type: 'authorization_code',
                     code: code,
-                    redirect_uri: 'https://throughputdb.org/search'
+                    redirect_uri: process.env.VUE_APP_BASEURL
                 };
 
-
                 // URL ENCODED FETCH REQUEST - TODO IMPLEMENT THIS ONCE HTTPS / API DECISION IS IMPMEMENTED
-                // fetch("https://orcid.org/oauth/token", {
-                //     method: "POST",
-                //     headers: { "Accept": "application/json", "Content-Type": "application/x-www-form-urlencoded" },
-                //     body: this.uriEncodeData(body)
-                //     })
-                //     .then(function(response) {
-                //         return response.json();
-                //     })
-                //     .then(data => {
-                //         console.log("ORCID RESPONSE: " + JSON.stringify(data));
-                //
-                //         // SAVE CODE AS COOKIE
-                //         let date = new Date();
-                //         date.setTime(date.getTime() + (90 * 86400000)); // EXPIRE COOKIE AFTER 90 DAYS;
-                //         const expires = date.toUTCString();
-                //         document.cookie = "orcid-id=" + code.toString() + "; expires=" + expires;
-                //
-                //         this.showLogin = false;
-                //
-                //     })
-                //     .catch( error => console.log(error) );
+                fetch("https://orcid.org/oauth/token", {
+                    method: "POST",
+                    headers: { "Accept": "application/json", "Content-Type": "application/x-www-form-urlencoded" },
+                    body: this.uriEncodeData(body)
+                    })
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(data => {
+                //        console.log("ORCID RESPONSE: " + JSON.stringify(data));
+                
+                        // SAVE CODE AS COOKIE
+                        let date = new Date();
+                        date.setTime(date.getTime() + (90 * 86400000)); // EXPIRE COOKIE AFTER 90 DAYS;
+                        const expires = date.toUTCString();
+                        document.cookie = "orcid-id=" + code.toString() + "; expires=" + expires;
+                
+                        this.showLogin = false;
+                
+                    })
+                    .catch( error => console.log(error) );
 
             } else {
                 // CHECK COOKIES FOR ORCID
