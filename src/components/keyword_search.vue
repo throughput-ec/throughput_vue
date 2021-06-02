@@ -35,7 +35,7 @@
             <b-col>
               <wordBadges
                 title="Keywords"
-                :badgein="somekw"
+                :badgein="typedKeywords"
                 :show="true"
                 @termOut="toggleKw"
               ></wordBadges>
@@ -46,7 +46,7 @@
               <b-col>
                 <wordBadges
                   title="Selected Keywords"
-                  :badgein="allkw"
+                  :badgein="clickedKeywords"
                   :show="false"
                   @termOut="toggleKw"
                 ></wordBadges>
@@ -124,12 +124,6 @@
               <repo_lister :repos="allrepos"></repo_lister>
             </div>
           </b-tab>
-
-          <!-- Deprecating for a bit. . .
-        <b-tab title='Network Graph' v-if="apikw.filter(x => x.show === 'yes').length > 0 && apikw.filter(x => x.show === 'yes').length <= 40 && searchKeywords === true" @click='generateNetworkGraph'>
-          <visualize_kw v-if='showGraph' :databases='apikw.filter(x => x.show === "yes")' :key='hash'></visualize_kw>
-        </b-tab>
-        -->
         </b-tabs>
       </div>
     </div>
@@ -140,10 +134,10 @@
 import lister from "./lister.vue";
 import repo_lister from "./repo_lister.vue";
 import kwInput from "./keywords/keywordinput.vue";
-import linkedkws from "./keywords/linkedkws.vue";
-import visualize_kw from "./visualize_kw";
+// import linkedkws from "./keywords/linkedkws.vue";
+// import visualize_kw from "./visualize_kw";
 import header from "../components/header.vue";
-import textInput from "./elements/text-input";
+// import textInput from "./elements/text-input";
 import searchType from "./search_elements/searchType.vue";
 import badgeBox from "./wordBadges.vue";
 
@@ -151,15 +145,20 @@ export default {
   name: "keywordSearch",
   data() {
     return {
+      // The full set of keywords.
       allkw: [],
+      // The subset set of code repositories (show === true)
       allrepos: [],
+      // The full set of code repositories
       apikw: [],
       expandKeywordSearch: true,
+      // A variable passed to the Throughput API, concatenating all selected terms.
       keyresults: [],
+      // The raw string used to find keywords
       kwText: "",
+      // Loading the full data
       loading: false,
       loadingRepos: false,
-      networkGraphData: [],
       returnSet: [
         { caption: "Databases", state: true },
         { caption: "Code Repos", state: false },
@@ -168,19 +167,27 @@ export default {
         { caption: "Keywords", state: true },
         { caption: "Text", state: false },
       ],
-      showGraph: false,
-      somekw: [
+      somesub: [
         {
           keyword: "",
           count: "",
           show: "",
         },
       ],
-      somesub: [
+      // These are used to pass along the smaller set of terms
+      // showing the set of keywords available when keywords are
+      // modified through kwinput (the thing the user types)
+      typedKeywords: [
         {
           keyword: "",
           count: "",
-          show: "",
+        },
+      ],
+      // These are the keywords the user has clicked.
+      clickedKeywords: [
+        {
+          keyword: "",
+          count: "",
         },
       ],
       textQuery: "",
@@ -195,9 +202,9 @@ export default {
     lister: lister,
     repo_lister: repo_lister,
     kwInput: kwInput,
-    textInput: textInput,
-    linkedkws: linkedkws,
-    visualize_kw: visualize_kw,
+    //textInput: textInput,
+    // linkedkws: linkedkws,
+    // visualize_kw: visualize_kw,
     wordBadges: badgeBox,
     "app-header": header,
   },
@@ -210,11 +217,16 @@ export default {
       })
       .then((data) => {
         this.allkw = data.data.data;
-        this.somekw = data.data.data.map((x) => {
-          x["term"] = x["keywords"];
-          x["show"] = true;
-          return x;
-        });
+        this.typedKeywords = this.allkw
+          .filter((x) => x.show == true)
+          .map((x) => {
+            return { term: x.term, count: x.count };
+          });
+        this.clickedKeywords = this.allkw
+          .filter((x) => x.show == false)
+          .map((x) => {
+            return { term: x.term, count: x.count };
+          });
         this.loading = false;
         return true;
       })
@@ -243,7 +255,7 @@ export default {
   watch: {
     kwText: {
       handler(val) {
-        this.somekw = this.allkw.filter(function (kw) {
+        this.typedKeyword = this.allkw.filter(function (kw) {
           return kw.keywords.includes(val.toLowerCase());
         });
       },
@@ -368,6 +380,8 @@ export default {
         }
         return x;
       });
+      this.typedKeywords = out.filter((x) => x.show == true);
+      this.clickedKeywords = out.filter((x) => x.show == false);
       this.allkw = out;
     },
     toggleSub(val) {
@@ -384,10 +398,7 @@ export default {
       this.loadingRepos = true;
       let self = this;
       this.error = "";
-      let keyresults = self.somekw
-        .filter((x) => x.show === false)
-        .map((x) => x.keywords)
-        .join(",");
+      let keyresults = self.clickedKeywords.map((x) => x.keywords).join(",");
       if (
         this.searchSet
           .filter((x) => x.state)
@@ -475,15 +486,10 @@ export default {
     toggleKeywordSearch() {
       this.expandKeywordSearch = !this.expandKeywordSearch;
     },
-    generateNetworkGraph() {
-      this.hash = Math.random().toString(36).slice(2);
-      this.showGraph = true;
-    },
     reset() {
       this.apikw = [];
       this.allrepos = [];
       this.keyresults = [];
-      this.showGraph = false;
 
       if (this.expandKeywordSearch === false) {
         this.toggleKeywordSearch();
