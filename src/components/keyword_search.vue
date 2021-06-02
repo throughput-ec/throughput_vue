@@ -1,12 +1,9 @@
 <template>
   <div class="app-body">
     <app-header></app-header>
-    <div v-if="loading" class="screen-center" style="height: 80vh">
-      <b-spinner
-        label="Loading..."
-        style="width: 4rem; height: 4rem"
-        variant="primary"
-      />
+
+    <div v-if="loading">
+      <loading class="screen-center"></loading>
     </div>
 
     <div>
@@ -24,37 +21,43 @@
           ></kwInput>
         </b-row>
         <b-row>
+          <!-- Show the Keyword search elements. -->
+          <div v-if="searchKind.includes('Keywords')">
+            <b-container class="border">
+              <b-row>
+                <b-col>
+                  <wordBadges
+                    title="Keywords"
+                    :badgein="typedKeywords"
+                    :show="true"
+                    @termOut="toggleKw"
+                  ></wordBadges>
+                </b-col>
+              </b-row>
+              <div v-if="allkw.filter((x) => !x.show).length > 0">
+                <b-row align-v="end">
+                  <b-col>
+                    <wordBadges
+                      title="Selected Keywords"
+                      :badgein="clickedKeywords"
+                      :show="false"
+                      @termOut="toggleKw"
+                    ></wordBadges>
+                  </b-col>
+                </b-row>
+              </div>
+            </b-container>
+          </div>
+        </b-row>
+        <b-row style="padding:20px;">
           <b-button @click="onSubmit" class="w-100">Submit Search</b-button>
         </b-row>
-      </b-container>
-
-      <!-- Show the Keyword search elements. -->
-      <div v-if="searchKind.includes('Keywords')">
-        <b-container class="border">
-          <b-row>
-            <b-col>
-              <wordBadges
-                title="Keywords"
-                :badgein="typedKeywords"
-                :show="true"
-                @termOut="toggleKw"
-              ></wordBadges>
-            </b-col>
-          </b-row>
-          <div v-if="allkw.filter((x) => !x.show).length > 0">
-            <b-row align-v="end">
-              <b-col>
-                <wordBadges
-                  title="Selected Keywords"
-                  :badgein="clickedKeywords"
-                  :show="false"
-                  @termOut="toggleKw"
-                ></wordBadges>
-              </b-col>
-            </b-row>
+        <b-row>
+          <div v-if="loadingRepos" class="w-100" style="padding:20px;">
+            <loading class="text-center"></loading>
           </div>
-        </b-container>
-      </div>
+        </b-row>
+      </b-container>
 
       <!-- INFORMATION SECTION FOR TABS: -->
       <div
@@ -109,10 +112,14 @@
         <b-tabs active-tab-class="active-tab">
           <b-tab title="Data Catalogs" active>
             <!-- Pass out the variables to list the databases -->
+            <div v-if="loadingRepos" class="screen-center" style="height: 80vh">
+              <loading class="screen-center"></loading>
+            </div>
             <lister :apikw="apikw"></lister>
           </b-tab>
 
           <b-tab title="Code Repositories" @click="getCodeRepos">
+
             <div
               v-if="apikw.filter((x) => x.show === 'yes').length > 40"
               style="padding: 20px 40px; width: 100%; text-align: center"
@@ -131,13 +138,11 @@
 </template>
 
 <script>
+import loading from "./elements/loadingTemplate";
 import lister from "./lister.vue";
 import repo_lister from "./repo_lister.vue";
 import kwInput from "./keywords/keywordinput.vue";
-// import linkedkws from "./keywords/linkedkws.vue";
-// import visualize_kw from "./visualize_kw";
 import header from "../components/header.vue";
-// import textInput from "./elements/text-input";
 import searchType from "./search_elements/searchType.vue";
 import badgeBox from "./wordBadges.vue";
 
@@ -152,8 +157,6 @@ export default {
       // The full set of code repositories
       apikw: [],
       expandKeywordSearch: true,
-      // A variable passed to the Throughput API, concatenating all selected terms.
-      keyresults: [],
       // The raw string used to find keywords
       kwText: "",
       // Loading the full data
@@ -198,6 +201,7 @@ export default {
     };
   },
   components: {
+    loading: loading,
     searchType: searchType,
     lister: lister,
     repo_lister: repo_lister,
@@ -216,7 +220,9 @@ export default {
         return response.json();
       })
       .then((data) => {
-        this.allkw = data.data.data;
+        this.allkw = data.data.data.map((x) => {
+          return { term: x.keywords, show: true, count: x.count };
+        });
         this.typedKeywords = this.allkw
           .filter((x) => x.show == true)
           .map((x) => {
@@ -255,8 +261,8 @@ export default {
   watch: {
     kwText: {
       handler(val) {
-        this.typedKeyword = this.allkw.filter(function (kw) {
-          return kw.keywords.includes(val.toLowerCase());
+        this.typedKeywords = this.allkw.filter(function (kw) {
+          return kw.term.includes(val.toLowerCase());
         });
       },
     },
@@ -398,7 +404,7 @@ export default {
       this.loadingRepos = true;
       let self = this;
       this.error = "";
-      let keyresults = self.clickedKeywords.map((x) => x.keywords).join(",");
+      let keyresults = self.clickedKeywords.map((x) => x.term).join(",");
       if (
         this.searchSet
           .filter((x) => x.state)
@@ -489,7 +495,6 @@ export default {
     reset() {
       this.apikw = [];
       this.allrepos = [];
-      this.keyresults = [];
 
       if (this.expandKeywordSearch === false) {
         this.toggleKeywordSearch();
