@@ -1,5 +1,5 @@
 <template>
-  <div style="margin:10px;">
+  <div style="margin: 10px">
     <b-alert show variant="primary">
       <h3>Adding Annotations</h3>
       This application allows a user with an authorized ORCID to add information
@@ -33,20 +33,19 @@
       </p>
       <img
         src="../assets/graph_place.svg"
-        style="text-align:center;width:100%"
+        style="text-align: center; width: 100%"
       />
     </b-alert>
   </div>
 </template>
 
 <script>
-
 export default {
   name: "opens",
   data() {
     return {
-      msg: "Text opening"
+      msg: "Text opening",
     };
-  }
+  },
 };
 </script>

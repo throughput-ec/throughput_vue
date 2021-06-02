@@ -4,7 +4,7 @@
       <h2>Link your ORCID</h2>
       <button
         class="btn btn-outline-secondary"
-        style="background-color:#A6CE39; width:80%;"
+        style="background-color: #a6ce39; width: 80%"
         type="button"
         v-on:click="checkorcid(form.orcid)"
         title="Link to your ORCID account"
@@ -12,13 +12,13 @@
         <img
           src="@/assets/vector_iD_icon.svg"
           width="20px;"
-          style="float:left;"
+          style="float: left"
         />
         <strong>ORCID</strong>
       </button>
       <app-orcid></app-orcid>
       <div>
-        <div style="padding-top:15px;">
+        <div style="padding-top: 15px">
           <h2 class="headerwbutton">Target URL</h2>
           <button
             class="btn btn-outline-secondary buttonhead"
@@ -78,9 +78,7 @@
             <b-btn v-b-modal.metainfo>Show full metadata</b-btn>
 
             <b-modal id="metainfo" title="Website OpenGraph Data" ok-only>
-              <pre style="white-space: pre-wrap; ">{{
-                this.metadata.data
-              }}</pre>
+              <pre style="white-space: pre-wrap">{{ this.metadata.data }}</pre>
             </b-modal>
           </b-alert>
         </div>

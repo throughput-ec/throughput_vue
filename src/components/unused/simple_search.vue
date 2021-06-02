@@ -4,7 +4,7 @@
       title="Get Started Searching"
       img-top
       tag="article"
-      style="max-width: 100%;"
+      style="max-width: 100%"
       class="mb-2"
     >
       <b-card-text>
@@ -56,9 +56,7 @@
         </b-input-group>
 
         <div v-if="!loading">
-          <b-button type="submit" variant="primary">
-            Submit
-          </b-button>
+          <b-button type="submit" variant="primary"> Submit </b-button>
         </div>
         <div v-if="loading">
           <b-button type="submit" variant="primary">
@@ -88,16 +86,16 @@ export default {
         name: "",
         keyword: "",
         subject: "",
-        limit: 15
+        limit: 15,
       },
       limit: [5, 10, 15, 30],
       repos: null,
       selected: "A",
       reposum: {
         ccdrs: "no return",
-        code: "no return"
+        code: "no return",
       },
-      show: true
+      show: true,
     };
   },
   methods: {
@@ -105,7 +103,7 @@ export default {
       this.loading = true;
       this.reposum = {
         ccdrs: "waiting",
-        code: "waiting"
+        code: "waiting",
       };
 
       evt.preventDefault();
@@ -127,10 +125,10 @@ export default {
           "&limit=" +
           self.form.limit
       )
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(data => {
+        .then((data) => {
           /* Modifying the values and processing the inputs */
           if (self.selected == "A") {
             self.repos = data.data.ccdrs;
@@ -150,18 +148,18 @@ export default {
       this.repos = null;
       this.reposum = {
         ccdrs: 0,
-        code: 0
+        code: 0,
       };
       // Trick to reset/clear native browser form validation state
       this.show = false;
       this.$nextTick(() => {
         this.show = true;
       });
-    }
+    },
   },
   components: {
     repoCounter: repoCounter,
-    objectList: objectList
-  }
+    objectList: objectList,
+  },
 };
 </script>

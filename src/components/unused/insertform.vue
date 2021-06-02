@@ -26,7 +26,7 @@ import annotside from "../components/addition_sidebar.vue";
 export default {
   components: {
     "app-orcid": orcidText,
-    "open-vue": opener
+    "open-vue": opener,
   },
   data() {
     return {
@@ -35,7 +35,7 @@ export default {
         orcid: this.$cookies.get("orcid"),
         url: [""],
         description: "",
-        keyword: ""
+        keyword: "",
       },
       data: null,
       line: "",
@@ -52,16 +52,16 @@ export default {
         strokeColor: "#29B5FF",
         width: "100%",
         svgWigth: 500,
-        svgHeight: 500
-      }
+        svgHeight: 500,
+      },
     };
   },
   created() {
     var orcid_params = this.$route.hash
       .substring(1, this.$route.hash.length)
       .split("&")
-      .map(x => x.split("="))
-      .reduce(function(p, c) {
+      .map((x) => x.split("="))
+      .reduce(function (p, c) {
         p[c[0]] = c[1];
         return p;
       }, {});
@@ -73,23 +73,23 @@ export default {
         headers: {
           Accept: "application/json",
           Authorization:
-            orcid_params.token_type + " " + orcid_params.access_token
+            orcid_params.token_type + " " + orcid_params.access_token,
         },
-        method: "GET"
+        method: "GET",
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(data => {
+        .then((data) => {
           this.$cookies.set("orcid", data.sub);
           this.$cookies.set("default_unit_second", "input_value", "0");
           this.form.orcid = data.sub;
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     }
   },
   methods: {
-    d3plot: function() {
+    d3plot: function () {
       var that = this;
       var svg = d3.select("svg");
 
@@ -99,13 +99,7 @@ export default {
       this.simulation = d3
         .forceSimulation()
         .nodes(that.graph.nodes)
-        .force(
-          "link",
-          d3
-            .forceLink()
-            .links(that.graph.links)
-            .distance(80)
-        )
+        .force("link", d3.forceLink().links(that.graph.links).distance(80))
         .force("charge", d3.forceManyBody().strength(-100))
         .force(
           "center",
@@ -115,37 +109,37 @@ export default {
           )
         );
     },
-    setValues: function() {
+    setValues: function () {
       this.url = this.form.url;
       this.description = this.form.description;
     },
-    add_url: function() {
+    add_url: function () {
       this.form.url.push("");
     },
-    drop_url: function() {
+    drop_url: function () {
       if (this.form.url.length > 1) {
         this.form.url.pop();
       }
     },
-    fetchmeta: function(url) {
+    fetchmeta: function (url) {
       this.metadata = { title: "", description: "" };
 
       var ogs = require("open-graph-scraper");
       var options = { url: "https://cors-anywhere.herokuapp.com/" + url };
 
       var result = ogs(options)
-        .then(function(result) {
+        .then(function (result) {
           return {
             title: result.data.ogTitle,
             description: result.data.ogDescription,
-            data: JSON.stringify(result.data, null, 2)
+            data: JSON.stringify(result.data, null, 2),
           };
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("error:", error);
           return null;
         })
-        .then(x => {
+        .then((x) => {
           this.metadata = x;
         });
 
@@ -155,40 +149,44 @@ export default {
         "http://ec2-52-32-164-166.us-west-2.compute.amazonaws.com/query?search=" +
           url
       )
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(data => {
+        .then((data) => {
           var graph = data.data.records;
 
           var nodes = [];
           var links = [];
 
-          var newNodes = graph.map(x =>
-            x._fields[0].segments.map(y => [y.start, y.end])
+          var newNodes = graph.map((x) =>
+            x._fields[0].segments.map((y) => [y.start, y.end])
           );
 
-          newNodes.flat(2).map(x => {
+          newNodes.flat(2).map((x) => {
             if (nodes.length == 0) {
               nodes[0] = {
                 identity: x.identity.low,
                 label: x.labels[0],
-                properties: x.properties
+                properties: x.properties,
               };
             }
 
-            if (nodes.map(x => x.identity).indexOf(x.identity.low) == -1) {
+            if (nodes.map((x) => x.identity).indexOf(x.identity.low) == -1) {
               nodes.push({
                 identity: x.identity.low,
                 label: x.labels[0],
-                properties: x.properties
+                properties: x.properties,
               });
             }
           });
 
-          var addlinks = newNodes.flat().map(x => {
-            var source = nodes.map(y => y.identity).indexOf(x[0].identity.low);
-            var target = nodes.map(y => y.identity).indexOf(x[1].identity.low);
+          var addlinks = newNodes.flat().map((x) => {
+            var source = nodes
+              .map((y) => y.identity)
+              .indexOf(x[0].identity.low);
+            var target = nodes
+              .map((y) => y.identity)
+              .indexOf(x[1].identity.low);
             return { source: source, target: target };
           });
 
@@ -200,12 +198,12 @@ export default {
 
           this.d3plot();
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("error:", error);
           return null;
         });
     },
-    checkorcid: function(orcid) {
+    checkorcid: function (orcid) {
       var orcid_auth = require("@/assets/orcid_secret.json");
 
       var options = {
@@ -213,7 +211,7 @@ export default {
         scope: "openid",
         nonce: "whatever",
         response_type: "token",
-        redirect_uri: "http://throughputdb.com"
+        redirect_uri: "http://throughputdb.com",
       };
 
       var url = "https://sandbox.orcid.org/oauth/authorize?";
@@ -232,7 +230,7 @@ export default {
           options.redirect_uri
       );
     },
-    onSubmit: function(evt) {
+    onSubmit: function (evt) {
       evt.preventDefault();
       var url =
         "http://ec2-34-219-104-150.us-west-2.compute.amazonaws.com/datanote/?body=" +
@@ -244,15 +242,15 @@ export default {
 
       fetch(url, {
         method: "POST",
-        mode: "cors"
+        mode: "cors",
       })
-        .then(response => {
+        .then((response) => {
           response;
         })
-        .then(x => {
+        .then((x) => {
           fetchmeta(this.form.url);
         })
-        .then(x => {
+        .then((x) => {
           this.form.url = null;
           this.form.description = null;
           this.form.keyword = null;
@@ -270,10 +268,10 @@ export default {
       this.$nextTick(() => {
         this.show = true;
       });
-    }
+    },
   },
   computed: {
-    nodes: function() {
+    nodes: function () {
       var that = this;
       if (that.graph) {
         var svg = d3.select("svg");
@@ -286,7 +284,7 @@ export default {
           .data(that.graph.nodes)
           .enter()
           .append("circle")
-          .attr("r", function(d) {
+          .attr("r", function (d) {
             var dtype = Object.keys(d.properties);
             if (dtype.indexOf("value") > -1) {
               return 30;
@@ -298,7 +296,7 @@ export default {
               return 10;
             }
           })
-          .attr("fill", function(d, i) {
+          .attr("fill", function (d, i) {
             if (Object.keys(d.properties).indexOf("value") > -1) {
               return "#CF394E";
             } else if (Object.keys(d.properties).indexOf("url") > -1) {
@@ -312,7 +310,7 @@ export default {
           .attr("stroke", "#00000077")
           .attr("stroke-width", 3);
 
-        node.append("title").text(function(d) {
+        node.append("title").text(function (d) {
           var newobj = d.properties;
           delete newobj.created;
           return JSON.stringify(newobj, null, 2);
@@ -339,7 +337,7 @@ export default {
         return node;
       }
     },
-    links: function() {
+    links: function () {
       var that = this;
       if (that.graph) {
         return d3
@@ -351,39 +349,39 @@ export default {
           .data(that.graph.links)
           .enter()
           .append("line")
-          .attr("stroke-width", function(d) {
+          .attr("stroke-width", function (d) {
             return 10;
           });
       }
-    }
+    },
   },
-  updated: function() {
+  updated: function () {
     if (this.simulation) {
       var that = this;
       that.simulation.nodes(that.graph.nodes).on("tick", function ticked() {
         that.links
-          .attr("x1", function(d) {
+          .attr("x1", function (d) {
             return d.source.x;
           })
-          .attr("y1", function(d) {
+          .attr("y1", function (d) {
             return d.source.y;
           })
-          .attr("x2", function(d) {
+          .attr("x2", function (d) {
             return d.target.x;
           })
-          .attr("y2", function(d) {
+          .attr("y2", function (d) {
             return d.target.y;
           });
 
         that.nodes
-          .attr("cx", function(d) {
+          .attr("cx", function (d) {
             return d.x;
           })
-          .attr("cy", function(d) {
+          .attr("cy", function (d) {
             return d.y;
           });
       });
     }
-  }
+  },
 };
 </script>

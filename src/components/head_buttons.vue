@@ -16,14 +16,13 @@
 </template>
 
 <script>
-
 export default {
   name: "opener",
   data() {
     return {
       loading: false,
-      options: ["Status", "Searches", "Something"]
+      options: ["Status", "Searches", "Something"],
     };
-  }
+  },
 };
 </script>
