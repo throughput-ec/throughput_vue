@@ -1,5 +1,5 @@
 <template>
-  <div style="float:right">
+  <div style="float: right">
     <b-btn v-b-modal.orcidinfo variant="outline-success" title="Why ORCID?"
       ><strong>?</strong></b-btn
     >
@@ -26,13 +26,12 @@
 </template>
 
 <script>
-
 export default {
   name: "orcidText",
   data() {
     return {
-      msg: "Orcid description"
+      msg: "Orcid description",
     };
-  }
+  },
 };
 </script>

@@ -12,7 +12,7 @@ export default {
   name: "repoCounter",
   props: {
     counters: Object,
-    type: String
-  }
+    type: String,
+  },
 };
 </script>

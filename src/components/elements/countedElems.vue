@@ -18,12 +18,12 @@ export default {
   name: "counters",
   props: {
     counter: Number,
-    type: String
+    type: String,
   },
   data() {
     return {
-      msg: "Orcid description"
+      msg: "Orcid description",
     };
-  }
+  },
 };
 </script>

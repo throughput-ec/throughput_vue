@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-for="items in repos" v-bind:key="items.name">
-      <b-card :title="items.name" style="max-width: 100%;" class="mb-2">
+      <b-card :title="items.name" style="max-width: 100%" class="mb-2">
         <b-card-text>
           <div>
             {{ items.description }}
@@ -22,10 +22,10 @@ export default {
   name: "objectList",
   props: {
     repos: Array,
-    type: String
+    type: String,
   },
   components: {
-    countElem: counters
-  }
+    countElem: counters,
+  },
 };
 </script>

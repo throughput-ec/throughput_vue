@@ -1,2 +1,0 @@
-export const ORCID_CLIENT_ID = "APP-0QKJVU4F2WCTN2RY";
-export const ORCID_SECRET = "b182215a-ca23-4834-965d-a2477bd87e0e";

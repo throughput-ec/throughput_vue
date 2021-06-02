@@ -4,7 +4,7 @@ import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 import VueCookies from "vue-cookies";
 
 import App from "./App.vue";
-import keyword_search from './components/keyword_search';
+import keyword_search from "./components/keyword_search";
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
@@ -26,29 +26,29 @@ const router = new VueRouter({
       metaTags: [
         {
           name: "Throughput",
-          content: "Searching connected code and data on the open web."
+          content: "Searching connected code and data on the open web.",
         },
         {
           property: "og:url",
-          contents: "http://throughputdb.com"
+          contents: "http://throughputdb.com",
         },
         {
           property: "og:type",
-          contents: "website"
+          contents: "website",
         },
         {
           property: "og-description",
-          contents: "Searching connected code and data on the open web."
+          contents: "Searching connected code and data on the open web.",
         },
         {
           property: "og:image",
-          contents: "http://throughputdb.com/throughput_infographic.png"
-        }
-      ]
+          contents: "http://throughputdb.com/throughput_infographic.png",
+        },
+      ],
     },
     { path: "/search", component: keyword_search, props: true },
-    { path: "/#", component: App, props: true }
-  ]
+    { path: "/#", component: App, props: true },
+  ],
 });
 
 Vue.use(VueRouter);
@@ -56,5 +56,5 @@ Vue.use(VueRouter);
 new Vue({
   el: "#app",
   router: router,
-  render: h => h("router-view")
+  render: (h) => h("router-view"),
 });
