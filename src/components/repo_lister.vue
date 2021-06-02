@@ -121,19 +121,21 @@ export default {
   },
   methods: {
     dropDB(val) {
+      let self = this;
       const dbs = this.repos.map((x) => x.name);
       const position = dbs.indexOf(val.name);
-      this.repos[position]["show"] = "no";
-      this.repos.sort(function (a, b) {
+      self.repos[position]["show"] = "no";
+      self.repos.sort(function (a, b) {
         return -a["show"].localeCompare(b["show"]);
       });
       this.$emit("repos", this.repos);
     },
     addDB(val) {
+      let self = this;
       const dbs = this.repos.map((x) => x.name);
       const position = dbs.indexOf(val.name);
-      this.repos[position]["show"] = "yes";
-      this.repos.sort(function (a, b) {
+      self.repos[position]["show"] = "yes";
+      self.repos.sort(function (a, b) {
         return -a["show"].localeCompare(b["show"]);
       });
       this.$emit("repos", this.repos);

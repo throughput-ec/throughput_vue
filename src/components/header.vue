@@ -47,7 +47,6 @@ export default {
 
     // ORCID CODE & COOKIES
     const code = this.$route.query.code;
-    const path = this.$route.path;
 
     if (code != null) {
       // EXCHANGE CODE FOR AUTH TOKEN
@@ -72,14 +71,11 @@ export default {
           return response.json();
         })
         .then((data) => {
-          //        console.log("ORCID RESPONSE: " + JSON.stringify(data));
-
-          // SAVE CODE AS COOKIE
           let date = new Date();
           date.setTime(date.getTime() + 90 * 86400000); // EXPIRE COOKIE AFTER 90 DAYS;
           const expires = date.toUTCString();
           document.cookie =
-            "orcid-id=" + code.toString() + "; expires=" + expires;
+            "orcid-id=" + data.toString() + "; expires=" + expires;
 
           this.showLogin = false;
         })
