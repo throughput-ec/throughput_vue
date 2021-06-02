@@ -39,12 +39,16 @@
           <b-col class="col-md-2">
             <div v-if="item.show === 'yes'">
               <b-button-group>
-                <b-button @click="dropDB(item)" variant="danger">Drop</b-button>
+                <b-button @click="switchDB(item)" variant="danger">
+                  Drop
+                </b-button>
               </b-button-group>
             </div>
             <div v-else>
               <b-button-group>
-                <b-button @click="addDB(item)" variant="success">Add</b-button>
+                <b-button @click="switchDB(item)" variant="success">
+                  Add
+                </b-button>
               </b-button-group>
             </div>
           </b-col>
@@ -174,23 +178,19 @@ export default {
     },
   },
   methods: {
-    dropDB(val) {
+    switchDB(val) {
+      let self = this;
       const dbs = this.apikw.map((x) => x.name);
       const position = dbs.indexOf(val.name);
-      this.apikw[position]["show"] = "no";
-      this.apikw.sort(function (a, b) {
+      if (self.apikw[position]["show"] === "yes") {
+        self.apikw[position]["show"] = "no";
+      } else {
+        self.apikw[position]["show"] = "yes";
+      }
+      self.apikw.sort(function (a, b) {
         return -a["show"].localeCompare(b["show"]);
       });
-      this.$emit("apikw", this.apikw);
-    },
-    addDB(val) {
-      const dbs = this.apikw.map((x) => x.name);
-      const position = dbs.indexOf(val.name);
-      this.apikw[position]["show"] = "yes";
-      this.apikw.sort(function (a, b) {
-        return -a["show"].localeCompare(b["show"]);
-      });
-      this.$emit("apikw", this.apikw);
+      this.$emit("apikw", self.apikw);
     },
     getCite(val) {
       let self = this;
@@ -209,7 +209,8 @@ export default {
         });
     },
     toggleExcerpt(index) {
-      this.apikw[index]["showExcerpt"] = !this.apikw[index]["showExcerpt"];
+      let self = this;
+      self.apikw[index]["showExcerpt"] = !self.apikw[index]["showExcerpt"];
       this.$forceUpdate();
     },
     updateToDisplay(data) {

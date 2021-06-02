@@ -49,7 +49,7 @@
             </b-container>
           </div>
         </b-row>
-        <b-row style="padding:20px;">
+        <b-row style="padding: 20px">
           <b-button @click="onSubmit" class="w-100">Submit Search</b-button>
         </b-row>
         <b-row>

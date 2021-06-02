@@ -4,7 +4,6 @@
      be dropped. 
      This would allow us to keep the full KW list in the parent component, and only
      have a short list of keywords in this component. -->
-<!--  -->
 
 <template>
   <div>
