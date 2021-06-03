@@ -1,6 +1,11 @@
 <template>
   <header class="header">
     <div class="header-menu">
+      <div id="orcidWidget"
+        :data-clientid="this.orcid"
+        :data-redirecturi="this.home"
+        data-size="large"
+        data-env="production"></div>
       <a :href="home" class="menu-button">Home</a>
       <a :href="about" class="menu-button">About Throughput</a>
       <a
@@ -9,12 +14,6 @@
         target="_blank"
         >GitHub Code</a
       >
-      <div id="orcidWidget"
-        :data-clientid="this.orcid"
-        :data-redirecturi="this.home"
-        data-size="large"
-        data-env="production"
-      ></div>
     </div>
 
     <div class="header-hero">
@@ -42,7 +41,7 @@ export default {
     return {
       showLogin: true,
       orcid: "",
-      orcidId: "",
+      orcidId: {orcidId: "", orcidGivenName: "", orcidFamilyName: ""},
       home: "",
       about: "https://throughputdb.com/about",
     };
@@ -51,55 +50,22 @@ export default {
     this.orcid = process.env.VUE_APP_ORCID;
     this.home = process.env.VUE_APP_BASEURL;
 
-    // ORCID CODE & COOKIES
-    const code = this.$route.query.code;
-
-    if (code != null) {
-      // EXCHANGE CODE FOR AUTH TOKEN
-      const body = {
-        client_id: process.env.VUE_APP_ORCID,
-        client_secret: process.env.VUE_APP_ORCIDSECRET,
-        grant_type: "authorization_code",
-        code: code,
-        redirect_uri: process.env.VUE_APP_BASEURL,
-      };
-
-      // URL ENCODED FETCH REQUEST - TODO IMPLEMENT THIS ONCE HTTPS / API DECISION IS IMPMEMENTED
-      fetch("https://orcid.org/oauth/token", {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: this.uriEncodeData(body),
-      })
-        .then(function (response) {
-          return response.json();
-        })
-        .then((data) => {
-          let date = new Date();
-          date.setTime(date.getTime() + 90 * 86400000); // EXPIRE COOKIE AFTER 90 DAYS;
-          const expires = date.toUTCString();
-          document.cookie =
-            "orcid-id=" + data.toString() + "; expires=" + expires;
-
-          this.showLogin = false;
-        })
-        .catch((error) => console.log(error));
+    if(this.$cookies.get('orcidId') == null) {
+      if(!document.getElementById('orcidId') == null) {
+        this.orcidId = {
+          orcidId: document.getElementById('orcidId').value,
+          orcidGivenName: document.getElementById('orcidGivenName').value,
+          orcidFamilyName: document.getElementById('orcidFamilyName').value,
+          orcidIdToken: document.getElementById('orcidIdToken').value};
+        let expires = new Date();
+        date.setTime(date.getTime() + 90 * 86400000); // EXPIRE COOKIE AFTER 90 DAYS;
+        let expireDate = date.toUTCString()
+        
+        this.$cookies.set('orcidId', orcidId, expireDate)
+      }
     } else {
       // CHECK COOKIES FOR ORCID
-      const store = decodeURIComponent(document.cookie);
-      const cookies = store.split(";");
-
-      for (const cookie of cookies) {
-        if (cookie.substring(0, 8) === "orcid-id") {
-          this.orcidId = cookie.substring(9);
-        }
-      }
-
-      //TODO: USE ORCID CODE TO GET ORCID ID
-      this.showLogin = this.orcidId === "";
+      this.orcidId = this.$cookies.get('orcidId')
     }
   },
   methods: {
