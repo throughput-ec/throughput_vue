@@ -53,7 +53,7 @@
           <b-button @click="onSubmit" class="w-100">Submit Search</b-button>
         </b-row>
         <b-row>
-          <div v-if="loadingRepos" class="w-100" style="padding:20px;">
+          <div v-if="loadingRepos" class="w-100" style="padding: 20px">
             <loading class="text-center"></loading>
           </div>
         </b-row>
@@ -119,7 +119,6 @@
           </b-tab>
 
           <b-tab title="Code Repositories" @click="getCodeRepos">
-
             <div
               v-if="apikw.filter((x) => x.show === 'yes').length > 40"
               style="padding: 20px 40px; width: 100%; text-align: center"

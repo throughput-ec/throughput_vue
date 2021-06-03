@@ -9,7 +9,12 @@
         target="_blank"
         >GitHub Code</a
       >
-      <a v-if="showLogin" :href="orcid" class="menu-button">ORCID Login</a>
+      <div id="orcidWidget"
+        :data-clientid="this.orcid"
+        :data-redirecturi="this.home"
+        data-size="large"
+        data-env="production"
+      ></div>
     </div>
 
     <div class="header-hero">
@@ -29,6 +34,8 @@
 </template>
 
 <script>
+import orcidWidget from "@/assets/js/orcid-widget.js"
+
 export default {
   name: "Header",
   data() {
@@ -41,8 +48,7 @@ export default {
     };
   },
   created() {
-    this.orcid = `https://orcid.org/oauth/authorize?client_id=${process.env.VUE_APP_ORCID}&response_type=code&scope=/authenticate&redirect_uri=${process.env.VUE_APP_BASEURL}`;
-
+    this.orcid = process.env.VUE_APP_ORCID;
     this.home = process.env.VUE_APP_BASEURL;
 
     // ORCID CODE & COOKIES
@@ -61,6 +67,7 @@ export default {
       // URL ENCODED FETCH REQUEST - TODO IMPLEMENT THIS ONCE HTTPS / API DECISION IS IMPMEMENTED
       fetch("https://orcid.org/oauth/token", {
         method: "POST",
+        mode: "no-cors",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/x-www-form-urlencoded",
