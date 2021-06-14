@@ -10,7 +10,6 @@
       >
         Get Citations
       </button>
-
       <b-form-checkbox
         id="checkboxrepo"
         v-model="status"
@@ -25,11 +24,6 @@
         >
       </b-form-checkbox>
     </div>
-
-    <!--<b-modal id="repocitation" title="Citations">
-            <pre>{{ this.citations }}</pre>
-        </b-modal>
--->
     <hr />
 
     <div v-for="(item, index) in toDisplay" :key="index">
@@ -58,6 +52,23 @@
                 >{{ item.name }}</a
               >&nbsp;
             </h4>
+            <div>
+              License:
+              <b-badge
+                v-if="item.meta.readme.license !== null"
+                variant="primary"
+              >
+                {{ item.meta.readme.license }}
+              </b-badge>
+              <b-badge v-else variant="danger">
+                No Reported License -- Not Open Source
+              </b-badge>
+              &nbsp; README.md
+              <b-badge v-if="item.meta.readme.readme.readme" variant="none">
+                {{ item.meta.readme.readme.char }} chars
+              </b-badge>
+              <b-badge v-else variant="danger">No README</b-badge>
+            </div>
             <div class="keyword-container">
               <div
                 v-for="(ccdrs, index) in item.ccdrs"
@@ -106,6 +117,13 @@ export default {
       citations: null,
       toDisplay: [],
       showPagination: false,
+      license: [
+        { value: null, text: "Any License" },
+        { value: "a", text: "" },
+        { value: "b", text: "Has a License" },
+        { value: "c", text: "This is an option with object value" },
+        { value: "d", text: "This one is disabled", disabled: true },
+      ],
     };
   },
   watch: {

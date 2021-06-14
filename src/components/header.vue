@@ -1,11 +1,13 @@
 <template>
   <header class="header">
     <div class="header-menu">
-      <div id="orcidWidget"
+      <div
+        id="orcidWidget"
         :data-clientid="this.orcid"
         :data-redirecturi="this.home"
         data-size="large"
-        data-env="production"></div>
+        data-env="production"
+      ></div>
       <a :href="home" class="menu-button">Home</a>
       <a :href="about" class="menu-button">About Throughput</a>
       <a
@@ -33,7 +35,7 @@
 </template>
 
 <script>
-import orcidWidget from "@/assets/js/orcid-widget.js"
+import orcidWidget from "@/assets/js/orcid-widget.js";
 
 export default {
   name: "Header",
@@ -41,7 +43,7 @@ export default {
     return {
       showLogin: true,
       orcid: "",
-      orcidId: {orcidId: "", orcidGivenName: "", orcidFamilyName: ""},
+      orcidId: { orcidId: "", orcidGivenName: "", orcidFamilyName: "" },
       home: "",
       about: "https://throughputdb.com/about",
     };
@@ -49,23 +51,25 @@ export default {
   created() {
     this.orcid = process.env.VUE_APP_ORCID;
     this.home = process.env.VUE_APP_BASEURL;
-
-    if(this.$cookies.get('orcidId') == null) {
-      if(!document.getElementById('orcidId') == null) {
+  },
+  mounted() {
+    if (this.$cookies.get("orcidId") == null) {
+      if (document.getElementById("orcidId") !== null) {
         this.orcidId = {
-          orcidId: document.getElementById('orcidId').value,
-          orcidGivenName: document.getElementById('orcidGivenName').value,
-          orcidFamilyName: document.getElementById('orcidFamilyName').value,
-          orcidIdToken: document.getElementById('orcidIdToken').value};
+          orcidId: document.getElementById("orcidId").value,
+          orcidGivenName: document.getElementById("orcidGivenName").value,
+          orcidFamilyName: document.getElementById("orcidFamilyName").value,
+          orcidIdToken: document.getElementById("orcidIdToken").value,
+        };
         let expires = new Date();
         date.setTime(date.getTime() + 90 * 86400000); // EXPIRE COOKIE AFTER 90 DAYS;
-        let expireDate = date.toUTCString()
-        
-        this.$cookies.set('orcidId', orcidId, expireDate)
+        let expireDate = date.toUTCString();
+
+        this.$cookies.set("orcidId", orcidId, expireDate);
       }
     } else {
       // CHECK COOKIES FOR ORCID
-      this.orcidId = this.$cookies.get('orcidId')
+      this.orcidId = this.$cookies.get("orcidId");
     }
   },
   methods: {
