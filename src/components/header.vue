@@ -17,7 +17,6 @@
         >GitHub Code</a
       >
     </div>
-
     <div class="header-hero">
       <div class="hero-container">
         <div class="hero-inner">
@@ -53,6 +52,7 @@ export default {
     this.home = process.env.VUE_APP_BASEURL;
   },
   mounted() {
+    this.processHash(this.$route.hash);
     if (this.$cookies.get("orcidId") == null) {
       if (document.getElementById("orcidId") !== null) {
         this.orcidId = {
@@ -73,6 +73,24 @@ export default {
     }
   },
   methods: {
+    processHash(val) {
+      let self = this;
+      var input = val
+        .replace("#", "")
+        .split("&")
+        .map((x) => {
+          var y = x.split("=");
+          var obj = {};
+          obj[y[0]] = y[1];
+          return obj;
+        })
+        .reduce(function (acc, x) {
+          for (var key in x) acc[key] = x[key];
+          return acc;
+        });
+      self.orcidlog = input;
+      this.$cookies.set("orcidId", input);
+    },
     uriEncodeData(data) {
       return Object.keys(data)
         .map(
