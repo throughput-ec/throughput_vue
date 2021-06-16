@@ -367,10 +367,26 @@ export default {
             return data.data.data;
           })
           .then((data) => {
-            self.allrepos = data.map(function (x) {
-              x["show"] = "yes";
-              return x;
-            });
+            self.allrepos = data
+              .map(function (x) {
+                x["show"] = "yes";
+                if (!Object.keys(x).includes("meta")) {
+                  x["meta"] = {
+                    topics: [],
+                    readme: { license: null, readme: { char: null } },
+                  };
+                }
+                return x;
+              })
+              .filter((x) => {
+                if (Object.keys(x).includes("status")) {
+                  if (x.status !== 404) {
+                    return true;
+                  }
+                } else {
+                  return true;
+                }
+              });
           })
           .then((data) => {
             this.loading = false;
