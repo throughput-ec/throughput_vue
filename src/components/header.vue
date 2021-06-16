@@ -1,13 +1,6 @@
 <template>
   <header class="header">
     <div class="header-menu">
-      <div
-        id="orcidWidget"
-        :data-clientid="this.orcid"
-        :data-redirecturi="this.home"
-        data-size="large"
-        data-env="production"
-      ></div>
       <a :href="home" class="menu-button">Home</a>
       <a :href="about" class="menu-button">About Throughput</a>
       <a
@@ -16,6 +9,18 @@
         target="_blank"
         >GitHub Code</a
       >
+      <div v-if="this.orcidId.access_token === ''">
+        <div
+          id="orcidWidget"
+          :data-clientid="this.orcid"
+          :data-redirecturi="this.home"
+          data-size="large"
+          data-env="production"
+        ></div>
+      </div>
+      <div v-else>
+        <b-button variant="success" pill>Logged Into ORCID</b-button>
+      </div>
     </div>
     <div class="header-hero">
       <div class="hero-container">
@@ -42,7 +47,7 @@ export default {
     return {
       showLogin: true,
       orcid: "",
-      orcidId: { orcidId: "", orcidGivenName: "", orcidFamilyName: "" },
+      orcidId: { access_token: "", orcidGivenName: "", orcidFamilyName: "" },
       home: "",
       about: "https://throughputdb.com/about",
     };
@@ -52,25 +57,11 @@ export default {
     this.home = process.env.VUE_APP_BASEURL;
   },
   mounted() {
-    this.processHash(this.$route.hash);
-    if (this.$cookies.get("orcidId") == null) {
-      if (document.getElementById("orcidId") !== null) {
-        this.orcidId = {
-          orcidId: document.getElementById("orcidId").value,
-          orcidGivenName: document.getElementById("orcidGivenName").value,
-          orcidFamilyName: document.getElementById("orcidFamilyName").value,
-          orcidIdToken: document.getElementById("orcidIdToken").value,
-        };
-        let expires = new Date();
-        date.setTime(date.getTime() + 90 * 86400000); // EXPIRE COOKIE AFTER 90 DAYS;
-        let expireDate = date.toUTCString();
-
-        this.$cookies.set("orcidId", orcidId, expireDate);
-      }
-    } else {
-      // CHECK COOKIES FOR ORCID
-      this.orcidId = this.$cookies.get("orcidId");
+    if (this.$route.hash !== "") {
+      this.processHash(this.$route.hash);
     }
+    // CHECK COOKIES FOR ORCID
+    this.orcidId = this.$cookies.get("orcidId");
   },
   methods: {
     processHash(val) {
@@ -90,13 +81,6 @@ export default {
         });
       self.orcidlog = input;
       this.$cookies.set("orcidId", input);
-    },
-    uriEncodeData(data) {
-      return Object.keys(data)
-        .map(
-          (key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key])
-        )
-        .join("&");
     },
   },
 };

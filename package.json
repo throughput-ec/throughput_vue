@@ -14,6 +14,7 @@
     "start": "HOST='0.0.0.0' PORT=80 npm run serve"
   },
   "dependencies": {
+    "@trevoreyre/autocomplete-vue": "^2.2.0",
     "bootstrap-vue": "^2.21.2",
     "compression": "^1.7.4",
     "core-js": "^3.13.1",
@@ -21,6 +22,8 @@
     "html-metadata": "git://github.com/wikimedia/html-metadata.git",
     "http": "0.0.0",
     "jquery": "^3.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^3.1.2",
     "open-graph-scraper": "^4.8.2",
     "page-metadata-parser": "^1.1.4",
     "passport-orcid": "0.0.3",
