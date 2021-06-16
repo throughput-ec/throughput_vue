@@ -5,6 +5,7 @@ import VueCookies from "vue-cookies";
 
 import App from "./App.vue";
 import keyword_search from "./components/keyword_search";
+import flagRepo from "./components/elements/flagRepo.vue";
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
@@ -47,6 +48,7 @@ const router = new VueRouter({
       ],
     },
     { path: "/search", component: keyword_search, props: true },
+    { path: "/test", component: flagRepo, props: true },
     { path: "/#", component: App, props: true },
   ],
 });

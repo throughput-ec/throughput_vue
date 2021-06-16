@@ -42,12 +42,18 @@
                 <b-button @click="switchDB(item)" variant="danger">
                   Drop
                 </b-button>
+                <b-button @click="selOne(item)" variant="primary">
+                  Select One
+                </b-button>
               </b-button-group>
             </div>
             <div v-else>
               <b-button-group>
                 <b-button @click="switchDB(item)" variant="success">
                   Add
+                </b-button>
+                <b-button @click="selOne(item)" variant="primary">
+                  Select One
                 </b-button>
               </b-button-group>
             </div>
@@ -187,6 +193,21 @@ export default {
       } else {
         self.apikw[position]["show"] = "yes";
       }
+      self.apikw.sort(function (a, b) {
+        return -a["show"].localeCompare(b["show"]);
+      });
+      this.$emit("apikw", self.apikw);
+    },
+    selOne(val) {
+      let self = this;
+      const dbs = this.apikw.map((x) => x.name);
+      const position = dbs.indexOf(val.name);
+      self.apikw.map(function (x) {
+        x["show"] = "no";
+        return x;
+      });
+      self.apikw[position]["show"] = "yes";
+
       self.apikw.sort(function (a, b) {
         return -a["show"].localeCompare(b["show"]);
       });

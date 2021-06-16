@@ -18,9 +18,10 @@
               list="input-list"
               v-model="textQuery"
               id="input-with-list"
-              aria-describedby="input-live-help input-live-feedback"
+              aria-describedby="input-live-feedback"
               :state="this.button.variant == 'success'"
               :disabled="this.button.variant == 'success'"
+              placeholder="A Github Repository (form User/Repo)"
             ></b-form-input>
             <b-input-group-append
               ><b-button :variant="this.button.variant" @click="repoCheck">{{
@@ -30,9 +31,6 @@
             <b-form-invalid-feedback id="input-live-feedback">
               Click "Check" to ensure repository name validity.
             </b-form-invalid-feedback>
-            <b-form-text id="input-live-help"
-              >A Github Repository (form User/Repo)</b-form-text
-            >
             <b-form-datalist
               id="input-list"
               :options="reponames"
@@ -74,7 +72,7 @@
   </div>
 </template>
 <script>
-import jwt_decode from "jwt-decode";
+var jwt = require("jsonwebtoken");
 
 export default {
   name: "updateRepo",
@@ -87,6 +85,7 @@ export default {
     reason: "",
     reponames: [],
     freeForm: "",
+    secret: "",
     dbnames: [],
     reporesult: [],
     orcid: "",
@@ -103,9 +102,12 @@ export default {
     modalOut: [],
   }),
   mounted() {
-    this.orcid = jwt_decode(this.$cookies.get("orcidId").id_token);
+    this.orcid = jwt.decode(this.$cookies.get("orcidId").id_token);
   },
   setup() {},
+  created() {
+    this.secret = process.env.VUE_APP_APISECRET;
+  },
   methods: {
     onClick() {
       let self = this;
@@ -114,10 +116,10 @@ export default {
         orcid: self.orcid.sub,
         db: self.dbQuery,
         repo: self.textQuery,
-        repoPurp: self.orcid,
+        repoPurp: self.reason,
         annotationBody: self.freeForm,
       };
-      this.modalOut = objectSend;
+      this.modalOut = jwt.sign(objectSend, this.secret);
     },
     repoCheck: function () {
       let self = this;

@@ -11,7 +11,6 @@
          search parameters, and what is being returned. -->
       <searchType @changeSearch="updateSearch" @changeReturn="updateReturn">
       </searchType>
-
       <b-container>
         <b-row>
           <kwInput
@@ -50,7 +49,10 @@
           </div>
         </b-row>
         <b-row style="padding: 20px">
-          <b-button @click="onSubmit" class="w-100">Submit Search</b-button>
+          <b-button @click="onSubmit" class="w-100" variant="primary"
+            >Submit Search</b-button
+          >
+          <flagRepo class="w-100" style="padding-top: 5px"></flagRepo>
         </b-row>
         <b-row>
           <div v-if="loadingRepos" class="w-100" style="padding: 20px">
@@ -144,6 +146,7 @@ import kwInput from "./keywords/keywordinput.vue";
 import header from "../components/header.vue";
 import searchType from "./search_elements/searchType.vue";
 import badgeBox from "./wordBadges.vue";
+import insertRepo from "./elements/flagRepo.vue";
 
 export default {
   name: "keywordSearch",
@@ -200,6 +203,7 @@ export default {
     };
   },
   components: {
+    flagRepo: insertRepo,
     loading: loading,
     searchType: searchType,
     lister: lister,

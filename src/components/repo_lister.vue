@@ -1,33 +1,48 @@
 <!-- this is the component that lists the repositories: -->
 <template>
   <div>
-    <div v-if="repos.length > 0" class="tab-header">
-      <button
-        v-if="repos.length > 0"
-        v-b-modal.dbcitation
-        @click="getCite(repos)"
-        class="light-blue-outline-button"
-      >
-        Get Citations
-      </button>
-      <b-form-checkbox
-        id="checkboxrepo"
-        v-model="status"
-        name="checkboxrepo"
-        value="yes"
-        unchecked-value="no"
-        v-b-tooltip.hover
-        title="Unselected resources will be placed at the end of the list."
-      >
-        <label style="color: var(--t-color-light-blue)"
-          >Show Unselected Resources</label
-        >
-      </b-form-checkbox>
-    </div>
+    <b-container>
+      <b-row>
+        <div v-if="repos.length > 0" class="tab-header">
+          <button
+            v-if="repos.length > 0"
+            v-b-modal.dbcitation
+            @click="getCite(repos)"
+            class="light-blue-outline-button"
+          >
+            Get Citations
+          </button>
+          <b-form-checkbox
+            id="checkboxrepo"
+            v-model="status"
+            name="checkboxrepo"
+            value="yes"
+            unchecked-value="no"
+            v-b-tooltip.hover
+            title="Unselected resources will be placed at the end of the list."
+          >
+            <label style="color: var(--t-color-light-blue)"
+              >Show Unselected Resources</label
+            >
+          </b-form-checkbox>
+        </div>
+      </b-row>
+      <b-row>
+        <b-col>
+          Licenses
+          <div></div>
+        </b-col>
+        <b-col> Language </b-col>
+        <b-col> Tags </b-col>
+      </b-row>
+    </b-container>
+
     <hr />
 
     <div v-for="(item, index) in toDisplay" :key="index">
-      <b-container v-if="item.show === 'yes' || status === 'yes'">
+      <b-container
+        v-if="(item.show === 'yes' || status === 'yes') & (item.status !== 404)"
+      >
         <b-row align-v="center">
           <b-col class="col-md-2">
             <div v-if="item.show === 'yes'">
@@ -53,21 +68,13 @@
               >&nbsp;
             </h4>
             <div>
-              License:
-              <b-badge
-                v-if="item.meta.readme.license !== null"
-                variant="primary"
-              >
-                {{ item.meta.readme.license }}
+              <b-badge v-if="item.hasOwnProperty('meta')" variant="primary">
+                {{ checkLicense(item.meta.readme.license) }}
               </b-badge>
-              <b-badge v-else variant="danger">
-                No Reported License -- Not Open Source
+              &nbsp;
+              <b-badge v-if="item.hasOwnProperty('meta')" variant="none">
+                {{ checkReadme(item.meta.readme.readme.char) }}
               </b-badge>
-              &nbsp; README.md
-              <b-badge v-if="item.meta.readme.readme.readme" variant="none">
-                {{ item.meta.readme.readme.char }} chars
-              </b-badge>
-              <b-badge v-else variant="danger">No README</b-badge>
             </div>
             <div class="keyword-container">
               <div
@@ -138,6 +145,22 @@ export default {
     },
   },
   methods: {
+    checkLicense(val) {
+      if (val === null) {
+        var output = "Implicit Copyright";
+      } else {
+        output = val;
+      }
+      return output;
+    },
+    checkReadme(val) {
+      if (val === null) {
+        var output = "No Readme";
+      } else {
+        output = "README: " + val + " chars";
+      }
+      return output;
+    },
     dropDB(val) {
       let self = this;
       const dbs = this.repos.map((x) => x.name);
