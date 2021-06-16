@@ -27,21 +27,13 @@
           </b-form-checkbox>
         </div>
       </b-row>
-      <b-row>
-        <b-col>
-          Licenses
-          <div></div>
-        </b-col>
-        <b-col> Language </b-col>
-        <b-col> Tags </b-col>
-      </b-row>
     </b-container>
 
     <hr />
 
     <div v-for="(item, index) in toDisplay" :key="index">
       <b-container
-        v-if="(item.show === 'yes' || status === 'yes') & (item.status !== 404)"
+        v-if="(item.show === 'yes' || status === 'yes')"
       >
         <b-row align-v="center">
           <b-col class="col-md-2">
@@ -56,42 +48,68 @@
               </b-button-group>
             </div>
           </b-col>
-
-          <b-col class="col-md-10">
-            <h4>
-              <a
-                :href="item.url"
-                rel="noopener noreferrer"
-                target="_blank"
-                style="color: var(--t-color-light-blue)"
-                >{{ item.name }}</a
-              >&nbsp;
-            </h4>
-            <div>
-              <b-badge v-if="item.hasOwnProperty('meta')" variant="primary">
-                {{ checkLicense(item.meta.readme.license) }}
-              </b-badge>
-              &nbsp;
-              <b-badge v-if="item.hasOwnProperty('meta')" variant="none">
-                {{ checkReadme(item.meta.readme.readme.char) }}
-              </b-badge>
-            </div>
-            <div class="keyword-container">
-              <div
-                v-for="(ccdrs, index) in item.ccdrs"
-                :key="index"
-                class="keyword-badge transparent-blue-green-badge"
-              >
-                <span>{{ ccdrs }}</span>
-                <span
-                  v-if="index < item.ccdrs.length - 1"
-                  style="color: var(--t-color-light)"
-                  >,</span
-                >
+          <b-col>
+            <b-row>
+              <h4>
+                <a
+                  :href="item.url"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  style="color: var(--t-color-light-blue)"
+                  >{{ item.name }}</a
+                >&nbsp;
+              </h4>
+            </b-row>
+            <b-row>
+              <div>
+                <b-badge v-if="item.hasOwnProperty('meta')" variant="primary">
+                  {{ checkLicense(item.meta.readme.license) }}
+                </b-badge>
+                &nbsp;
+                <b-badge v-if="item.hasOwnProperty('meta')" variant="none">
+                  {{ checkReadme(item.meta.readme.readme.char) }}
+                </b-badge>
               </div>
-            </div>
-            <small>{{ item.description }}</small>
-            <br />
+              <div class="keyword-container">
+                <div
+                  v-for="(ccdrs, index) in item.ccdrs"
+                  :key="index"
+                  class="keyword-badge transparent-blue-green-badge"
+                >
+                  <span>{{ ccdrs }}</span>
+                  <span
+                    v-if="index < item.ccdrs.length - 1"
+                    style="color: var(--t-color-light)"
+                    >,</span
+                  >
+                </div>
+              </div>
+              <small>{{ item.description }}</small>
+            </b-row>
+            <b-row>
+              <div
+                v-if="item.meta.topics.length > 0"
+                style="display: inline-block"
+              >
+                <div
+                  v-for="(topic, index) in item.meta.topics"
+                  :key="index"
+                  class="keyword-badge transparent-green-badge"
+                  style="display: inline"
+                >
+                  <span>{{ topic }}</span>
+                  <span
+                    v-if="index < item.ccdrs.length - 1"
+                    style="color: var(--t-color-light)"
+                    >,</span
+                  >
+                </div>
+              </div>
+              <div v-else>No Repository Topics Listed</div>
+            </b-row>
+          </b-col>
+          <b-col>
+            <b-modal>Show meta</b-modal>
           </b-col>
         </b-row>
         <hr />
