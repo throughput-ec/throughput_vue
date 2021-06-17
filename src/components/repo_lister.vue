@@ -1,6 +1,11 @@
 <!-- this is the component that lists the repositories: -->
 <template>
   <div>
+    <b-modal id="meta-modal" v-if="modalVisible" @close="modalVisible = false"
+      ><div>
+        <pre>{{ this.metaModal }}</pre>
+      </div></b-modal
+    >
     <b-container>
       <b-row>
         <div v-if="repos.length > 0" class="tab-header">
@@ -32,11 +37,9 @@
     <hr />
 
     <div v-for="(item, index) in toDisplay" :key="index">
-      <b-container
-        v-if="(item.show === 'yes' || status === 'yes')"
-      >
+      <b-container v-if="item.show === 'yes' || status === 'yes'">
         <b-row align-v="center">
-          <b-col class="col-md-2">
+          <b-col fluid="sm" cols="2">
             <div v-if="item.show === 'yes'">
               <b-button-group>
                 <b-button @click="dropDB(item)" variant="danger">Drop</b-button>
@@ -48,7 +51,7 @@
               </b-button-group>
             </div>
           </b-col>
-          <b-col>
+          <b-col cols="8">
             <b-row>
               <h4>
                 <a
@@ -83,8 +86,7 @@
                     >,</span
                   >
                 </div>
-              </div>
-              <small>{{ item.description }}</small>
+              </div>{{ item.description }}
             </b-row>
             <b-row>
               <div
@@ -105,11 +107,25 @@
                   >
                 </div>
               </div>
-              <div v-else>No Repository Topics Listed</div>
+              <div v-else>
+                <div
+                  class="keyword-badge transparent-red-badge"
+                  style="display: inline"
+                >
+                  <span><small>No Topic Listed</small></span>
+                  <span
+                    v-if="index < item.ccdrs.length - 1"
+                    style="color: var(--t-color-light)"
+                    >,</span
+                  >
+                </div>
+              </div>
             </b-row>
           </b-col>
           <b-col>
-            <b-modal>Show meta</b-modal>
+            <b-button v-b-modal.meta-modal @click="printMeta(item)"
+              >Show meta</b-button
+            >
           </b-col>
         </b-row>
         <hr />
@@ -138,6 +154,8 @@ export default {
   },
   data() {
     return {
+      modalVisible: false,
+      metaModal: "",
       status: "no",
       citations: null,
       toDisplay: [],
@@ -163,6 +181,10 @@ export default {
     },
   },
   methods: {
+    printMeta(val) {
+      this.modalVisible = true;
+      this.metaModal = JSON.stringify(val, null, 2);
+    },
     checkLicense(val) {
       if (val === null) {
         var output = "Implicit Copyright";
@@ -175,7 +197,7 @@ export default {
       if (val === null) {
         var output = "No Readme";
       } else {
-        output = "README: " + val + " chars";
+        output = "README: " + val.toLocaleString() + " chars";
       }
       return output;
     },
