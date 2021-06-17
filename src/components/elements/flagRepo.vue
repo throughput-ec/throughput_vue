@@ -8,6 +8,9 @@
       <b-button v-b-modal.modal-1 class="w-100" variant="success"
         >Link New Repository</b-button
       >
+      <b-modal id="added-1" title="Annotation Added" ok-only>
+        You've added a record to the graph!
+      </b-modal>
       <b-modal id="modal-1" title="Modifying Repositories" @ok="onClick">
         Thank you {{ this.orcid.given_name }} for helping us modify or add
         records!
@@ -43,13 +46,11 @@
             v-model="dbQuery"
             aria-describedby="input-dblive-help input-dblive-feedback"
             :state="dbnames.includes(this.dbQuery)"
+            placeholder="A Database Registered within Throughput."
           ></b-form-input>
           <b-form-invalid-feedback id="input-dblive-feedback">
             Enter the full database name.
           </b-form-invalid-feedback>
-          <b-form-text id="input-dblive-help"
-            >A Database Registered within Throughput.</b-form-text
-          >
           <b-form-datalist
             id="dbName-list"
             :options="dbnames"
@@ -81,7 +82,7 @@ export default {
     textQuery: "",
     dbQuery: "",
     button: { variant: "primary", text: "Check" },
-    dbButton: { variant: "primary", text: "Check" },
+    validForm: { repo: false, db: false },
     reason: "",
     reponames: [],
     freeForm: "",
@@ -89,6 +90,7 @@ export default {
     dbnames: [],
     reporesult: [],
     orcid: "",
+    tester: false,
     purpose: [
       "Don't Know",
       "Educational",
@@ -109,13 +111,38 @@ export default {
     this.secret = process.env.VUE_APP_APISECRET;
   },
   methods: {
-    onClick() {
+    formValidation() {
+      if (this.dbnames.includes(this.dbQuery)) {
+        this.validForm.db = true;
+      }
+      return Object.values(this.validForm).every((x) => x);
+    },
+    onClick(bvModalEvt) {
+      bvModalEvt.preventDefault();
+      this.checkSubmit();
+      this.loader = true;
+      fetch(
+        `${process.env.VUE_APP_URLPATH}/api/throughputvue?token=${this.modalOut}`
+      ).then((x) => {
+        this.$bvModal.show("added-1");
+        this.loader = false;
+      });
+      this.$nextTick(() => {
+        this.$bvModal.hide("modal-1");
+      });
+    },
+    checkSubmit() {
       let self = this;
+      var works = this.formValidation();
+      if (!works) {
+        return;
+      }
       // Validate object:
       var objectSend = {
         orcid: self.orcid.sub,
+        orcidname: self.orcid.name,
         db: self.dbQuery,
-        repo: self.textQuery,
+        repo: self.reporesult,
         repoPurp: self.reason,
         annotationBody: self.freeForm,
       };
@@ -139,6 +166,7 @@ export default {
           .then((data) => {
             this.reporesult = data;
             if (this.reporesult.message === undefined) {
+              this.validForm.repo = true;
               this.button["variant"] = "success";
               this.button.text = "matched (clear)";
             } else {
@@ -153,7 +181,7 @@ export default {
     textQuery: {
       handler(val) {
         var self = this;
-        if (val.length > 3) {
+        if (val.length > 2) {
           fetch(
             `${process.env.VUE_APP_URLPATH}/api/repos/name?name=${this.textQuery}`
           )
@@ -167,7 +195,7 @@ export default {
     dbQuery: {
       handler(val) {
         var self = this;
-        if (val.length > 3) {
+        if (val.length > 2) {
           fetch(
             `${process.env.VUE_APP_URLPATH}/api/ccdr/name?name=${this.dbQuery}`
           )

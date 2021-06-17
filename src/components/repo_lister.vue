@@ -86,7 +86,8 @@
                     >,</span
                   >
                 </div>
-              </div>{{ item.description }}
+              </div>
+              {{ item.description }}
             </b-row>
             <b-row>
               <div
