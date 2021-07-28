@@ -104,7 +104,9 @@ export default {
     modalOut: [],
   }),
   mounted() {
-    this.orcid = jwt.decode(this.$cookies.get("orcidId").id_token);
+    if (this.$cookies.isKey("orcidId")) {
+      this.orcid = jwt.decode(this.$cookies.get("orcidId").id_token);
+    }
   },
   setup() {},
   created() {
