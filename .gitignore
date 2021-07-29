@@ -27,3 +27,7 @@ orcid_secret.json
 
 ./src/settings.js;
 
+
+.nyc_output/processinfo/
+
+.nyc_output/

@@ -10,16 +10,25 @@
         >GitHub Code</a
       >
       <div v-if="this.orcidId.access_token === ''">
-        <div
-          id="orcidWidget"
-          :data-clientid="this.orcid"
-          :data-redirecturi="this.home"
-          data-size="large"
-          data-env="production"
-        ></div>
+        <a
+          id="orcidAuthButton"
+          href="https://orcid.org/oauth/authorize?response_type=token&redirect_uri=https://throughputdb.com/search&client_id=APP-OKAEGWFY7MEOK4HE&scope=openid"
+        >
+          <b-button id="loginorcid-1" variant="warning" pill
+            >Log Into ORCID</b-button
+          >
+        </a>
+        <b-tooltip target="loginorcid-1" triggers="hover">
+          Use ORCiD to manage your authentication on Throughput.
+        </b-tooltip>
       </div>
       <div v-else>
-        <b-button variant="success" pill>Logged Into ORCID</b-button>
+        <b-button variant="success" pill @click="logOut()" id="loginorcid-2">
+          Logged Into ORCiD
+        </b-button>
+        <b-tooltip target="loginorcid-2" triggers="hover">
+          Click to logout and remove ORCiD-related cookies.
+        </b-tooltip>
       </div>
     </div>
     <div class="header-hero">
@@ -61,9 +70,19 @@ export default {
       this.processHash(this.$route.hash);
     }
     // CHECK COOKIES FOR ORCID
-    this.orcidId = this.$cookies.get("orcidId");
+    if (this.$cookies.isKey("orcidId")) {
+      this.orcidId = this.$cookies.get("orcidId");
+    }
   },
   methods: {
+    logOut() {
+      this.orcidId = {
+        access_token: "",
+        orcidGivenName: "",
+        orcidFamilyName: "",
+      };
+      this.$cookies.remove("orcidId");
+    },
     processHash(val) {
       let self = this;
       var input = val
