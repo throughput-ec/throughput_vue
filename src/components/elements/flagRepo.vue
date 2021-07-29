@@ -6,7 +6,7 @@
   <div>
     <div v-if="this.orcid !== ''">
       <b-button v-b-modal.modal-1 class="w-100" variant="success"
-        >Link New Repository</b-button
+        >Link A New Code Repository to a Database</b-button
       >
       <b-modal id="added-1" title="Annotation Added" ok-only>
         You've added a record to the graph!

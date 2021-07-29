@@ -99,6 +99,7 @@ export default {
           return acc;
         });
       self.orcidlog = input;
+
       this.$cookies.set("orcidId", input);
     },
   },

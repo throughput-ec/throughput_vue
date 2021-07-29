@@ -309,7 +309,7 @@ export default {
           // ADD LINK COUNT
           self.apikw = data.data;
           self.apikw = self.apikw.map(function (x) {
-            x["show"] = "yes";
+            x["show"] = "no";
             if (!x["linked"] && x["count"]) {
               x["linked"] = x["count"];
             }
@@ -454,7 +454,7 @@ export default {
 
           self.apikw = data.data.data;
           self.apikw = self.apikw.map(function (x) {
-            x["show"] = "yes";
+            x["show"] = "no";
             return x;
           });
         })

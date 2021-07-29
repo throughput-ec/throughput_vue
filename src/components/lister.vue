@@ -153,7 +153,7 @@ export default {
   },
   data() {
     return {
-      status: "",
+      status: "yes",
       keyresults: [],
       somekw: [
         {
