@@ -47,7 +47,33 @@ const router = new VueRouter({
         },
       ],
     },
-    { path: "/search", component: keyword_search, props: true },
+    {
+      path: "/search",
+      component: keyword_search,
+      props: true,
+      metaTags: [
+        {
+          name: "Throughput",
+          content: "Searching connected code and data on the open web.",
+        },
+        {
+          property: "og:url",
+          contents: "http://throughputdb.com/search",
+        },
+        {
+          property: "og:type",
+          contents: "website",
+        },
+        {
+          property: "og-description",
+          contents: "Searching connected code and data on the open web.",
+        },
+        {
+          property: "og:image",
+          contents: "http://throughputdb.com/throughput_infographic.png",
+        },
+      ],
+    },
     { path: "/test", component: flagRepo, props: true },
     { path: "/#", component: App, props: true },
   ],

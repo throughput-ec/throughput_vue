@@ -1,136 +1,17 @@
 <!-- this is the component that lists the repositories: -->
 <template>
-  <div>
+  <div width="100%">
     <b-modal id="meta-modal" v-if="modalVisible" @close="modalVisible = false"
       ><div>
         <pre>{{ this.metaModal }}</pre>
       </div></b-modal
     >
-    <b-container>
-      <b-row>
-        <div v-if="repos.length > 0" class="tab-header">
-          <button
-            v-if="repos.length > 0"
-            v-b-modal.dbcitation
-            @click="getCite(repos)"
-            class="light-blue-outline-button"
-          >
-            Get Citations
-          </button>
-          <b-form-checkbox
-            id="checkboxrepo"
-            v-model="status"
-            name="checkboxrepo"
-            value="yes"
-            unchecked-value="no"
-            v-b-tooltip.hover
-            title="Unselected resources will be placed at the end of the list."
-          >
-            <label style="color: var(--t-color-light-blue)"
-              >Show Unselected Resources</label
-            >
-          </b-form-checkbox>
-        </div>
-      </b-row>
-    </b-container>
+    <searchfilter @filterprops="filterprops"></searchfilter>
 
     <hr />
 
     <div v-for="(item, index) in toDisplay" :key="index">
-      <b-container v-if="item.show === 'yes' || status === 'yes'">
-        <b-row align-v="center">
-          <b-col fluid="sm" cols="2">
-            <div v-if="item.show === 'yes'">
-              <b-button-group>
-                <b-button @click="dropDB(item)" variant="danger">Drop</b-button>
-              </b-button-group>
-            </div>
-            <div v-else>
-              <b-button-group>
-                <b-button @click="addDB(item)" variant="success">Add</b-button>
-              </b-button-group>
-            </div>
-          </b-col>
-          <b-col cols="8">
-            <b-row>
-              <h4>
-                <a
-                  :href="item.url"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  style="color: var(--t-color-light-blue)"
-                  >{{ item.name }}</a
-                >&nbsp;
-              </h4>
-            </b-row>
-            <b-row>
-              <div>
-                <b-badge v-if="item.hasOwnProperty('meta')" variant="primary">
-                  {{ checkLicense(item.meta.readme.license) }}
-                </b-badge>
-                &nbsp;
-                <b-badge v-if="item.hasOwnProperty('meta')" variant="none">
-                  {{ checkReadme(item.meta.readme.readme.char) }}
-                </b-badge>
-              </div>
-              <div class="keyword-container">
-                <div
-                  v-for="(ccdrs, index) in item.ccdrs"
-                  :key="index"
-                  class="keyword-badge transparent-blue-green-badge"
-                >
-                  <span>{{ ccdrs }}</span>
-                  <span
-                    v-if="index < item.ccdrs.length - 1"
-                    style="color: var(--t-color-light)"
-                    >,</span
-                  >
-                </div>
-              </div>
-              {{ item.description }}
-            </b-row>
-            <b-row>
-              <div
-                v-if="item.meta.topics.length > 0"
-                style="display: inline-block"
-              >
-                <div
-                  v-for="(topic, index) in item.meta.topics"
-                  :key="index"
-                  class="keyword-badge transparent-green-badge"
-                  style="display: inline"
-                >
-                  <span>{{ topic }}</span>
-                  <span
-                    v-if="index < item.ccdrs.length - 1"
-                    style="color: var(--t-color-light)"
-                    >,</span
-                  >
-                </div>
-              </div>
-              <div v-else>
-                <div
-                  class="keyword-badge transparent-red-badge"
-                  style="display: inline"
-                >
-                  <span><small>No Topic Listed</small></span>
-                  <span
-                    v-if="index < item.ccdrs.length - 1"
-                    style="color: var(--t-color-light)"
-                    >,</span
-                  >
-                </div>
-              </div>
-            </b-row>
-          </b-col>
-          <b-col>
-            <b-button v-b-modal.meta-modal @click="printMeta(item)"
-              >Show meta</b-button
-            >
-          </b-col>
-        </b-row>
-        <hr />
-      </b-container>
+      <repoItems :repoItem="item" />
     </div>
 
     <t-pagination
@@ -144,6 +25,8 @@
 
 <script>
 import pagination from "./elements/pagination";
+import searchfilter from "./elements/repofilter";
+import repoItems from "./elements/repoBox.vue";
 
 export default {
   name: "listervue",
@@ -152,12 +35,14 @@ export default {
   },
   components: {
     "t-pagination": pagination,
+    searchfilter: searchfilter,
+    repoItems: repoItems,
   },
   data() {
     return {
       modalVisible: false,
       metaModal: "",
-      status: "no",
+      status: "yes",
       citations: null,
       toDisplay: [],
       showPagination: false,
@@ -182,25 +67,24 @@ export default {
     },
   },
   methods: {
-    printMeta(val) {
-      this.modalVisible = true;
-      this.metaModal = JSON.stringify(val, null, 2);
-    },
-    checkLicense(val) {
-      if (val === null) {
-        var output = "Implicit Copyright";
-      } else {
-        output = val;
+    filterprops(val) {
+      let self = this;
+      if (val.readme === "yes") {
+        self.repos = self.repos.filter(
+          (x) => x.meta.readme.readme.char !== null
+        );
       }
-      return output;
-    },
-    checkReadme(val) {
-      if (val === null) {
-        var output = "No Readme";
-      } else {
-        output = "README: " + val.toLocaleString() + " chars";
+      if (val.license === "yes") {
+        self.repos = self.repos.filter((x) => x.meta.readme.license !== null);
       }
-      return output;
+      self.repos = self.repos.filter((x) => {
+        if (x.meta.commits !== null) {
+          if (x.meta.commits.range.length == 2) {
+            date = Date.parse(x.meta.commits.range)
+          }
+        }
+      });
+      this.$emit("repos", self.repos);
     },
     dropDB(val) {
       let self = this;

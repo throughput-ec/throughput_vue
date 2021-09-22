@@ -33,8 +33,8 @@
           style="padding: 20px"
           alt="network diagram"
         />
-        By searching for databases and repositories using keywords Throughput
-        returns all associated data resources, and provides links to code
+        By searching for databases and repositories using keywords, Throughput
+        returns associated data resources, and provides links to code
         repositories that either reference those data resources, or use those
         data resources in analysis.
         <div>

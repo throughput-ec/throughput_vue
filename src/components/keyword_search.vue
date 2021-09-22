@@ -1,3 +1,5 @@
+<!-- This template provides the main search capacity for the
+     Throughput web app. -->
 <template>
   <div class="app-body">
     <app-header></app-header>
@@ -33,7 +35,7 @@
                   ></wordBadges>
                 </b-col>
               </b-row>
-              <div v-if="allkw.filter((x) => !x.show).length > 0">
+              <div v-if="allKeywords.filter((x) => !x.show).length > 0">
                 <b-row align-v="end">
                   <b-col>
                     <wordBadges
@@ -54,23 +56,20 @@
           >
           <flagRepo class="w-100" style="padding-top: 5px"></flagRepo>
         </b-row>
-        <b-row>
-          <div v-if="loadingRepos" class="w-100" style="padding: 20px">
-            <loading class="text-center"></loading>
-          </div>
-        </b-row>
       </b-container>
 
       <!-- INFORMATION SECTION FOR TABS: -->
       <div
-        v-if="apikw.length > 0"
+        v-if="datacatalogs.length > 0"
         style="background: var(--t-color-light-grey); margin-top: 10px"
       >
         <div style="padding: 15px 40px">
           <p style="font-size: 18px">
             You have selected
-            {{ apikw.filter((x) => x.show === "yes").length }} databases.
-            <span v-if="apikw.filter((x) => x.show === 'yes').length > 40">
+            {{ datacatalogs.filter((x) => x.show === "yes").length }} databases.
+            <span
+              v-if="datacatalogs.filter((x) => x.show === 'yes').length > 40"
+            >
               The number of databases selected needs to be 40 or less in order
               to proceed to search data repositories.</span
             >
@@ -81,7 +80,7 @@
             >
           </p>
           <p
-            v-if="apikw.filter((x) => x.show === 'yes').length > 40"
+            v-if="datacatalogs.filter((x) => x.show === 'yes').length > 40"
             style="font-size: 18px"
           >
             You can also click on
@@ -98,7 +97,7 @@
               Reset Search
             </button>
             <button
-              v-if="apikw.filter((x) => x.show === 'yes').length > 40"
+              v-if="datacatalogs.filter((x) => x.show === 'yes').length > 40"
               @click="autoFilterDBs"
               class="blue-button"
               style="margin-left: 10px"
@@ -110,19 +109,26 @@
       </div>
 
       <!-- TABS -->
-      <div class="tabs" v-if="apikw.length > 0">
+      <div class="tabs" v-if="datacatalogs.length > 0">
         <b-tabs active-tab-class="active-tab">
           <b-tab title="Data Catalogs" active>
             <!-- Pass out the variables to list the databases -->
             <div v-if="loadingRepos" class="screen-center" style="height: 80vh">
               <loading class="screen-center"></loading>
             </div>
-            <lister :apikw="apikw"></lister>
+            <lister :datacatalogs="datacatalogs"></lister>
           </b-tab>
 
           <b-tab title="Code Repositories" @click="getCodeRepos">
             <div
-              v-if="apikw.filter((x) => x.show === 'yes').length > 40"
+              v-if="loadingCodeRepos"
+              class="screen-center"
+              style="height: 80vh"
+            >
+              <loading class="screen-center"></loading>
+            </div>
+            <div
+              v-if="datacatalogs.filter((x) => x.show === 'yes').length > 40"
               style="padding: 20px 40px; width: 100%; text-align: center"
             >
               You cannot select more than 40 Databases. Please remove databases
@@ -153,17 +159,18 @@ export default {
   data() {
     return {
       // The full set of keywords.
-      allkw: [],
+      allKeywords: [],
       // The subset set of code repositories (show === true)
       allrepos: [],
       // The full set of code repositories
-      apikw: [],
+      datacatalogs: [],
       expandKeywordSearch: true,
       // The raw string used to find keywords
       kwText: "",
       // Loading the full data
       loading: false,
       loadingRepos: false,
+      loadingCodeRepos: false,
       returnSet: [
         { caption: "Databases", state: true },
         { caption: "Code Repos", state: false },
@@ -223,15 +230,15 @@ export default {
         return response.json();
       })
       .then((data) => {
-        this.allkw = data.data.data.map((x) => {
+        this.allKeywords = data.data.data.map((x) => {
           return { term: x.keywords, show: true, count: x.count };
         });
-        this.typedKeywords = this.allkw
+        this.typedKeywords = this.allKeywords
           .filter((x) => x.show == true)
           .map((x) => {
             return { term: x.term, count: x.count };
           });
-        this.clickedKeywords = this.allkw
+        this.clickedKeywords = this.allKeywords
           .filter((x) => x.show == false)
           .map((x) => {
             return { term: x.term, count: x.count };
@@ -264,7 +271,7 @@ export default {
   watch: {
     kwText: {
       handler(val) {
-        this.typedKeywords = this.allkw.filter(function (kw) {
+        this.typedKeywords = this.allKeywords.filter(function (kw) {
           return kw.term.includes(val.toLowerCase());
         });
       },
@@ -307,8 +314,8 @@ export default {
         })
         .then((data) => {
           // ADD LINK COUNT
-          self.apikw = data.data;
-          self.apikw = self.apikw.map(function (x) {
+          self.datacatalogs = data.data;
+          self.datacatalogs = self.datacatalogs.map(function (x) {
             x["show"] = "no";
             if (!x["linked"] && x["count"]) {
               x["linked"] = x["count"];
@@ -318,7 +325,7 @@ export default {
         })
         .then((data) => {
           // ADD TEXT EXCERPT FIELD
-          self.apikw = self.apikw.map(function (x) {
+          self.datacatalogs = self.datacatalogs.map(function (x) {
             const words = x["description"].split(" ");
 
             if (words.length > 30) {
@@ -331,11 +338,14 @@ export default {
           });
 
           this.loadingRepos = false;
-          if (this.expandKeywordSearch === true && self.apikw.length > 0) {
+          if (
+            this.expandKeywordSearch === true &&
+            self.datacatalogs.length > 0
+          ) {
             this.toggleKeywordSearch();
           }
 
-          if (self.apikw.length === 0) {
+          if (self.datacatalogs.length === 0) {
             this.error =
               "No Databases Found.  Please update your search and try again.";
           }
@@ -347,12 +357,13 @@ export default {
     },
     getCodeRepos() {
       // Get the code repositories associated with databases.
-      const toShow = this.apikw.filter((x) => x.show === "yes").length;
 
-      if (this.apikw.length > 0 && toShow <= 40) {
-        this.loading = true;
+      const toShow = this.datacatalogs.filter((x) => x.show === "yes").length;
+
+      if (this.datacatalogs.length > 0 && toShow <= 40) {
+        this.loadingCodeRepos = true;
         let self = this;
-        const databaseIds = this.apikw
+        const databaseIds = this.datacatalogs
           .filter((x) => x.show === "yes")
           .map((x) => x.id)
           .join(",");
@@ -369,7 +380,7 @@ export default {
           .then((data) => {
             self.allrepos = data
               .map(function (x) {
-                x["show"] = "yes";
+                x["show"] = "no";
                 if (!Object.keys(x).includes("meta")) {
                   x["meta"] = {
                     topics: [],
@@ -389,17 +400,17 @@ export default {
               });
           })
           .then((data) => {
-            this.loading = false;
+            this.loadingCodeRepos = false;
             this.$forceUpdate();
             return data;
           })
           .catch(() => {
-            this.loading = false;
+            this.loadingCodeRepos = false;
           });
       }
     },
     toggleKw(val) {
-      let out = this.allkw.map(function (x) {
+      let out = this.allKeywords.map(function (x) {
         if (x["term"] === val) {
           x["show"] = !x["show"];
         }
@@ -407,7 +418,7 @@ export default {
       });
       this.typedKeywords = out.filter((x) => x.show == true);
       this.clickedKeywords = out.filter((x) => x.show == false);
-      this.allkw = out;
+      this.allKeywords = out;
     },
     toggleSub(val) {
       let out = this.somesub.map(function (x) {
@@ -452,15 +463,15 @@ export default {
           /* This comes from the api/keyword/repos endpoint,
             returning a "repositories" array of repositories. */
 
-          self.apikw = data.data.data;
-          self.apikw = self.apikw.map(function (x) {
+          self.datacatalogs = data.data.data;
+          self.datacatalogs = self.datacatalogs.map(function (x) {
             x["show"] = "no";
             return x;
           });
         })
         .then((data) => {
           // ADD TEXT EXCERPT FIELD
-          self.apikw = self.apikw.map(function (x) {
+          self.datacatalogs = self.datacatalogs.map(function (x) {
             const words = x["description"].split(" ");
 
             if (words.length > 30) {
@@ -473,11 +484,14 @@ export default {
           });
 
           this.loadingRepos = false;
-          if (this.expandKeywordSearch === true && self.apikw.length > 0) {
+          if (
+            this.expandKeywordSearch === true &&
+            self.datacatalogs.length > 0
+          ) {
             this.toggleKeywordSearch();
           }
 
-          if (self.apikw.length === 0) {
+          if (self.datacatalogs.length === 0) {
             this.error =
               "No Databases Found.  Please update your search and try again.";
           }
@@ -488,8 +502,8 @@ export default {
         });
     },
     autoFilterDBs() {
-      let staging = this.apikw;
-      this.apikw = [];
+      let staging = this.datacatalogs;
+      this.datacatalogs = [];
 
       const filteredCount = staging.filter((x) => x.show === "yes");
 
@@ -502,7 +516,7 @@ export default {
             staging[index]["show"] = "no";
           }
 
-          this.apikw = [...this.apikw, staging[index]];
+          this.datacatalogs = [...this.datacatalogs, staging[index]];
         }
       }
 
@@ -512,7 +526,7 @@ export default {
       this.expandKeywordSearch = !this.expandKeywordSearch;
     },
     reset() {
-      this.apikw = [];
+      this.datacatalogs = [];
       this.allrepos = [];
 
       if (this.expandKeywordSearch === false) {

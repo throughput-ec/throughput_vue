@@ -5,7 +5,7 @@
     <div class="tab-header">
       <button
         v-b-modal.dbcitation
-        @click="getCite(apikw)"
+        @click="getCite(datacatalogs)"
         class="light-blue-outline-button"
       >
         Get Citations
@@ -113,7 +113,7 @@
 
     <t-pagination
       v-if="showPagination === true"
-      :data="apikw"
+      :data="datacatalogs"
       :showAll="status === 'yes'"
       @updateToDisplay="updateToDisplay"
     ></t-pagination>
@@ -146,7 +146,7 @@ import pagination from "./elements/pagination";
 export default {
   name: "listervue",
   props: {
-    apikw: { type: Array },
+    datacatalogs: { type: Array },
   },
   components: {
     "t-pagination": pagination,
@@ -173,7 +173,7 @@ export default {
     };
   },
   watch: {
-    apikw: {
+    datacatalogs: {
       handler(value) {
         if (value.length > 10) {
           this.showPagination = true;
@@ -186,32 +186,32 @@ export default {
   methods: {
     switchDB(val) {
       let self = this;
-      const dbs = this.apikw.map((x) => x.name);
+      const dbs = this.datacatalogs.map((x) => x.name);
       const position = dbs.indexOf(val.name);
-      if (self.apikw[position]["show"] === "yes") {
-        self.apikw[position]["show"] = "no";
+      if (self.datacatalogs[position]["show"] === "yes") {
+        self.datacatalogs[position]["show"] = "no";
       } else {
-        self.apikw[position]["show"] = "yes";
+        self.datacatalogs[position]["show"] = "yes";
       }
-      self.apikw.sort(function (a, b) {
+      self.datacatalogs.sort(function (a, b) {
         return -a["show"].localeCompare(b["show"]);
       });
-      this.$emit("apikw", self.apikw);
+      this.$emit("datacatalogs", self.datacatalogs);
     },
     selOne(val) {
       let self = this;
-      const dbs = this.apikw.map((x) => x.name);
+      const dbs = this.datacatalogs.map((x) => x.name);
       const position = dbs.indexOf(val.name);
-      self.apikw.map(function (x) {
+      self.datacatalogs.map(function (x) {
         x["show"] = "no";
         return x;
       });
-      self.apikw[position]["show"] = "yes";
+      self.datacatalogs[position]["show"] = "yes";
 
-      self.apikw.sort(function (a, b) {
+      self.datacatalogs.sort(function (a, b) {
         return -a["show"].localeCompare(b["show"]);
       });
-      this.$emit("apikw", self.apikw);
+      this.$emit("datacatalogs", self.datacatalogs);
     },
     getCite(val) {
       let self = this;
@@ -231,7 +231,7 @@ export default {
     },
     toggleExcerpt(index) {
       let self = this;
-      self.apikw[index]["showExcerpt"] = !self.apikw[index]["showExcerpt"];
+      self.datacatalogs[index]["showExcerpt"] = !self.datacatalogs[index]["showExcerpt"];
       this.$forceUpdate();
     },
     updateToDisplay(data) {
