@@ -1,19 +1,20 @@
 <!-- this is the component that lists the repositories: -->
 <template>
-  <div width="100%">
-    <b-modal id="meta-modal" v-if="modalVisible" @close="modalVisible = false"
-      ><div>
-        <pre>{{ this.metaModal }}</pre>
-      </div></b-modal
-    >
-    <searchfilter @filterprops="filterprops"></searchfilter>
-
-    <hr />
-
-    <div v-for="(item, index) in toDisplay" :key="index">
-      <repoItems :repoItem="item" />
-    </div>
-
+  <div>
+    <b-container style="margin-left: 0px; margin-right: 0px; buffer-left: 0px">
+      <b-row />
+      <b-row>
+        <b-col cols="3">
+          <searchfilter @filterprops="filterprops"></searchfilter>
+        </b-col>
+        <b-col>
+          <hr />
+          <div v-for="(item, index) in toDisplay" :key="index">
+            <repoItems :repoItem="item" />
+          </div>
+        </b-col>
+      </b-row>
+    </b-container>
     <t-pagination
       v-if="showPagination === true"
       :data="repos"
@@ -27,6 +28,7 @@
 import pagination from "./elements/pagination";
 import searchfilter from "./elements/repofilter";
 import repoItems from "./elements/repoBox.vue";
+import itemsjs from "itemsjs";
 
 export default {
   name: "listervue",
@@ -38,8 +40,19 @@ export default {
     searchfilter: searchfilter,
     repoItems: repoItems,
   },
+  created() {
+    this.itemsJsInstance = itemsjs(this.repos, {});
+  },
+  mounted: function () {
+    this.repoSet = this.repos;
+    this.repoSet = this.repoSet.map((x) => {
+      return x;
+    });
+  },
   data() {
     return {
+      repoSet: {},
+      itemsJsInstance: {},
       modalVisible: false,
       metaModal: "",
       status: "yes",
@@ -80,47 +93,11 @@ export default {
       self.repos = self.repos.filter((x) => {
         if (x.meta.commits !== null) {
           if (x.meta.commits.range.length == 2) {
-            date = Date.parse(x.meta.commits.range)
+            date = Date.parse(x.meta.commits.range);
           }
         }
       });
       this.$emit("repos", self.repos);
-    },
-    dropDB(val) {
-      let self = this;
-      const dbs = this.repos.map((x) => x.name);
-      const position = dbs.indexOf(val.name);
-      self.repos[position]["show"] = "no";
-      self.repos.sort(function (a, b) {
-        return -a["show"].localeCompare(b["show"]);
-      });
-      this.$emit("repos", this.repos);
-    },
-    addDB(val) {
-      let self = this;
-      const dbs = this.repos.map((x) => x.name);
-      const position = dbs.indexOf(val.name);
-      self.repos[position]["show"] = "yes";
-      self.repos.sort(function (a, b) {
-        return -a["show"].localeCompare(b["show"]);
-      });
-      this.$emit("repos", this.repos);
-    },
-    getCite(val) {
-      let self = this;
-
-      self.ids = val
-        .filter((x) => x.show === "yes")
-        .map((x) => x.id)
-        .join(",");
-
-      fetch(`${process.env.VUE_APP_URLPATH}/api/citations?ids=${self.ids}`)
-        .then(function (response) {
-          return response.json();
-        })
-        .then((data) => {
-          self.citations = data.data.citation.join("");
-        });
     },
     updateToDisplay(data) {
       this.toDisplay = data;

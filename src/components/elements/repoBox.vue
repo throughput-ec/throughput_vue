@@ -83,11 +83,7 @@
                 style="display: inline"
               >
                 <span><small>No Topic Listed</small></span>
-                <span
-                  v-if="index < repoItem.ccdrs.length - 1"
-                  style="color: var(--t-color-light)"
-                  >,</span
-                >
+                <span style="color: var(--t-color-light)">,</span>
               </div>
             </div>
           </b-row>
@@ -139,7 +135,7 @@ export default {
       return output;
     },
     checkReadme(val) {
-      if (val === null) {
+      if (val === null || val === undefined) {
         var output = "No Readme";
       } else {
         output = "README: " + val.toLocaleString() + " chars";
