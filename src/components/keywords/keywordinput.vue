@@ -10,7 +10,7 @@
 
       <b-input-group-append>
         <b-button @click="$bvModal.show('keyword-search-info-modal')"
-          >Info</b-button
+          >Help</b-button
         >
         <b-modal id="keyword-search-info-modal" hide-footer hide-header>
           <div style="padding: 20px">
