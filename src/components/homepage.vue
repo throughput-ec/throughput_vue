@@ -1,8 +1,10 @@
 <template>
   <div class="page-div">
+    <!--
     <div class="d-three-div">
       <d3-network :net-nodes="nodes" :net-links="links" :options="options" />
     </div>
+    -->
 
     <div class="title-div">
       <h1 style="vertical-align: middle; letter-spacing: 4px">THROUGHPUT</h1>
@@ -19,7 +21,7 @@
       <img
         src="@/assets/img/nsf.png"
         height="50px"
-        alt="national science foundation logo"
+        alt="National Science Foundation logo"
       />
 
       <b-modal id="findout" title="Throughput Database" ok-only>
@@ -31,7 +33,7 @@
           src="@/assets/throughput_modal.svg"
           width="100%"
           style="padding: 20px"
-          alt="network diagram"
+          alt="Network Diagram"
         />
         By searching for databases and repositories using keywords, Throughput
         returns associated data resources, and provides links to code
@@ -82,12 +84,12 @@
 
 <script>
 import basicGraph from "../assets/opengraph.json";
-import D3Network from "vue-d3-network";
+// import D3Network from "vue-d3-network";
 
 export default {
   name: "throughGraph",
   components: {
-    D3Network,
+//    D3Network,
   },
   data() {
     return {
