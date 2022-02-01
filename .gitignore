@@ -31,3 +31,5 @@ orcid_secret.json
 .nyc_output/processinfo/
 
 .nyc_output/
+
+package-lock.json
