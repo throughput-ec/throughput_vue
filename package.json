@@ -22,7 +22,7 @@
     "html-metadata": "git://github.com/wikimedia/html-metadata.git",
     "http": "0.0.0",
     "jquery": "^3.6.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "jwt-decode": "^3.1.2",
     "open-graph-scraper": "^4.9.0",
     "page-metadata-parser": "^1.1.4",
