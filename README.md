@@ -3,11 +3,11 @@
 
 # Throughput Annotation Vue.js Application
 
-This application connects to the Throughput annotation graph database.  The database itself uses a data model based on the [W3C Annotation standard](), although modified to fit the graph database model we have developed, and further modified for several use-cases to fit with unser interaction models.
+This application connects to the Throughput annotation graph database.  The database itself uses a data model based on the [W3C Annotation standard](), although modified to fit the graph database model we have developed, and further modified for several use-cases to fit with user interaction models.
 
 ## Contributors
 
-This project is an open project, and contributiosn are welcome from anyone.  All contributors to this project are bound by a [code of conduct](CODE_OF_CONDUCT.md).  Please review and follow this code of conduct as part of your contribution.
+This project is an open project, and contributions are welcome from anyone.  All contributors to this project are bound by a [code of conduct](CODE_OF_CONDUCT.md).  Please review and follow this code of conduct as part of your contribution.
 
   * [Simon Goring](http://goring.org) [![orcid](https://img.shields.io/badge/orcid-0000--0002--2700--4605-brightgreen.svg)](https://orcid.org/0000-0002-2700-4605)
 
@@ -15,7 +15,7 @@ All products of the Throughput Annotation Project are licensed under and [MIT Li
 
 ## Project Components
 
-This respository uses a Vue.js application to serve a static website with integrations for [the Throughput API](http://throughputdb.com/api-docs).
+This repository uses a Vue.js application to serve a static website with integrations for [the Throughput API](http://throughputdb.com/api-docs).
 
 ### Requirements
 
@@ -32,11 +32,11 @@ npm install
 to install all required packages.  Note that the user also requires a file called `.env` to be added to the local directory.  This can be done using:
 
 ```bash
-echo "VUE_APP_URLPATH=http://throughputdb.com/api > .env"
+echo "VUE_APP_URLPATH=http://throughputdb.com/api" > .env
 ```
 
 ```bash
-echo "VUE_APP_ORCID={{ADD ORCID APP ID HERE}} > .env.local"
+echo "VUE_APP_ORCID={{ADD ORCID APP ID HERE}}" > .env.local
 ```
 
 ### Compiles and hot-reloads for development
