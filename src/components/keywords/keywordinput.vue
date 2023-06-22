@@ -8,7 +8,7 @@
         v-on:keyup="$emit('change', kwinput)"
       ></b-form-input>
 
-      <b-input-group-append>
+      <!-- <b-input-group-append>
         <b-button @click="$bvModal.show('keyword-search-info-modal')"
           >Info</b-button
         >
@@ -30,7 +30,7 @@
             </div>
           </div>
         </b-modal>
-      </b-input-group-append>
+      </b-input-group-append> -->
     </b-input-group>
   </b-container>
 </template>

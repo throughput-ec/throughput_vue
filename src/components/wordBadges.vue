@@ -14,9 +14,9 @@
           <h3>{{ this.title }}</h3>
           The top {{ Math.min(30, badgein.length) }} of
           {{ badgein.length }} available keywords are shown. Click on one of the
-          words to add it to your set.<br /><strong
-            >The number beside the keyword indicates how frequently the terms
-            appear in the Throughput Database.</strong
+          words to add it to your search set.<br /><strong
+            >The number beside each keyword indicates how frequently the term
+            appears in the Throughput Database.</strong
           >
         </small>
       </div>
@@ -30,13 +30,15 @@
       <!-- Badges for selected terms -->
       <div v-if="badgein.length > 0" class="keyword-container">
         <div v-for="index in Math.min(30, badgein.length)" :key="index">
-          <div class="keyword-badge" v-bind:class="{ 'red-badge': !show }">
+          <div
+          class="keyword-badge"
+          v-bind:class="{ 'selected-keyword-badge': !show }"
+          v-on:click="$emit('termOut', badgein[index - 1].term)"
+          >
             <!-- Clicking one of these span elements turns the show parameter
                  on or off.  That happens in "keyword_search"-->
-            <span v-on:click="$emit('termOut', badgein[index - 1].term)">{{
-              badgein[index - 1].term
-            }}</span>
             <span class="inner-badge">{{ badgein[index - 1].count }}</span>
+            <span>{{ badgein[index - 1].term }}</span>
           </div>
         </div>
       </div>

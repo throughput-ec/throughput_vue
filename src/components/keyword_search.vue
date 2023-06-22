@@ -14,6 +14,12 @@
       <searchType @changeSearch="updateSearch" @changeReturn="updateReturn">
       </searchType>
       <b-container>
+        <b-row v-if="searchKind.includes('Keywords')" style="padding: 15px;">
+          Begin typing keywords. As you
+          limit the potential set of keywords a set of options will appear
+          in blue below. Click on a term to add it to your search set. Click
+          on it again to remove it from the search set.
+        </b-row>        
         <b-row>
           <kwInput
             :term="searchKind"
@@ -24,8 +30,8 @@
         <b-row>
           <!-- Show the Keyword search elements. -->
           <div v-if="searchKind.includes('Keywords')">
-            <b-container class="border">
-              <b-row>
+            <b-container>
+              <b-row style="padding-top: 15px;">
                 <b-col>
                   <wordBadges
                     title="Keywords"
@@ -36,7 +42,7 @@
                 </b-col>
               </b-row>
               <div v-if="allKeywords.filter((x) => !x.show).length > 0">
-                <b-row align-v="end">
+                <b-row style="padding-top: 15px;" align-v="end">
                   <b-col>
                     <wordBadges
                       title="Selected Keywords"
@@ -50,8 +56,8 @@
             </b-container>
           </div>
         </b-row>
-        <b-row style="padding: 20px">
-          <b-button @click="onSubmit" class="w-100" variant="primary"
+        <b-row style="padding: 20px" align-h="center">
+          <b-button @click="onSubmit" class="w-25" variant="primary"
             >Submit Search</b-button
           >
           <flagRepo class="w-100" style="padding-top: 5px"></flagRepo>
@@ -173,7 +179,7 @@ export default {
       loadingCodeRepos: false,
       returnSet: [
         { caption: "Databases", state: true },
-        { caption: "Code Repos", state: false },
+        { caption: "Code Repositories", state: false },
       ],
       searchSet: [
         { caption: "Keywords", state: true },
