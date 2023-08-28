@@ -4,22 +4,6 @@
   <div>
     <b-container v-if="repoItem.show === 'yes' || status === 'yes'">
       <b-row align-v="center">
-        <b-col fluid="sm" cols="2">
-          <div v-if="repoItem.show === 'yes'">
-            <b-button-group>
-              <b-button @click="dropDB(repoItem)" variant="danger"
-                >Drop</b-button
-              >
-            </b-button-group>
-          </div>
-          <div v-else>
-            <b-button-group>
-              <b-button @click="addDB(repoItem)" variant="success"
-                >Add</b-button
-              >
-            </b-button-group>
-          </div>
-        </b-col>
         <b-col cols="8">
           <b-row>
             <h4>
@@ -91,11 +75,6 @@
               </div>
             </div>
           </b-row>
-        </b-col>
-        <b-col>
-          <b-button v-b-modal.meta-modal @click="printMeta(repoItem)"
-            >Show meta</b-button
-          >
         </b-col>
       </b-row>
       <hr />

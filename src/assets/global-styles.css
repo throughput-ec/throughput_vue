@@ -105,6 +105,14 @@ hr {
     font-size: 12px;
 }
 
+.add-button-span {
+    background: #aaeead;
+    color: black;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
 .auto-filter-span {
     background: var(--t-color-blue);
     color: white;
@@ -291,5 +299,5 @@ hr {
 }
 
 .searchType {
-    padding-top: 50px;
+    padding-top: 20px;
 }

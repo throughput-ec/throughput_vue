@@ -2,38 +2,38 @@
 
 <template>
   <div>
-    <div class="tab-header">
-      <button
-        v-b-modal.dbcitation
-        @click="getCite(datacatalogs)"
-        class="light-blue-outline-button"
-      >
-        Get Citations
-      </button>
-
+    <div style="padding:15px;">
       <b-form-checkbox
         id="checkboxdb"
         v-model="status"
         name="checkboxdb"
         value="yes"
         unchecked-value="no"
-        v-b-tooltip.hover
-        title="Unselected resources will be placed at the end of the list."
-      >
-        <label style="color: var(--t-color-light-blue)"
-          >Show Unselected Resources</label
         >
+        <label
+          v-b-tooltip.hover
+          title="Unselected resources will be placed at the end of the list."
+          >Show Unselected Resources</label>
       </b-form-checkbox>
+      
+      <button
+        v-b-modal.dbcitation
+        @click="getCite(datacatalogs)"
+        type="button"
+        class="btn btn-outline-light"
+      >
+        Get Citations
+      </button>
     </div>
 
-    <b-modal id="dbcitation" title="Citations">
+    <b-modal id="dbcitation" title="Citations" ok-only>
       <pre>{{ this.citations }}</pre>
     </b-modal>
 
     <hr />
 
     <!-- This is to display each database/repository -->
-    <div v-for="(item, index) in toDisplay" :key="index">
+    <div v-for="(item, index) in toDisplay" :key="item.name">
       <b-container v-if="item.show === 'yes' || status === 'yes'">
         <b-row align-v="center">
           <b-col class="col-md-2">
@@ -43,17 +43,17 @@
                   Drop
                 </b-button>
                 <b-button @click="selOne(item)" variant="primary">
-                  Select One
+                  Select Only
                 </b-button>
               </b-button-group>
             </div>
             <div v-else>
               <b-button-group>
-                <b-button @click="switchDB(item)" variant="success">
+                <b-button @click="switchDB(item)" style="background-color:#aaeead;color:black;">
                   Add
                 </b-button>
                 <b-button @click="selOne(item)" variant="primary">
-                  Select One
+                  Select Only
                 </b-button>
               </b-button-group>
             </div>
@@ -84,8 +84,8 @@
 
             <br />
             <b-container>
-              <b-row align-v="center">
-                <b-col v-if="item.count > 0" class="text-center" cols="3">
+              <b-row>
+                <b-col v-if="item.count > 0" cols="3">
                   <strong style="color: var(--t-color-blue-green)"
                     >Linked Code Repositories: {{ item.count }}</strong
                   >
