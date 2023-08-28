@@ -124,12 +124,8 @@ hr {
 /* brg 6/19/23: fixed-width keyword-badges + column-gap fakes out columns */
 .keyword-container {
     display: flex;
-    /* display: grid; */
     flex-flow: row wrap;
-    /* justify-content: space-between; */
-    /* align-content: space-between; */
     column-gap: 10px;
-    /* align-items: center; */
     width: 100%;
 }
 
@@ -137,12 +133,9 @@ hr {
 .keyword-badge {
     display: flex;
     flex-flow: row nowrap;
-    /* justify-content: center; */
-    /* align-items: center; */
     background: var(--t-color-light);
     color: var(--t-color-blue);
     font-size: 12px;
-    /* line-height: 16px; */
     border-radius: 5px;
     border: solid 1px;
     letter-spacing: 1px;
@@ -178,7 +171,6 @@ hr {
 .inner-badge {
     color: var(--t-color-dark);
     font-size: 10px;
-    /* line-height: 11px; */
     font-weight: 600;
     background:var(--t-color-light);
     padding: 1px 3px;
