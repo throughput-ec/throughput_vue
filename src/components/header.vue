@@ -1,7 +1,6 @@
 <template>
   <header class="header">
     <div class="header-menu">
-      <a :href="home" class="menu-button">Home</a>
       <a :href="about" class="menu-button">About Throughput</a>
       <a
         href="https://github.com/throughput-ec"
