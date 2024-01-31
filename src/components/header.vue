@@ -1,7 +1,6 @@
 <template>
   <header class="header">
     <div class="header-menu">
-      <a :href="home" class="menu-button">Home</a>
       <a :href="about" class="menu-button">About Throughput</a>
       <a
         href="https://github.com/throughput-ec"
@@ -34,13 +33,12 @@
     <div class="header-hero">
       <div class="hero-container">
         <div class="hero-inner">
-          <h1>Throughput Data and Software Annotation</h1>
+          <h1>Throughput Database</h1>
           <img
             src="@/assets/graph_place.png"
             class="header-logo"
             alt="sample-network-diagram"
           />
-          <h4>Annotation Editor</h4>
         </div>
       </div>
     </div>

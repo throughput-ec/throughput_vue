@@ -22,6 +22,10 @@ const router = new VueRouter({
   routes: [
     {
       path: "/",
+      redirect: "/search",
+    },
+    {
+      path: "/index",
       component: App,
       name: "root",
       metaTags: [
@@ -45,7 +49,7 @@ const router = new VueRouter({
           property: "og:image",
           contents: "http://throughputdb.com/throughput_infographic.png",
         },
-      ],
+      ],      
     },
     {
       path: "/search",

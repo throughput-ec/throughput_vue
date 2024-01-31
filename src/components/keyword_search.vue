@@ -9,11 +9,25 @@
     </div>
 
     <div>
+      <b-container>
+        <b-row style="padding: 15px;">
+          Search the Throughput database below to find publications, databases, people, grants, and code resources across the web.
+        </b-row>
+      </b-container>
+
       <!-- This tells us which kinds of information we need to use for the
          search parameters, and what is being returned. -->
       <searchType @changeSearch="updateSearch" @changeReturn="updateReturn">
       </searchType>
       <b-container>
+        <b-row v-if="searchKind.includes('Keywords')" style="padding: 15px;">
+          <p>
+          Begin typing keywords. As you
+          limit the potential set of keywords a set of options will appear
+          in blue below. Click on a term to add it to your search set. Click
+          on it again to remove it from the search set.
+          </p>
+        </b-row>        
         <b-row>
           <kwInput
             :term="searchKind"
@@ -24,8 +38,8 @@
         <b-row>
           <!-- Show the Keyword search elements. -->
           <div v-if="searchKind.includes('Keywords')">
-            <b-container class="border">
-              <b-row>
+            <b-container>
+              <b-row style="padding-top: 15px;">
                 <b-col>
                   <wordBadges
                     title="Keywords"
@@ -36,7 +50,7 @@
                 </b-col>
               </b-row>
               <div v-if="allKeywords.filter((x) => !x.show).length > 0">
-                <b-row align-v="end">
+                <b-row style="padding-top: 15px;" align-v="end">
                   <b-col>
                     <wordBadges
                       title="Selected Keywords"
@@ -50,8 +64,8 @@
             </b-container>
           </div>
         </b-row>
-        <b-row style="padding: 20px">
-          <b-button @click="onSubmit" class="w-100" variant="primary"
+        <b-row style="padding: 20px" align-h="center">
+          <b-button @click="onSubmit" class="w-25" variant="primary"
             >Submit Search</b-button
           >
           <flagRepo class="w-100" style="padding-top: 5px"></flagRepo>
@@ -61,51 +75,59 @@
       <!-- INFORMATION SECTION FOR TABS: -->
       <div
         v-if="datacatalogs.length > 0"
-        style="background: var(--t-color-light-grey); margin-top: 10px"
+        style="margin-top: 10px"
       >
-        <div style="padding: 15px 40px">
-          <p style="font-size: 18px">
-            You have selected
-            {{ datacatalogs.filter((x) => x.show === "yes").length }} databases.
+        <b-container>
+          <b-row>
+            <b-col>
+              <h3>Search Results</h3>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col><p>
+            Data catalogs matching your search are listed below. To view associated code repositories, select data catalog(s) of interest with the <span class="add-button-span">Add</span> button, then navigate to the Code Repositories tab.
+            </p>
+
+            <p>You have selected {{ datacatalogs.filter((x) => x.show === "yes").length }} data catalog(s).</p>
             <span
               v-if="datacatalogs.filter((x) => x.show === 'yes').length > 40"
             >
-              The number of databases selected needs to be 40 or less in order
-              to proceed to search data repositories.</span
-            >
-            <span>
-              You can drop individual databases by clicking the
+              The number of data catalogs selected needs to be 40 or less in order
+              to proceed to search code repositories.
+              You can drop individual data catalogs by clicking the
               <span class="drop-button-span">Drop</span> button next to each
-              database below.</span
-            >
-          </p>
-          <p
-            v-if="datacatalogs.filter((x) => x.show === 'yes').length > 40"
-            style="font-size: 18px"
-          >
-            You can also click on
-            <span class="auto-filter-span" @click="autoFilterDBs"
-              >Auto Filter</span
-            >
-            and we will automatically select the top 40 databases based on your
-            keyword search.
-          </p>
-          <div
-            style="display: flex; justify-content: flex-end; padding-left: 30px"
-          >
-            <button @click="reset" class="light-blue-button">
-              Reset Search
-            </button>
-            <button
+              data catalog below.
+            </span>
+
+            <p
               v-if="datacatalogs.filter((x) => x.show === 'yes').length > 40"
-              @click="autoFilterDBs"
-              class="blue-button"
-              style="margin-left: 10px"
+              style="font-size: 18px"
             >
-              Auto Filter
-            </button>
-          </div>
-        </div>
+              You can also click on
+              <span class="auto-filter-span" @click="autoFilterDBs"
+                >Auto Filter</span
+              >
+              and we will automatically select the top 40 data catalogs based on your
+              keyword search.
+            </p>
+            <div
+              style="display: flex; justify-content: flex-end; padding-left: 30px"
+            >
+              <button @click="reset" class="light-blue-button">
+                Reset Search
+              </button>
+              <button
+                v-if="datacatalogs.filter((x) => x.show === 'yes').length > 40"
+                @click="autoFilterDBs"
+                class="blue-button"
+                style="margin-left: 10px"
+              >
+                Auto Filter
+              </button>
+            </div>
+            </b-col>
+          </b-row>
+        </b-container>
       </div>
 
       <!-- TABS -->
@@ -113,8 +135,8 @@
         <b-tabs active-tab-class="active-tab">
           <b-tab title="Data Catalogs" active>
             <!-- Pass out the variables to list the databases -->
-            <div v-if="loadingRepos" class="screen-center" style="height: 80vh">
-              <loading class="screen-center"></loading>
+            <div v-if="loadingRepos" style="height: 80vh">
+              <loading></loading>
             </div>
             <lister :datacatalogs="datacatalogs"></lister>
           </b-tab>
@@ -122,16 +144,15 @@
           <b-tab title="Code Repositories" @click="getCodeRepos">
             <div
               v-if="loadingCodeRepos"
-              class="screen-center"
               style="height: 80vh"
             >
-              <loading class="screen-center"></loading>
+              <loading></loading>
             </div>
             <div
               v-if="datacatalogs.filter((x) => x.show === 'yes').length > 40"
               style="padding: 20px 40px; width: 100%; text-align: center"
             >
-              You cannot select more than 40 Databases. Please remove databases
+              You cannot select more than 40 data catalogs. Please remove data catalogs
               from your selection.
             </div>
             <div v-else>
@@ -173,7 +194,7 @@ export default {
       loadingCodeRepos: false,
       returnSet: [
         { caption: "Databases", state: true },
-        { caption: "Code Repos", state: false },
+        { caption: "Code Repositories", state: false },
       ],
       searchSet: [
         { caption: "Keywords", state: true },

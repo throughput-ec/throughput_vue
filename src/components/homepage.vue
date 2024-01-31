@@ -1,8 +1,5 @@
 <template>
   <div class="page-div">
-    <div class="d-three-div">
-      <d3-network :net-nodes="nodes" :net-links="links" :options="options" />
-    </div>
 
     <div class="title-div">
       <h1 style="vertical-align: middle; letter-spacing: 4px">THROUGHPUT</h1>
@@ -44,10 +41,15 @@
         </div> </b-modal
       ><br />
 
+
       <small
         >Funding support from the National Science Foundation Award
         1928366</small
       >
+    </div>
+    <!-- annotation graph -->
+    <div> 
+      <d3-network :net-nodes="nodes" :net-links="links" :options="options" />
     </div>
   </div>
 </template>
@@ -62,19 +64,13 @@
   top: 0;
   left: 0;
 }
-.d-three-div {
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
+
 .title-div {
   width: 100%;
-  position: absolute;
-  top: 30%;
+
   z-index: 10;
   opacity: 0.8;
-  background: rgba(200, 54, 54, 0.7);
+  background: rgba(216, 216, 216, 0.7);
   padding: 20px;
   font-family: "Montserrat", sans-serif;
 }
